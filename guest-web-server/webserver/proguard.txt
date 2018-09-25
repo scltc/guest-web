@@ -1,0 +1,26 @@
+# This is a configuration file for ProGuard.
+# http://proguard.sourceforge.net/index.html#manual/usage.html
+
+# -libraryjars "C:/Program Files (x86)/Java/jdk1.8.0_162/jre/lib/rt.jar"
+#-dontwarn java.**
+#-dontwarn javax.**
+#-dontwarn org.apache.commons.codec.**
+#-dontwarn org.slf4j.impl.**
+
+# -dontusemixedcaseclassnames
+#-dontskipnonpubliclibraryclasses
+#-verbose
+
+#-optimizations !code/simplification/arithmetic,!code/simplification/cast,!field/*,!class/merging/*
+-optimizationpasses 5
+#-allowaccessmodification
+#
+
+# Jackson
+-keep @com.fasterxml.jackson.annotation.JsonIgnoreProperties class * { *; }
+-keep class com.fasterxml.** { *; }
+-keep class org.codehaus.** { *; }
+-keepnames class com.fasterxml.jackson.** { *; }
+-keepclassmembers public final enum com.fasterxml.jackson.annotation.JsonAutoDetect$Visibility { 
+    public static final com.fasterxml.jackson.annotation.JsonAutoDetect$Visibility *;
+}

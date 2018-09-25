@@ -1,0 +1,23 @@
+{
+	"folders": [
+		{
+			"name": "server",
+			"path": "guest-web-server"
+		},
+		{
+			"name": "site",
+			"path": "guest-web-site"
+		},
+		{
+			"name": "ev3dev-lang-java",
+			"path": "ev3dev-lang-java"
+		},
+		{
+			"name": "nanohttpd",
+			"path": "nanohttpd-2.3.2"
+		}
+	],
+	"settings": {
+		"java.configuration.updateBuildConfiguration": "automatic"
+	}
+}

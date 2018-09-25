@@ -1,0 +1,30 @@
+rootProject.name = 'guest-web-server'
+
+/*
+include ':ev3dev-lang-java'
+project(':ev3dev-lang-java').projectDir = "$rootDir/../ev3dev-lang-java" as File
+*/
+include ':nanohttpd'
+project(':nanohttpd').projectDir = "$rootDir/../nanohttpd-2.3.2/core" as File
+include ':nanohttpd-webserver'
+project(':nanohttpd-webserver').projectDir = "$rootDir/../nanohttpd-2.3.2/webserver" as File
+include ':nanohttpd-websocket'
+project(':nanohttpd-websocket').projectDir = "$rootDir/../nanohttpd-2.3.2/websocket" as File
+include ':nanohttpd-nanolets'
+project(':nanohttpd-nanolets').projectDir = "$rootDir/../nanohttpd-2.3.2/nanolets" as File
+
+// include ':nanohttpd-samples'
+// project(':nanohttpd-samples').projectDir = "$rootDir/../nanohttpd-2.3.2/samples" as File
+// project(':nanohttpd-webserver-markdown-plugin').projectDir = "$rootDir/../nanohttpd-2.3.2/markdown-plugin" as File
+// include ':nanohttpd-webserver-markdown-plugin'
+// include ':nanohttpd-apache-fileupload'
+// project(':nanohttpd-apache-fileupload').projectDir = "$rootDir/../nanohttpd-2.3.2/fileupload" as File
+
+include ':railroad'
+project(':railroad').projectDir = "$rootDir/railroad" as File
+
+include ':webserver'
+project(':webserver').projectDir = "$rootDir/webserver" as File
+
+include ':web-site'
+project(':web-site').projectDir = "$rootDir/../guest-web-site" as File

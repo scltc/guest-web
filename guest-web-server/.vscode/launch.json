@@ -1,0 +1,77 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Debug (Launch)-AppNanolets<nanohttpd-nanolets>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "stopOnEntry": false,
+            "mainClass": "org.nanohttpd.junit.router.AppNanolets",
+            "projectName": "nanohttpd-nanolets",
+            "args": ""
+        },
+        {
+            "type": "java",
+            "name": "Debug (Launch)-TestNanolets<nanohttpd-nanolets>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "stopOnEntry": false,
+            "mainClass": "org.nanohttpd.junit.router.TestNanolets",
+            "projectName": "nanohttpd-nanolets",
+            "args": ""
+        },
+        {
+            "type": "java",
+            "name": "Debug (Launch)-SimpleWebServer<nanohttpd-webserver>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "stopOnEntry": false,
+            "mainClass": "org.nanohttpd.webserver.SimpleWebServer",
+            "projectName": "nanohttpd-webserver",
+            "args": ""
+        },
+        {
+            "type": "java",
+            "name": "Debug (Launch)-EchoSocketSample<nanohttpd-websocket>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "stopOnEntry": false,
+            "mainClass": "org.nanohttpd.samples.websockets.EchoSocketSample",
+            "projectName": "nanohttpd-websocket",
+            "args": ""
+        },
+        {
+            "type": "java",
+            "name": "Debug (Launch)-Main<webserver>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "stopOnEntry": false,
+            "mainClass": "com.brickintellect.webserver.Main",
+            "projectName": "webserver",
+            "args": ""
+        },
+        {
+            "type": "java",
+            "name": "Debug (Attach EV3-1)",
+            "request": "attach",
+            "hostName": "192.168.2.201",
+            "port": 8000
+        },
+        {
+            "type": "java",
+            "name": "Debug (Attach localhost)",
+            "request": "attach",
+            "hostName": "localhost",
+            "port": 8000
+        }        
+    ]
+}

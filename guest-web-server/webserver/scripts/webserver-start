@@ -1,0 +1,5 @@
+#!/bin/bash
+DIRECTORY="$( cd "$( dirname "$0" )" && pwd )"
+#echo $DIRECTORY
+#echo "$@"
+sudo /opt/ejre1.8.0_171/bin/java -agentlib:jdwp=transport=dt_socket,server=y,address=8000,suspend=n -jar $DIRECTORY/mindstorms-webserver-all-1.0.0-SNAPSHOT.jar --port 80 --root $DIRECTORY/site "$@"

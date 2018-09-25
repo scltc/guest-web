@@ -1,0 +1,26 @@
+bin
+out
+build
+target
+
+*.iml
+*.ipr
+*.iws
+*.class
+*.jar
+
+.idea
+.classpath
+.project
+.gradle
+gradle/
+gradlew
+gradlew.bat
+
+# Vim Backup/Swap Files
+*~
+.swp
+.*.swp
+
+/.settings/
+/LICENSE.txt
