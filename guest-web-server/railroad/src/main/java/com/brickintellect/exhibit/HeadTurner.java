@@ -13,6 +13,7 @@ public class HeadTurner {
         public int rightDutyCycle = +33;
         public int motorRunTime = 160;
     }
+
     private Settings settings;
 
     public Settings getSettings()
