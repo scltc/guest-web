@@ -1,0 +1,1 @@
+ng build --prod --delete-output-path --output-path "%~dp0\..\docs"

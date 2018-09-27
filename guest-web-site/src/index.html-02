@@ -1,0 +1,250 @@
+<!doctype html>
+<html>
+
+<head>
+
+  <base href="/">
+  <!--  -->
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <link rel="stylesheet" href="./assets/icons/material-icons.css">
+  <link rel="icon" type="image/ico" href="./assets/favicon.ico">
+
+  <title>SCLTC Exhibit</title>
+
+  <style type="text/css">
+    body,
+    html {
+      height: 100%;
+    }
+
+    .app-loading {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .app-loading .spinner {
+      height: 300px;
+      width: 300px;
+      animation: rotate 2s linear infinite;
+      transform-origin: center center;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      margin: auto;
+    }
+
+    .app-loading .spinner .path {
+      stroke-dasharray: 1, 200;
+      stroke-dashoffset: 0;
+      animation: dash 1.5s ease-in-out infinite;
+      stroke-linecap: round;
+      stroke: #ddd;
+    }
+
+    @keyframes rotate {
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    /*
+    @keyframes dash {
+      0% {
+        stroke-dasharray: 1, 200;
+        stroke-dashoffset: 0;
+      }
+
+      50% {
+        stroke-dasharray: 89, 200;
+        stroke-dashoffset: -35px;
+      }
+
+      100% {
+        stroke-dasharray: 89, 200;
+        stroke-dashoffset: -124px;
+      }
+    }
+*/
+    @keyframes dash {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+
+    .logo {
+      position: absolute;
+      /* flex-grow: 1; */
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      background: url('./assets/SCLTC-Logo-200x200.png') no-repeat center;
+      background-size: 200px 200px;
+      /* opacity: 0.20; */
+      content: '';
+      /* z-index: -1; */
+    }
+
+    .box {
+      display: inline-block;
+      width: 200px;
+      height: 200px;
+      border: 1px solid currentcolor;
+      border-radius: 3px;
+      font-size: 30px;
+      padding: 1em;
+      position: relative;
+      margin-bottom: .25em;
+      vertical-align: top;
+      transition: .3s color, .3s border, .3s transform, .3s opacity;
+    }
+
+    .box:hover {
+      color: #fff;
+      background-color: rgba(0, 0, 0, .1);
+      font-size: 0;
+      padding: 0;
+      border-width: 3px;
+      line-height: 200px;
+      opacity: 1;
+      transform: scale(1.2);
+      z-index: 2;
+      /*
+		[class*="loader-"] {
+			font-size: 70px;
+			line-height: 200px;
+    }
+    */
+    }
+
+    .loader-05 {
+      border: .2em solid transparent;
+      border-top-color: currentcolor;
+      border-radius: 50%;
+      animation: 1s loader-05 linear infinite;
+      position: relative;
+    }
+
+    .loader-05::before {
+      content: '';
+      display: block;
+      width: inherit;
+      height: inherit;
+      position: absolute;
+      top: -.2em;
+      left: -.2em;
+      border: .2em solid currentcolor;
+      border-radius: 50%;
+      opacity: .5;
+    }
+
+
+    @keyframes loader-05 {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    .cp-spinner {
+      width: 270px;
+      height: 270px;
+      display: inline-block;
+      box-sizing: border-box;
+      position: relative
+    }
+
+    .cp-round:before {
+      border-radius: 50%;
+      content: " ";
+      width: 270px;
+      height: 270px;
+      display: inline-block;
+      box-sizing: border-box;
+      border-top: solid 16px #bababa;
+      border-right: solid 16px #bababa;
+      border-bottom: solid 16px #bababa;
+      border-left: solid 16px #bababa;
+      position: absolute;
+      top: 0;
+      left: 0
+    }
+
+    .cp-round:after {
+      border-radius: 50%;
+      content: " ";
+      width: 270px;
+      height: 270px;
+      display: inline-block;
+      box-sizing: border-box;
+      border-top: solid 16px red;
+      border-right: solid 16px transparent;
+      border-bottom: solid 16px transparent;
+      border-left: solid 16px transparent;
+      position: absolute;
+      top: 0;
+      left: 0;
+      animation-delay: 500ms;
+      animation: cp-round-animate 2s ease-in-out infinite
+    }
+
+    @keyframes cp-round-animate {
+      0% {
+        transform: rotate(0deg)
+      }
+
+      100% {
+        transform: rotate(360deg)
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <app-root>
+    <!--
+    <div class="app-loading">
+      <div class="logo"></div>
+      <svg class="spinner" viewBox="25 25 50 50">
+        <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10" />
+      </svg>
+    </div>     
+    -->
+    <div class="app-loading">
+      <div class="logo"></div>
+      <div class="cp-spinner cp-round"></div>
+    </div>
+    <!--
+    <div class="box">
+      <div class="loader-05"></div>
+    </div>
+    -->
+
+    <!--
+    <div class="app-loading">
+        <div class="logo"></div>
+      <div class="loader-5"></div>
+    </div>
+    -->
+  </app-root>
+</body>
+
+</html>

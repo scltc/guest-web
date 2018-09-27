@@ -1,0 +1,49 @@
+task wrapper(type: Wrapper) {
+	gradleVersion = "4.4.1"
+}
+
+apply from: '../guest-web-server/gradle/config.gradle'
+
+def remotePath = "./guest-web"
+def outputPath = "${projectDir}/../docs"
+
+def ngCommand = (System.getProperty("os.name").toUpperCase().contains("WINDOWS"))
+	            ? "ng.cmd"
+			        : "ng";
+
+task siteBuild(type:Exec) {
+     commandLine "$ngCommand", "build", "--no-progress", "--prod", "--delete-output-path", "--output-path", "$outputPath"
+}
+
+task siteDeploy(dependsOn: 'siteBuild') {
+  doLast {
+    ssh.run {
+      session(remotes.webServer) {
+      println("${remotePath}")
+      execute "rm -rf ${remotePath}/site"
+//    execute "mkdir -p ${remotePath}"
+      execute "mkdir -p ${remotePath}/site"
+//    execute "mkdir -p ${remotePath}/site/images"
+//    new File("${buildDir}/libs").listFiles().each { put(from: it, into: "${remotePath}") }
+//    execute "mkdir -p ${remotePath}/scripts"
+/*
+      new File("${buildDir}/../scripts").listFiles().each {
+        put(from: it, into: "${remotePath}")
+        // If building on Windows, the scripts may have \r\n line separators that Linux won't like.  Fix them.
+        execute "tr -d '\\r' < ${remotePath}/${it.name} > ${remotePath}/${it.name}.tmp && mv --force ${remotePath}/${it.name}.tmp ${remotePath}/${it.name}"
+      }
+*/
+      new File("${outputPath}").listFiles().each {
+        println("${remotePath}/site/${it.name}")
+        put(from: it, into: "${remotePath}/site/${it.name}")
+      }
+	  /*
+      execute "chmod +x ${remotePath}/*"
+      execute "sudo ${remotePath}/webserver-register"
+//    put from: 'build/libs/' + project.name + '-all-' + version + '.jar', into: '.'
+//    execute 'sudo service tomcat restart'
+*/
+      }
+    }
+  }
+}

@@ -1,0 +1,171 @@
+@import '../styles-variables';
+
+/*
+**  Fix your footer at the bottom of the page thanks to Flexbox (French?)
+**  https://www.design-fluide.com/01-09-2016/fixer-son-footer-en-bas-de-page-grace-a-flexbox/
+*/
+
+.ie-stickyFooter { /* 1 */
+  display: -ms-flexbox;
+  flex-direction: column;
+  -ms-flex-direction: column;
+}
+
+.wrapper {
+	width: 100%; /* 2 */
+  min-height: 100vh;
+  max-height: 100vh;
+	display: -webkit-flex; /* 3 */
+	display: flex;
+	-webkit-flex-direction: column; /* 3 */
+  flex-direction: column;
+  flex-wrap: nowrap;
+}
+
+header {
+  flex-shrink: 0;
+  padding-bottom: 2px;
+}
+
+main {
+  border-top: 1px black solid;
+	-webkit-flex-grow: 1; /* 3 */
+  flex-grow: 1;
+  min-height: 2em;
+  overflow: auto;
+}
+
+footer {
+  background-color: rgb(255, 255, 255);
+  border-top: 1px black solid;
+  flex-shrink: 0;
+}
+
+.outlet {
+  margin: 0 16px;
+  height: 100%;
+}
+
+ul {
+  list-style: none;
+}
+
+li {
+  display: inline-block;
+}
+
+/*
+.container {
+    min-height: 100vh;
+  }
+
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+ }
+
+ .content {
+    flex: 1;
+    flex-grow: 1;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    > *:not(router-outlet) {
+      flex: 1;
+      display: block;
+    }
+    padding: 0 16px;
+ }
+*/
+
+/*
+.mat-button-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+*/
+
+mat-sidenav {
+    width: 250px;
+  /*
+    .branding {
+      height: 64px;
+      padding: 8px 10px;
+      font-size: 20px;
+      font-weight: 500;
+  
+      img {
+        height: 48px;
+        margin: 2px 10px 0 0;
+      }
+  
+      span {
+        position: relative;
+        top: 3px;
+      }
+    }
+*/
+    .mat-nav-list {
+      padding-top: 0;
+    }
+}
+
+mat-toolbar {
+  background-color: rgb(255, 255, 255);
+  // max-width: 800px;
+  // margin: 0 auto;
+}
+
+// Under Construction overlay (apply to <main>).
+
+.under-construction::after {
+  content: "Under construction.\a Please come back again!";
+  white-space: pre;
+  font-size: 1.5em;
+  color: red;
+
+  display: block;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  align-items: center;
+  transform: translateX(-50%) translateY(-50%) rotate(-45deg);
+
+  font-family: sans-serif;
+  font-weight: bold;
+  font-style: italic;
+  text-align: center;
+  // line-height: 100%;
+  cursor: default;
+  pointer-events: none;
+  user-select: none;
+}
+
+// Background watermark.
+
+.background {
+  display: flex;
+  min-height: 100%;
+  flex-direction: column;
+  // Needed only to cause background to fill page on IE 11.
+}
+
+.background {
+  &::before {
+      position: absolute;
+      flex-grow: 1;
+      top: 80px;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      background: url('../assets/LEGO-60051-High-Speed-Passenger-Train-2256x1408.jpg') no-repeat top;
+      background-size: cover;
+      opacity: 0.20;
+      content: '';
+      z-index: -1;
+  }
+}

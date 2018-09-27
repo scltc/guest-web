@@ -1,0 +1,10 @@
+<mat-card class="feature-card unselectable">
+    <mat-card-title>Cows!</mat-card-title>
+    <button mat-stroked-button (click)="onHeadDirectionToggle()">
+        <span class="feature-control">
+            <mat-icon [inline]="true" style="color: lightgrey;">{{westArrowIcon}}</mat-icon>
+            <mat-icon [inline]="true" [style.transform]="transform" class="circle-icon">swap_horiz</mat-icon>
+            <mat-icon [inline]="true" style="color: lightgrey;">{{eastArrowIcon}}</mat-icon>
+        </span>
+    </button>
+</mat-card>

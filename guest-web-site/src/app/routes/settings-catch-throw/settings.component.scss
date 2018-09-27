@@ -1,0 +1,20 @@
+h2 {
+    font-weight: bold;
+}
+  
+label.checkbox {
+    // position: relative;
+    // float: right;
+    display: block;
+    margin-bottom: 1em;
+}
+
+input[type="checkbox"] {
+    // text-align: right;
+    // float: left;
+    // position: relative;
+    display: inline-block;
+    margin-right: 0.5em;
+    // margin-bottom: 1em;
+}
+

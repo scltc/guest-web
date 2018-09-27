@@ -1,0 +1,64 @@
+/* You can add global styles to this file, and also import other style files */
+@import 'styles-variables';
+
+@import '~@angular/material/theming';
+
+// We locally host the font icons (see "index.html").
+//@import url('//fonts.googleapis.com/icon?family=Material+Icons');
+
+@include mat-core();
+
+$primary: mat-palette($mat-lime, 500);
+$accent:  mat-palette($mat-lime, 500, A200, A400);
+$warn:    mat-palette($mat-red, 500);
+
+$config: mat-typography-config();
+
+$theme: mat-light-theme($primary, $accent, $warn);
+
+@include angular-material-theme($theme);
+
+/*
+header {
+  background-color: mat-color($primary);
+}
+*/
+
+body {
+  font-family: mat-font-family($config);
+  font-weight: normal;
+  margin: 0;
+}
+
+footer {
+  background-color: mat-color($primary);
+  padding: 4px 0px 2px 4px;
+  text-align: center;
+}
+
+h1, h2, h3, h4 {
+  font-weight: normal;
+}
+
+.unselectable {
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Prevent super and subscripts from messing up line height. */
+sup,
+sub {
+  vertical-align: baseline;
+  position: relative;
+  top: -0.4em;
+}
+
+sup {
+  font-size: 0.75em;
+}
+
+sub {
+  top: 0.4em;
+}

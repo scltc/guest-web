@@ -1,0 +1,34 @@
+.feature-control {
+    font-size: 4em;
+}
+
+.feature-control mat-icon {
+    padding-top: .2em !important;
+    font-weight: bold;
+}
+
+.circle-icon {
+/*    width: 1em;
+    height: 1em;
+    border-radius: 50%;
+    border: 1px black solid;
+    box-sizing: border-box;
+    margin: 4px 0; */
+    color: green;
+}
+
+
+.feature-card {
+    margin: 20px auto 0;
+    max-width: 240px;
+    text-align: center;
+}
+
+.feature-card .mat-fab {
+    margin: 0 12px;
+}
+/*
+.feature-control {
+    // margin: auto;
+    // text-align: center;
+}*/

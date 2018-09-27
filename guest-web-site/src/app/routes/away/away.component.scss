@@ -1,0 +1,46 @@
+/*
+.actions {
+    line-height: 1em;
+    width: 100%;
+    text-align: center;
+}
+
+.actions div {
+    display: inline-block;
+    margin: 0 4px 8px 4px;
+    text-align: center;
+    //width: 20em;
+}
+
+.actions strong {
+    font-size: 1.5em;
+}
+*/
+.actions {
+    line-height: 1.5em !important;
+}
+.actions br {
+    line-height: 0 !important;
+}
+.message-button {
+    display: flex;
+    font-size: 1.2em;
+    font-weight: bold;
+    line-height: 1.2em;
+    margin: 0 auto;
+    vertical-align: middle;
+    align-items: center;
+  }
+  
+  .message-button mat-icon {
+    vertical-align: middle;
+    font-size: 1.5em;
+  }
+  
+  .message-button-negative mat-icon {
+    color: red;
+  }
+  
+  .message-button-positive mat-icon {
+    color: green;
+  }

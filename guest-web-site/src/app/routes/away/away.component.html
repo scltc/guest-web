@@ -1,0 +1,48 @@
+<div class="container">
+  <div class="background">
+    <h1>Welcome!</h1>
+    <div>
+      <!-- </div> [ngClass]="routeAnimationsElements"> -->
+      <p>The Southern California LEGO® Train Club has created this web site to allow our guests to share in the fun of
+        operating
+        our layout!</p>
+      <p>The public site that you are now viewing communicates with another at our exhibit. That link cannot currently
+        be
+        established.
+      </p>
+      <p>Please choose one of the options below.</p>
+    </div>
+    <div class="actions">
+      <button mat-stroked-button class="message-button message-button-positive" routerLink="/troubleshooting">
+        <strong>YES</strong><br />
+        <mat-icon [inline]="true">thumb_up</mat-icon><br />I am at the exhibit. Let's go!
+      </button>
+      <br/>
+      <button mat-stroked-button class="message-button message-button-negative" routerLink="/schedule">
+        <strong>NO</strong><br />
+        <mat-icon [inline]="true">thumb_down</mat-icon><br />I'm not there. Tell me more!
+      </button>
+      <!--
+        
+      <div>
+        <a mat-raised-button routerLink="/troubleshooting">
+          [ngClass]="routeAnimationsElements" /a>>
+          
+        </a>
+      </div>
+      <div>
+        <a mat-raised-button routerLink="/schedule">
+          <strong>NO</strong><br/>I'm not there. Tell me more!
+        </a>
+      </div>
+      -->
+
+    </div>
+    <!--
+    <div layout="row" layout-align="center end">
+      <p>LEGO® is a trademark of the LEGO Group which does not sponsor, authorize, or endorse SCLTC nor this site.</p>
+    </div>
+    -->
+
+  </div>
+</div>

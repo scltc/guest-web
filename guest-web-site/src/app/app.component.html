@@ -1,0 +1,93 @@
+<mat-sidenav-container class="container">
+
+    <mat-sidenav #sidenav mode="over" role="navigation" (click)="sidenav.close()">
+
+            <!-- Workaround, still required as of Angular 6.
+                 See: https://stackoverflow.com/questions/42442406/angular-2-material-sidenav-focus-on-the-first-navigation-item -->
+                 <button mat-button style="height:0; padding:0; margin: 0;"></button>
+        <mat-nav-list>
+            <button mat-button mat-list-item style="text-align: left; width: 100%; border-bottom: 1px black solid; width: 100%; margin-bottom: 4px;" [routerLink]="''">
+                <img [src]="logo" style="z-index:-1;" />
+                <span style="display: inline-block; font-size: 1em; line-height: 1em; padding-left: 0.4em; text-align: left;">
+                    <div><strong>Southern California</strong></div>
+                    <div><strong>LEGO<sup>®</sup> Train Club</strong></div>
+                </span>
+            </button>
+
+            <ng-container *ngFor="let route of routes">
+                <button mat-button mat-list-item style="display: block; font-size: 1.2em; text-align: left; width: 100%;"
+                    *ngIf="showSide(route)" [routerLink]="[route.path]" routerLinkActive="active">
+                    {{route.data.title}}
+                </button>
+            </ng-container>
+        </mat-nav-list>
+    </mat-sidenav>
+
+    <mat-sidenav-content>
+
+        <div class="ie-stickyFooter">
+
+            <div class="wrapper">
+
+                <header role="banner">
+
+                    <mat-toolbar>
+
+                        <div fxHide.gt-xs>
+                            <button mat-icon-button onclick="this.blur()" (click)="sidenav.open();">
+                                <mat-icon>menu</mat-icon>
+                            </button>
+                        </div>
+
+                        <button mat-button fxHide.lt-sm routerLink="">
+                            <img style="display: inline-block" [src]="logo" />
+                            <span style="display: inline-block; font-size: 1em; line-height: 1.2em; padding-left: 1em; text-align: left;">
+                                <div><strong>Southern California</strong></div>
+                                <div><strong>LEGO<sup>®</sup> Train Club</strong></div>
+                            </span>
+                        </button>
+
+                        <span fxFlex fxLayout fxLayoutAlign="flex-end">
+                            <span fxHide.lt-sm>
+                                <ul>
+                                    <ng-container *ngFor="let route of routes">
+                                        <li>
+                                            <button *ngIf="showMain(route)" mat-button [routerLink]="[route.path]"
+                                                routerLinkActive="active">
+                                                <span class="label">
+                                                    <strong>{{route.data.title}}</strong>
+                                                </span>
+                                            </button>
+                                        </li>
+                                    </ng-container>
+                                </ul>
+                            </span>
+
+                            <span fxHide.gt-xs style="align-content: top;">
+                                <button mat-icon-button routerLink="">
+                                    <img [src]="logo" />
+                                </button>
+                            </span>
+                        </span>
+
+                    </mat-toolbar>
+
+                </header>
+
+                <main class="under-construction">
+                    <div [class.background]="showBackground">
+                        <div class="outlet">
+                            <router-outlet #o="outlet"></router-outlet>
+                        </div>
+                    </div>
+                </main>
+
+                <footer [innerHTML]="footerContent"></footer>
+
+            </div>
+
+        </div>
+
+    </mat-sidenav-content>
+
+</mat-sidenav-container>

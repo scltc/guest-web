@@ -1,0 +1,126 @@
+<!doctype html>
+<html>
+
+<head>
+
+  <base href="/">
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <link rel="stylesheet" href="./assets/icons/material-icons.css">
+  <link rel="icon" type="image/ico" href="./assets/favicon.ico">
+
+  <title>SCLTC Exhibit</title>
+
+  <style type="text/css">
+    body,
+    html {
+      height: 100%;
+    }
+
+    sup {
+      font-size: 0.75em;
+    }
+
+    /* Prevent super and subscripts from messing up line height. */
+    sup,
+    sub {
+      vertical-align: baseline;
+      position: relative;
+      top: -0.4em;
+    }
+
+    sub {
+      top: 0.4em;
+    }
+
+    .loading-wrapper {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .loading-logo {
+      background: url('./assets/SCLTC-Logo-200x200.png') no-repeat center;
+      background-size: 200px 200px;
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+    }
+
+    .loading-spinner {
+      width: 270px;
+      height: 270px;
+      display: inline-block;
+      box-sizing: border-box;
+      position: relative
+    }
+
+    .loading-spinner:before {
+      border-radius: 50%;
+      content: " ";
+      width: 270px;
+      height: 270px;
+      display: inline-block;
+      box-sizing: border-box;
+      border-top: solid 16px #bababa;
+      border-right: solid 16px #bababa;
+      border-bottom: solid 16px #bababa;
+      border-left: solid 16px #bababa;
+      position: absolute;
+      top: 0;
+      left: 0
+    }
+
+    .loading-spinner:after {
+      border-radius: 50%;
+      content: " ";
+      width: 270px;
+      height: 270px;
+      display: inline-block;
+      box-sizing: border-box;
+      border-top: solid 16px red;
+      border-right: solid 16px transparent;
+      border-bottom: solid 16px transparent;
+      border-left: solid 16px transparent;
+      position: absolute;
+      top: 0;
+      left: 0;
+      animation: loading-spinner-animate 2s ease-in-out infinite
+    }
+
+    @keyframes loading-spinner-animate {
+      0% {
+        transform: rotate(0deg)
+      }
+
+      100% {
+        transform: rotate(360deg)
+      }
+    }
+  </style>
+
+</head>
+
+<body onload="document.getElementsByClassName('loading-wrapper')[0].style.visibility = 'visible';">
+  <app-root>
+    <div class="loading-wrapper" style="visibility: hidden">
+      <div class="loading-logo"></div>
+      <div class="loading-spinner"></div>
+    </div>
+  </app-root>
+
+  <script>
+    
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,44 @@
+import { Component, OnInit } from '@angular/core';
+
+import { ControllerService } from 'core';
+
+@Component({
+  selector: 'app-features',
+  templateUrl: './features.component.html',
+  styleUrls: ['./features.component.scss']
+})
+export class FeaturesComponent implements OnInit {
+
+  westArrowColor : string = "black";
+  iconArrow : string = "chevron_right";
+  eastArrowColor : string = "lightgrey";
+
+  constructor(private controller : ControllerService) {
+  }
+
+  onHeadDirectionToggle() {
+    console.log("turn");
+    this.controller.setHeadsDirection(0, 0);
+
+    if (this.westArrowColor == "black") {
+      this.westArrowColor = "lightgrey";
+      this.iconArrow = "chevron_left";
+      this.eastArrowColor = "black";
+    }
+    else {
+      this.westArrowColor = "black";
+      this.iconArrow = "chevron_right";
+      this.eastArrowColor = "lightgrey";
+    }
+  }
+
+  onCatchAndThrowGo() {
+    console.log("go");
+
+    this.controller.runCatchAndThrow(0)
+  }
+
+  ngOnInit() {
+    console.log("FeaturesComponent ngOnInit()")
+  }
+}

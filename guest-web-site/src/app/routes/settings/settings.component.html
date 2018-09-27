@@ -1,0 +1,33 @@
+<h2>Settings</h2>
+
+<form [formGroup]="settingForm" (ngSubmit)="onSubmit()" autocomplete="off">
+
+    <h3>Catch &amp; Throw</h3>
+<!--
+    <app-controller-port></app-controller-port>
+
+    <mat-form-field>
+        <app-time-period formControlName="minStopTime" placeholder="Minimum stop time"></app-time-period>
+    </mat-form-field>
+-->
+
+    <mat-checkbox type="checkbox" formControlName="enabled">Enabled</mat-checkbox>
+
+    <mat-form-field class="app-form-field">
+        <mat-label>Minimum stop time</mat-label>
+        <input matInput formControlName="minStopTime" placeholder="booga booga">
+    </mat-form-field>
+
+    <mat-form-field class="app-form-field">
+        <mat-label>Maximum stop time</mat-label>
+        <input matInput formControlName="maxStopTime" placeholder="">
+    </mat-form-field>
+
+    <mat-form-field class="app-form-field">
+        <mat-label>Running time</mat-label>
+        <input matInput formControlName="runningTime" placeholder="">
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" type="submit" [disabled]="!settingForm.valid">Apply</button>
+
+</form>
