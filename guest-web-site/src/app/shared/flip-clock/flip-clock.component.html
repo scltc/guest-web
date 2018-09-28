@@ -1,0 +1,19 @@
+<div class="flip-clock">
+  <div class="flip-clock-group">
+    <div class="flip-clock-label">Hours</div>
+    <flip-clock-digit [timer]="timer" [digit]="getHoursTensPlace"></flip-clock-digit>
+    <flip-clock-digit [timer]="timer" [digit]="getHoursOnesPlace"></flip-clock-digit>
+  </div>
+  <div class="flip-clock-divider"></div>
+  <div class="flip-clock-group">
+    <div class="flip-clock-label">Minutes</div>
+    <flip-clock-digit [timer]="timer" [digit]="getMinutesTensPlace"></flip-clock-digit>
+    <flip-clock-digit [timer]="timer" [digit]="getMinutesOnesPlace"></flip-clock-digit>
+  </div>
+  <div class="flip-clock-divider"></div>
+  <div class="flip-clock-group">
+    <div class="flip-clock-label">Seconds</div>
+      <flip-clock-digit [timer]="timer" [digit]="getSecondsTensPlace"></flip-clock-digit>
+      <flip-clock-digit [timer]="timer" [digit]="getSecondsOnesPlace"></flip-clock-digit>
+    </div>
+  </div>
