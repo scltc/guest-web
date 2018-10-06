@@ -1,4 +1,5 @@
-<div>
+<br/>
+<mat-accordion displayMode="flat">
     <!--
     <audio autoplay>
         <source type="audio/mpeg" src="../../../assets/Train Whistle-SoundBible.com-458982136.mp3" />
@@ -16,7 +17,29 @@
         </span>
     </mat-card>    
 -->
-<app-feature-turning-heads></app-feature-turning-heads>
-<app-feature-catch-and-throw></app-feature-catch-and-throw>
+    <mat-expansion-panel [style.display]="display[0]" (opened)="onOpened(0)" (closed)="onClosed(0)">
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                Cows!
+            </mat-panel-title>
+        </mat-expansion-panel-header>
+        <app-feature-turning-heads></app-feature-turning-heads>
+    </mat-expansion-panel>
+    <mat-expansion-panel [style.display]="display[1]" (opened)="onOpened(1)" (closed)="onClosed(1)">
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                Catch and Throw
+            </mat-panel-title>
+        </mat-expansion-panel-header>
+        <app-feature-catch-and-throw></app-feature-catch-and-throw>
+    </mat-expansion-panel>
+    <mat-expansion-panel [style.display]="display[2]" (opened)="onOpened(2)" (closed)="onClosed(2)">
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                Pick a Train
+            </mat-panel-title>
+        </mat-expansion-panel-header>
+        <app-feature-pick-a-train></app-feature-pick-a-train>
+    </mat-expansion-panel>
 
-</div>
+</mat-accordion>

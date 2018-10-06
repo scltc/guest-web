@@ -29,7 +29,31 @@ export class FeaturesComponent implements OnInit {
   }
 
   constructor(private controller : ControllerService) {
+    this.onClosed(-1);
   }
+
+  display : string[] = [
+    "block",
+    "block",
+    "block"
+  ];
+      
+  onOpened(index : number) {
+    console.log('opened');
+
+    for (let i : number = 0; i < this.display.length; ++i) {
+      this.display[i] = (i != index) ? "none" : "block";
+    }
+  }
+
+  onClosed(index : number) {
+    console.log('closed');
+
+    for (let i : number = 0; i < this.display.length; ++i) {
+      this.display[i] = "block";
+    }
+  }
+
 
   onHeadDirectionToggle() {
     console.log('turn');

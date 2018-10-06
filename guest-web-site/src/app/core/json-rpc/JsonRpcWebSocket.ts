@@ -57,7 +57,16 @@ export class JsonRpcWebSocket {
     private reconnectionAttempts: number;
     private reconnectionInterval: number;
 
-    protected logMessage(message: any, data?: any) {
+    public logMessage(message: any, data?: any) {
+        if (data) {
+            console.log(message, JSON.stringify(data));
+        }
+        else {
+            console.log(message);
+        }
+    }
+
+    protected logError(message: any, data?: any) {
         if (data) {
             console.error(message, JSON.stringify(data));
         }
@@ -91,7 +100,7 @@ export class JsonRpcWebSocket {
                 this.incoming$.next(message);
             },
             (error: Event) => {
-                this.logMessage('WebSocket error!', error);
+                this.logError('WebSocket error!', error);
                 /* if (!this.websocket$) */ {
                     // run reconnect if errors
                     this.reconnect();
@@ -116,7 +125,7 @@ export class JsonRpcWebSocket {
             },
             null,
             () => {
-                this.logMessage('reconnect failed.');
+                this.logError('reconnect failed.');
                 // Subject complete if reconnect attempts ending
                 this.reconnector$ = null;
 

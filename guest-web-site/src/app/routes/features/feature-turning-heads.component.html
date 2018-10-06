@@ -1,10 +1,37 @@
-<mat-card class="feature-card unselectable">
-    <mat-card-title>Cows!</mat-card-title>
-    <button mat-stroked-button (click)="onHeadDirectionToggle()">
-        <span class="feature-control">
-            <mat-icon [inline]="true" style="color: lightgrey;">{{westArrowIcon}}</mat-icon>
-            <mat-icon [inline]="true" [style.transform]="transform" class="circle-icon">swap_horiz</mat-icon>
-            <mat-icon [inline]="true" style="color: lightgrey;">{{eastArrowIcon}}</mat-icon>
-        </span>
-    </button>
-</mat-card>
+<div class="feature-wrapper">
+    <div [style.display]=" displayIntroduction">
+        <p class="feature-heading">
+            Our cows gaze left and right. Even better, they can do it under your control!
+            Our younger guests especially enjoy it when the cows follow their own movements
+            and your secret is safe; our cows will never let anyone know who makes them move!
+        </p>
+        <div class="actions">
+            <div style="width: 50%; margin: 0; text-align: center; display: inline-block;">
+                <button mat-stroked-button class="message-button message-button-positive" (click)="onLetsPlay()">
+                    <mat-icon [inline]="true">thumb_up</mat-icon><br />Let's do this!
+                </button>
+            </div>
+            <div style="width: 50%; margin: 0; text-align: center; display: inline-block;">
+                <button mat-stroked-button class="message-button message-button-negative" (click)="onNoThanks();">
+                    <mat-icon [inline]="true">thumb_down</mat-icon><br />No thanks.
+                </button>
+            </div>
+        </div>
+    </div>
+    <div [style.display]=" displayWaiting">
+        <p class="feature-heading-centered">
+            Be ready! Your turn starts in no more than:
+        </p>
+        <app-turn-queue [wait-time]="30000"></app-turn-queue>
+
+    </div>
+    <div [style.display]="displayActive">
+        <button mat-stroked-button (click)="onHeadDirectionToggle()">
+            <span class="feature-control">
+                <mat-icon [inline]="true" style="color: lightgrey;">{{westArrowIcon}}</mat-icon>
+                <mat-icon [inline]="true" [style.transform]="transform" class="circle-icon">swap_horiz</mat-icon>
+                <mat-icon [inline]="true" style="color: lightgrey;">{{eastArrowIcon}}</mat-icon>
+            </span>
+        </button>
+    </div>
+</div>

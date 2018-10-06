@@ -66,7 +66,7 @@ import { ControllerModule } from './core/controller/controller.module';
     MatSidenavModule,
     MatToolbarModule,
     // If we are running on 'localhost', we are debugging. Use the web socket server from there too.
-    ControllerModule.forRoot(/* (window.location.hostname.toLowerCase() === 'localhost') ? 'ws://localhost' : */ 'ws://192.168.2.201'), //'ws://localhost'),
+    ControllerModule.forRoot(/* (window.location.hostname.toLowerCase() === 'localhost') ? 'ws://localhost' : */ 'wss://home.scltc.club'), //'ws://localhost'),
 //  ControllerModule.forRoot({ url: 'ws://192.168.2.201', reconnectAttempts: -1 }),
     // This must be last or some of the imports above may fail!
     AppRoutingModule

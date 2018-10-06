@@ -21,7 +21,7 @@ export class FlipClockDigitComponent implements OnInit {
 
   ngOnInit() {
     this.timer.subscribe(value => {
-      value *= 1000;
+      //value *= 1000;
 
       this.previousValue = this.currentValue;
       try {

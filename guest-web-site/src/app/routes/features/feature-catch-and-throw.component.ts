@@ -9,6 +9,8 @@ import { ControllerService } from 'core';
 })
 export class FeatureCatchAndThrowComponent implements OnInit {
 
+  displayIntroduction: string = "block";
+
   constructor(private controller : ControllerService) {
   }
 

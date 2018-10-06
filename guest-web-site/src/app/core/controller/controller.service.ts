@@ -46,7 +46,7 @@ export class ControllerService extends JsonRpcWebSocket implements OnDestroy {
     public status: Observable<boolean>;
 
     public processSettings(settings: ControllerSettings) {
-        this.logMessage(settings);
+        super.logMessage(settings);
     }
 
     public getControllerSettings(): void {

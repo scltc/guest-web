@@ -1,9 +1,39 @@
 package com.brickintellect.webserver;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.io.IOException;
+import java.security.KeyStore;
+
+import javax.net.ssl.KeyManager;
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLServerSocketFactory;
+import javax.net.ssl.TrustManagerFactory;
+
+import org.nanohttpd.protocols.http.NanoHTTPD;
 
 public class Main {
+
+    /**
+     * Creates an SSLSocketFactory for HTTPS. Pass a KeyStore resource with your
+     * certificate and passphrase
+     */
+    public static SSLServerSocketFactory makeSSLSocketFactory(File keyAndTrustStorePath, char[] passphrase)
+            throws IOException {
+        try (InputStream keystoreStream = new FileInputStream(keyAndTrustStorePath)) {
+            KeyStore keystore = KeyStore.getInstance(KeyStore.getDefaultType());
+            keystore.load(keystoreStream, passphrase);
+
+            KeyManagerFactory keyManagerFactory = KeyManagerFactory
+                    .getInstance(KeyManagerFactory.getDefaultAlgorithm());
+            keyManagerFactory.init(keystore, passphrase);
+            return NanoHTTPD.makeSSLSocketFactory(keystore, keyManagerFactory);
+        } catch (Exception e) {
+            throw new IOException(e.getMessage());
+        }
+    }
 
     /**
      * Starts as a standalone file server and waits for Enter.
@@ -42,7 +72,20 @@ public class Main {
         // Launch the server!
         try {
 
-            WebServer server = new WebServer(host, port);
+            WebServer server;
+
+            File keyStore = new File("/home/robot/certificates/exhibit.scltc.club.jks");
+
+            if (!keyStore.exists()) {
+                server = new WebServer(host, port);
+            } else {
+                server = new WebServer(host, 443);
+
+                server.makeSecure(
+                        makeSSLSocketFactory(
+                                keyStore, "storePassword".toCharArray()),
+                        null);
+            }
 
             server.start(root);
 

@@ -7,10 +7,10 @@ $digit-width: null;
 $digit-line-height: null;
 $digit-perspective: null;
 $digit-separator-top: null;
-/*
+
 $divider-height: null;
 $divider-width: null;
-
+/*
 $dot-left: null;
 $dot-height: null;
 $dot-width: null;
@@ -35,20 +35,20 @@ $dot-lower-bottom: null;
     $dot-lower-bottom: 30px;
 }
 @else {
-    $digit-font-size: 48px;
-    $digit-height: 48px;
-    $digit-width: 8px;
+    $digit-font-size: 42px;
+    $digit-height: 42px;
+    $digit-width: 2px;
 
-    $digit-margin: 3px;
+    $digit-margin: 2px;
     $digit-line-height: $digit-font-size;
     $digit-perspective: $digit-height * 2;
     $digit-separator-top: $digit-height / 2 - 1;
 
-    $divider-height: $digit-height;
-    $divider-width: 8px;
+    $divider-height: 6px;
+    $divider-width: 6px;
 
     $dot-left: $divider-width / 4;
-    $dot-height: 5px;
+    $dot-height: 8px;
     $dot-width: $dot-height;
 
     $dot-upper-top: $digit-height / 4;
@@ -56,13 +56,14 @@ $dot-lower-bottom: null;
 }
 
 /* Main */
+
 .flip-clock {
     font: normal 11px 'Helvetica Neue', Helvetica, sans-serif;
     user-select: none;
     text-align: center;
     position: relative;
+    margin: 0 0 6px 0;
     width: 100%;
-    margin: 0;
   }
   
   .flip-clock * {
@@ -85,7 +86,7 @@ $dot-lower-bottom: null;
     list-style: none;
     float: left;
     margin: $digit-margin;
-    width: $digit-width;
+    width: 36px;// $digit-width;
     height: $digit-height;
     font-size: $digit-font-size;
     font-weight: bold;
@@ -93,6 +94,7 @@ $dot-lower-bottom: null;
     border-radius: 6px;
     background: #000;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.7);
+    padding: 0px;
   }
   
   .flip-clock-number {
@@ -103,7 +105,7 @@ $dot-lower-bottom: null;
     width: 100%;
     height: 100%;
     line-height: $digit-line-height;
-    text-decoration: none !important;
+//    text-decoration: none !important;
   }
   
   .flip-clock-number:first-child {
@@ -113,6 +115,7 @@ $dot-lower-bottom: null;
   .flip-clock-number-full {
     display: block;
     height: 100%;
+    width: 100%;
     perspective: $digit-perspective;
     margin: 0 !important;
     overflow: visible !important;
@@ -126,7 +129,7 @@ $dot-lower-bottom: null;
     left: 0;
     width: 100%;
     height: 50%;
-    font-size: $digit-font-size;
+    //font-size: $digit-font-size;
     overflow: hidden;
     outline: 1px solid transparent;
   }
@@ -169,11 +172,12 @@ $dot-lower-bottom: null;
     width: 100%;
     height: 200%;
     color: #ccc;
-    text-shadow: 0 1px 2px #000;
+    //text-shadow: 0 1px 2px #000;
     text-align: center;
     background-color: #333;
     border-radius: 6px;
-    font-size: $digit-font-size;
+    vertical-align: middle;
+    // font-size: $digit-font-size;
   }
   
   .flip-clock-number-value-upper {
@@ -201,8 +205,8 @@ $dot-lower-bottom: null;
   .flip-clock-divider {
     display: inline-block;
     position: relative;
-    width: 8px;
-    height: 8px;
+    width: $divider-width;
+    height: $divider-height;
 
   }
   

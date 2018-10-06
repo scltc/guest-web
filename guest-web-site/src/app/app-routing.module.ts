@@ -1,4 +1,5 @@
 import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 import { ReactiveFormsModule } from '@angular/forms';
 import { Routes, RouterModule } from '@angular/router';
@@ -6,6 +7,7 @@ import { Routes, RouterModule } from '@angular/router';
 import {
     MatButtonModule,
     MatCheckboxModule,
+    MatExpansionModule,
     MatFormFieldControl,
     MatFormFieldModule,
     MatInputModule,
@@ -20,11 +22,12 @@ import {
 
 import { AppInitializeService } from './app-initialize.service';
 
-import { AwayComponent } from "./routes/away/away.component";
+import { AwayComponent } from './routes/away/away.component';
 import { HomeComponent } from './routes/home/home.component';
 
 import {
     FeatureCatchAndThrowComponent,
+    FeaturePickATrainComponent,
     FeatureTurningHeadsComponent,
     FeaturesComponent
 } from './routes/features';
@@ -34,7 +37,14 @@ import { SettingsComponent } from './routes/settings/settings.component';
 import { TroubleshootingComponent } from './routes/troubleshooting/troubleshooting.component';
 
 import { ControllerPortComponent } from 'shared/controller-port';
+
+import {
+    FlipClockComponent,
+    FlipClockDigitComponent,
+    TimerDirective
+} from 'shared/flip-clock';
 import { TimePeriodComponent } from 'shared/time-period';
+import { TurnQueueComponent } from './routes/features/turn-queue.component';
 
 // Must use only exported functions in the routing table!
 
@@ -115,9 +125,11 @@ export const appRoutes: Routes = [
 
 @NgModule({
     imports: [
+        CommonModule,
         MatButtonModule,
         MatCardModule,
         MatCheckboxModule,
+        MatExpansionModule,
         MatFormFieldModule,
         MatIconModule,
         MatInputModule,
@@ -133,12 +145,17 @@ export const appRoutes: Routes = [
         HomeComponent,
         FeaturesComponent,
         FeatureCatchAndThrowComponent,
+        FeaturePickATrainComponent,
         FeatureTurningHeadsComponent,
         ScheduleComponent,
         SettingsComponent,
         TroubleshootingComponent,
         ControllerPortComponent,
-        TimePeriodComponent
+        FlipClockComponent,
+        FlipClockDigitComponent,
+        TimerDirective,
+        TimePeriodComponent,
+        TurnQueueComponent
     ]
 })
 export class AppRoutingModule {

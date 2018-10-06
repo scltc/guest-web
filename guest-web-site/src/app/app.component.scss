@@ -142,7 +142,9 @@ mat-toolbar {
   // line-height: 100%;
   cursor: default;
   pointer-events: none;
+  opacity: 0.75;
   user-select: none;
+  z-index: 99;
 }
 
 // Background watermark.
