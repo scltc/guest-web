@@ -1,38 +1,77 @@
 package com.brickintellect.webserver;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.InputStream;
 import java.io.IOException;
 import java.security.KeyStore;
 
-import javax.net.ssl.KeyManager;
+//import javax.net.ssl.KeyManager;
 import javax.net.ssl.KeyManagerFactory;
-import javax.net.ssl.SSLContext;
+// import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLServerSocketFactory;
-import javax.net.ssl.TrustManagerFactory;
+// import javax.net.ssl.TrustManagerFactory;
 
 import org.nanohttpd.protocols.http.NanoHTTPD;
 
 public class Main {
 
-    /**
-     * Creates an SSLSocketFactory for HTTPS. Pass a KeyStore resource with your
-     * certificate and passphrase
-     */
-    public static SSLServerSocketFactory makeSSLSocketFactory(File keyAndTrustStorePath, char[] passphrase)
-            throws IOException {
-        try (InputStream keystoreStream = new FileInputStream(keyAndTrustStorePath)) {
-            KeyStore keystore = KeyStore.getInstance(KeyStore.getDefaultType());
-            keystore.load(keystoreStream, passphrase);
+    public static File getFileWithNewExtension(File file, String extension) {
+        File result;
 
-            KeyManagerFactory keyManagerFactory = KeyManagerFactory
-                    .getInstance(KeyManagerFactory.getDefaultAlgorithm());
-            keyManagerFactory.init(keystore, passphrase);
-            return NanoHTTPD.makeSSLSocketFactory(keystore, keyManagerFactory);
-        } catch (Exception e) {
-            throw new IOException(e.getMessage());
+        if (file == null) {
+            result = null;
+        } else {
+            String path = file.toString();
+            result = new File(path.substring(0, path.lastIndexOf('.')) + extension);
         }
+
+        return result;
+    }
+
+    /**
+     * Reads
+     */
+    public static String readOneLine(File file) throws IOException {
+        String result;
+
+        if (file == null || !file.exists()) {
+            result = null;
+        } else {
+            try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+                result = reader.readLine();
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Creates an SSLSocketFactory for HTTPS.
+     */
+    public static SSLServerSocketFactory makeSSLSocketFactory(File keyStoreFile, String keyStorePassword)
+            throws IOException {
+
+        SSLServerSocketFactory result;
+
+        if (keyStoreFile == null || !keyStoreFile.exists() || keyStorePassword == null) {
+            result = null;
+        } else {
+            try (InputStream keystoreStream = new FileInputStream(keyStoreFile)) {
+                KeyStore keystore = KeyStore.getInstance(KeyStore.getDefaultType());
+                keystore.load(keystoreStream, keyStorePassword.toCharArray());
+
+                KeyManagerFactory keyManagerFactory = KeyManagerFactory
+                        .getInstance(KeyManagerFactory.getDefaultAlgorithm());
+                keyManagerFactory.init(keystore, keyStorePassword.toCharArray());
+                result = NanoHTTPD.makeSSLSocketFactory(keystore, keyManagerFactory);
+            } catch (Exception e) {
+                throw new IOException(e.getMessage());
+            }
+        }
+        return result;
     }
 
     /**
@@ -42,24 +81,28 @@ public class Main {
 
         // Set parameter defaults.
         String host = null; // bind to all interfaces by default
-        int port = 8080;
+        int port = 80;
         File root = null;
+        File keyStoreFile = null;
         boolean daemon = false;
         // boolean verbose = false;
         // String cors = null;
 
         // Parse the command-line.
         for (int i = 0; i < args.length; ++i) {
-            if ("--host".equalsIgnoreCase(args[i])) {
-                host = args[i + 1];
-            } else if ("--port".equalsIgnoreCase(args[i])) {
-                port = Integer.parseInt(args[i + 1]);
+            if ("--daemon".equals(args[i])) {
+                daemon = true;
+            } else if ("--host".equals(args[i])) {
+                host = args[++i];
+            } else if ("--key-store".equals(args[i])) {
+                keyStoreFile = new File(args[++i]).getAbsoluteFile();
+            } else if ("--port".equals(args[i])) {
+                port = Integer.parseInt(args[++i]);
                 // } else if ("--verbose".equalsIgnoreCase(args[i])) {
                 // verbose = true;
-            } else if ("--root".equalsIgnoreCase(args[i])) {
-                root = new File(args[i + 1]).getAbsoluteFile();
-            } else if ("--daemon".equalsIgnoreCase(args[i])) {
-                daemon = true;
+            } else if ("--root".equals(args[i])) {
+                root = new File(args[++i]).getAbsoluteFile();
+
                 // } else if (args[i].startsWith("--cors")) {
                 // cors = "*";
                 // int equalIdx = args[i].indexOf('=');
@@ -72,19 +115,13 @@ public class Main {
         // Launch the server!
         try {
 
-            WebServer server;
+            WebServer server = new WebServer(host, port);
 
-            File keyStore = new File("/home/robot/certificates/exhibit.scltc.club.jks");
+            // Create a HTTPS socket factory if key store specified.
+            SSLServerSocketFactory socketFactory = makeSSLSocketFactory(keyStoreFile, readOneLine(getFileWithNewExtension(keyStoreFile, ".password")));
 
-            if (!keyStore.exists()) {
-                server = new WebServer(host, port);
-            } else {
-                server = new WebServer(host, 443);
-
-                server.makeSecure(
-                        makeSSLSocketFactory(
-                                keyStore, "storePassword".toCharArray()),
-                        null);
+            if (socketFactory != null) {
+                server.makeSecure(socketFactory, null);
             }
 
             server.start(root);
