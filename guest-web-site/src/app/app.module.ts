@@ -22,7 +22,7 @@ import {
   MatToolbarModule,
 } from '@angular/material';
 
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+//import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { faBars } from '@fortawesome/free-solid-svg-icons';
 
@@ -54,7 +54,7 @@ import { ControllerModule } from './core/controller/controller.module';
     FormsModule,
     ReactiveFormsModule,
     FlexLayoutModule,
-    FontAwesomeModule,
+//    FontAwesomeModule,
     HttpModule,
     MatButtonModule,
     MatCardModule,

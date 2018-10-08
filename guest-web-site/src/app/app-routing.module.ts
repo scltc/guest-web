@@ -29,7 +29,10 @@ import {
     FeatureCatchAndThrowComponent,
     FeaturePickATrainComponent,
     FeatureTurningHeadsComponent,
-    FeaturesComponent
+    FeatureTurningHeadsButtonComponent,
+    FeaturesComponent,
+    FeaturePanelDirective,
+    FeaturePanelStepDirective
 } from './routes/features';
 
 import { ScheduleComponent } from './routes/schedule/schedule.component';
@@ -138,7 +141,9 @@ export const appRoutes: Routes = [
         RouterModule.forRoot(appRoutes, { useHash: true })
     ],
     exports: [
-        RouterModule
+        RouterModule,
+        FeaturePanelDirective,
+        FeaturePanelStepDirective
     ],
     declarations: [
         AwayComponent,
@@ -147,6 +152,9 @@ export const appRoutes: Routes = [
         FeatureCatchAndThrowComponent,
         FeaturePickATrainComponent,
         FeatureTurningHeadsComponent,
+        FeatureTurningHeadsButtonComponent,
+        FeaturePanelDirective,
+        FeaturePanelStepDirective,
         ScheduleComponent,
         SettingsComponent,
         TroubleshootingComponent,

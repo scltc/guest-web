@@ -1,4 +1,6 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit, Output, EventEmitter } from '@angular/core';
+import { Observable, Observer, PartialObserver, interval } from 'rxjs';
+import { finalize, map, takeWhile } from 'rxjs/operators';
 
 import { ControllerService } from 'core';
 
@@ -9,65 +11,47 @@ import { ControllerService } from 'core';
 })
 export class FeatureTurningHeadsComponent implements OnInit {
 
+  @Output('complete')
+  complete = new EventEmitter<any>();
+
   displayIntroduction: string;
   displayWaiting: string;
   displayActive: string;
 
-  direction: number = -1;
-  westArrowIcon: string = 'chevron_left';
-  eastArrowIcon: string = 'chevron_left';
-  transform: string = 'scale(1,1)';
-
-  setDirection(direction: number) {
-    this.direction = direction;
-    if (direction < 0) {
-      this.westArrowIcon = 'chevron_left';
-      this.eastArrowIcon = 'chevron_left';
-      this.transform = 'scale(1,1)';
-    }
-    else {
-      this.westArrowIcon = 'chevron_right';
-      this.eastArrowIcon = 'chevron_right';
-      this.transform = 'scale(-1,1)';
-    }
+  cancel() {
+    this.complete.emit(null);
   }
 
-  reset() {
-    this.displayIntroduction = "block";
-    this.displayWaiting = "none";
-    this.displayActive = "none";
+  display(page: string) {
+    this.displayIntroduction
+      = (page == 'introduction') ? 'block' : 'none';
+    this.displayWaiting
+      = (page == 'waiting') ? 'block' : 'none';
+    this.displayActive
+      = (page == 'active') ? 'block' : 'none';
+  }
+  
+  private interval: number = 1000;
+  private isCanceled: boolean = false;
+
+  // @Input('wait-time')
+  time: number = 60000;
+  
+  public waitTimer: Observable<number> = interval(this.interval).pipe(
+    map(value => this.time - value * this.interval),
+    takeWhile(value => !this.isCanceled && value >= 0),
+    finalize(() => {
+      console.log('finalize');
+      // if (this.isCanceled) this.canceled.emit(null); else this.complete.emit(null);
+    })
+  );
+
+  setHeadsDirection(direction: number) {
+    this.controller.setHeadsDirection(0, direction);
   }
 
   constructor(private controller: ControllerService) {
-    this.reset();
-  }
-
-  onOpened() {
-    this.reset();
-  }
-
-  onClosed() {
-    this.reset();
-  }
-
-  onLetsPlay() {
-    this.displayIntroduction = 'none';
-    this.displayWaiting = 'block';
-  }
-
-  onNoThanks() {
-  }
-
-  onHeadDirectionToggle() {
-    console.log('turn');
-    this.controller.setHeadsDirection(0, 0);
-    this.setDirection(this.direction * -1);
-  }
-
-  onCatchAndThrowGo() {
-    console.log('go');
-
-    this.controller.runCatchAndThrow(0);
+    this.display('introduction');
   }
 
   ngOnInit() {

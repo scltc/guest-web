@@ -1,6 +1,6 @@
-import { Component, EventEmitter, OnDestroy, OnInit, Input } from '@angular/core';
-import { Observable, PartialObserver, Subject, interval, timer } from 'rxjs';
-import { finalize, map, share, switchMap, take, takeWhile, tap } from 'rxjs/operators';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { Observable, interval } from 'rxjs';
+import { finalize, map, takeWhile } from 'rxjs/operators';
 
 @Component({
   selector: 'app-turn-queue',
@@ -9,38 +9,23 @@ import { finalize, map, share, switchMap, take, takeWhile, tap } from 'rxjs/oper
 })
 export class TurnQueueComponent implements OnDestroy {
 
-  private interval: number = 1000;
-  private canceled: boolean = false;
+  @Input('timer')
+  timer : Observable<number>;
 
-  @Input('wait-time')
-  time: number = 60000;
+  @Output('canceled')
+  canceled = new EventEmitter<any>();
 
-  @Input('observer')
-  observer: PartialObserver<number> = null;
+  @Output('complete')
+  complete = new EventEmitter<any>();
 
-  public timer: Observable<number> = interval(this.interval).pipe(
-    map(value => this.time - value * this.interval),
-    takeWhile(value => !this.canceled && value >= 0),
-    finalize(() => console.log('finalize: ' + this.canceled)),
-    share()
-  );
-
-  onCancel() {
-    this.canceled = true;
+  cancel() {
+    this.canceled.emit(null);
   }
-  
+
   ngOnDestroy() {
     console.log('onDestroy');
   }
 
-  /*
-  public value = new Subject<number>();
-  private counterSubject = new Subject<any>();
-  public xtimer: Observable<number> = timer(0, this.interval).pipe(
-    take(this.count),
-    tap(() => this.value.next(--this.count * 1000))
-  );
-*/
   constructor() {
   }
 }

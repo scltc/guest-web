@@ -1,4 +1,6 @@
-<br/>
+<br />
+<app-feature-panel>
+</app-feature-panel>
 <mat-accordion displayMode="flat">
     <!--
     <audio autoplay>
@@ -17,29 +19,35 @@
         </span>
     </mat-card>    
 -->
-    <mat-expansion-panel [style.display]="display[0]" (opened)="onOpened(0)" (closed)="onClosed(0)">
+
+    <mat-expansion-panel app-feature-panel [style.display]="display[0]" [expanded]="expanded[0]" (opened)="onOpened(0)"
+        (closed)="onClosed()">
         <mat-expansion-panel-header>
             <mat-panel-title>
                 Cows!
             </mat-panel-title>
         </mat-expansion-panel-header>
-        <app-feature-turning-heads></app-feature-turning-heads>
+        <app-feature-turning-heads (complete)="onClosed()"></app-feature-turning-heads>
     </mat-expansion-panel>
-    <mat-expansion-panel [style.display]="display[1]" (opened)="onOpened(1)" (closed)="onClosed(1)">
+
+    <mat-expansion-panel app-feature-panel [style.display]="display[1]" [expanded]="expanded[1]" (opened)="onOpened(1)"
+        (closed)="onClosed()">
         <mat-expansion-panel-header>
             <mat-panel-title>
                 Catch and Throw
             </mat-panel-title>
         </mat-expansion-panel-header>
-        <app-feature-catch-and-throw></app-feature-catch-and-throw>
+        <app-feature-catch-and-throw (complete)="onClosed()"></app-feature-catch-and-throw>
     </mat-expansion-panel>
-    <mat-expansion-panel [style.display]="display[2]" (opened)="onOpened(2)" (closed)="onClosed(2)">
+
+    <mat-expansion-panel app-feature-panel [style.display]="display[2]" [expanded]="expanded[2]" (opened)="onOpened(2)"
+        (closed)="onClosed()">
         <mat-expansion-panel-header>
             <mat-panel-title>
                 Pick a Train
             </mat-panel-title>
         </mat-expansion-panel-header>
-        <app-feature-pick-a-train></app-feature-pick-a-train>
+        <app-feature-pick-a-train (complete)="onClosed()"></app-feature-pick-a-train>
     </mat-expansion-panel>
 
 </mat-accordion>

@@ -1,5 +1,5 @@
 <div class="feature-wrapper">
-    <div [style.display]=" displayIntroduction">
+    <div app-featurepanel-step="0" [style.display]=" displayIntroduction">
         <p class="feature-heading">
             Our cows gaze left and right. Even better, they can do it under your control!
             Our younger guests especially enjoy it when the cows follow their own movements
@@ -7,31 +7,26 @@
         </p>
         <div class="actions">
             <div style="width: 50%; margin: 0; text-align: center; display: inline-block;">
-                <button mat-stroked-button class="message-button message-button-positive" (click)="onLetsPlay()">
+                <button mat-stroked-button class="message-button message-button-positive" (click)="display('waiting')">
                     <mat-icon [inline]="true">thumb_up</mat-icon><br />Let's do this!
                 </button>
             </div>
             <div style="width: 50%; margin: 0; text-align: center; display: inline-block;">
-                <button mat-stroked-button class="message-button message-button-negative" (click)="onNoThanks();">
+                <button mat-stroked-button class="message-button message-button-negative" (click)="cancel();">
                     <mat-icon [inline]="true">thumb_down</mat-icon><br />No thanks.
                 </button>
             </div>
         </div>
     </div>
-    <div [style.display]=" displayWaiting">
+    <div app-feature-panel-step="1" [style.display]=" displayWaiting">
         <p class="feature-heading-centered">
             Be ready! Your turn starts in no more than:
         </p>
-        <app-turn-queue [wait-time]="30000"></app-turn-queue>
-
+        <app-turn-queue [timer]="waitTimer" (canceled)="cancel()" (complete)="display('active')"></app-turn-queue>
     </div>
-    <div [style.display]="displayActive">
-        <button mat-stroked-button (click)="onHeadDirectionToggle()">
-            <span class="feature-control">
-                <mat-icon [inline]="true" style="color: lightgrey;">{{westArrowIcon}}</mat-icon>
-                <mat-icon [inline]="true" [style.transform]="transform" class="circle-icon">swap_horiz</mat-icon>
-                <mat-icon [inline]="true" style="color: lightgrey;">{{eastArrowIcon}}</mat-icon>
-            </span>
-        </button>
+    <div app-feature-panel-step="2" [style.display]="displayActive">
+        <div class="actions action-one-centered">
+            <app-feature-turning-heads-button></app-feature-turning-heads-button>
+        </div>
     </div>
 </div>

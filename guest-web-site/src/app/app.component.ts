@@ -30,7 +30,7 @@ export class AppComponent {
 
   public showMain(route: Route): boolean {
     if (route.data) {
-      console.log(typeof(route.data.showMain));
+      // console.log(typeof(route.data.showMain));
     }
 
     return route.data && route.data.showMain && ((typeof(route.data.showMain) === 'function') ? route.data.showMain() : route.data.showMain);

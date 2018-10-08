@@ -1,73 +1,58 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterContentInit, AfterViewInit, Component, ContentChildren, OnInit, QueryList, ViewChildren } from '@angular/core';
+import { MatExpansionPanelHeader } from '@angular/material/expansion';
 
-import { ControllerService } from 'core';
+import { FeaturePanelDirective } from './feature-panel.directive';
 
 @Component({
   selector: 'app-features',
   templateUrl: './features.component.html',
   styleUrls: ['./features.scss']
 })
-export class FeaturesComponent implements OnInit {
+export class FeaturesComponent implements AfterContentInit, AfterViewInit {
 
-  direction : number = -1;
-  westArrowIcon : string = 'chevron_left';
-  eastArrowIcon : string = 'chevron_left';
-  transform : string = 'scale(1,1)';
+  //@ContentChildren('@feature-panel', /*FeaturePanelDirective, */{ descendants: true })
+  @ContentChildren(MatExpansionPanelHeader, { descendants: true })
+  panels: QueryList<MatExpansionPanelHeader>;
 
-  setDirection(direction : number) {
-      this.direction = direction;
-      if (direction < 0) {
-        this.westArrowIcon = 'chevron_left';
-        this.eastArrowIcon = 'chevron_left';
-        this.transform = 'scale(1,1)';
-      }
-      else {
-        this.westArrowIcon = 'chevron_right';
-        this.eastArrowIcon = 'chevron_right';
-        this.transform = 'scale(-1,1)';
-      }
-  }
-
-  constructor(private controller : ControllerService) {
-    this.onClosed(-1);
-  }
-
-  display : string[] = [
+  display: string[] = [
     "block",
     "block",
     "block"
   ];
-      
-  onOpened(index : number) {
+
+  expanded: boolean[] = [
+    false,
+    false,
+    false
+  ]
+
+  onOpened(index: number) {
     console.log('opened');
 
-    for (let i : number = 0; i < this.display.length; ++i) {
+    for (let i: number = 0; i < this.display.length; ++i) {
       this.display[i] = (i != index) ? "none" : "block";
+      this.expanded[i] = (i == index);
     }
   }
 
-  onClosed(index : number) {
+  onClosed() {
     console.log('closed');
 
-    for (let i : number = 0; i < this.display.length; ++i) {
+    for (let i: number = 0; i < this.display.length; ++i) {
       this.display[i] = "block";
+      this.expanded[i] = false;
     }
   }
 
-
-  onHeadDirectionToggle() {
-    console.log('turn');
-    this.controller.setHeadsDirection(0, 0);
-    this.setDirection(this.direction * -1);
+  constructor() {
+    this.onClosed();
   }
 
-  onCatchAndThrowGo() {
-    console.log('go');
-
-    this.controller.runCatchAndThrow(0);
+  ngAfterContentInit() {
+    console.log('ngAfterContentInit(): ' + this.panels.length);
   }
 
-  ngOnInit() {
-    console.log('FeaturesComponent ngOnInit()');
+  ngAfterViewInit() {
+    console.log('ngAfterViewInit(): ' + this.panels.length)
   }
 }

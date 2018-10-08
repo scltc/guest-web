@@ -12,23 +12,19 @@ import { share } from "rxjs/operators";
   styleUrls: ['./flip-clock.scss'],
   templateUrl: './flip-clock.component.html'
 })
-export class FlipClockComponent implements OnInit {
+export class FlipClockComponent {
 
-  @Input('timer') _timer: Observable<number>;
-  public timer : Observable<number>;
+  @Input('timer')
+  timer: Observable<number>;
 
   constructor() {
-  }
-
-  ngOnInit() {
-    this.timer = this._timer.pipe(share());
   }
 
   private static MILISECONDS_IN_SECOND: number = 1000;
   private static MILISECONDS_IN_MINUTE: number = FlipClockComponent.MILISECONDS_IN_SECOND * 60;
   private static MILISECONDS_IN_HOUR: number = FlipClockComponent.MILISECONDS_IN_MINUTE * 60;
   private static MILISECONDS_IN_24_HOURS: number = FlipClockComponent.MILISECONDS_IN_HOUR * 24;
-  
+
   public static getHours(value): number {
     return Math.floor((value % FlipClockComponent.MILISECONDS_IN_24_HOURS - FlipClockComponent.getMinutes(value)) / FlipClockComponent.MILISECONDS_IN_HOUR);
   }
@@ -53,23 +49,23 @@ export class FlipClockComponent implements OnInit {
     return value % 10;
   }
 
-  public getHoursTensPlace(value : number): number {
+  public getHoursTensPlace(value: number): number {
     return FlipClockComponent.getTensPlace(FlipClockComponent.getHours(value));
   }
 
-  public getHoursOnesPlace(value : number): number {
+  public getHoursOnesPlace(value: number): number {
     return FlipClockComponent.getOnesPlace(FlipClockComponent.getHours(value));
   }
 
-  public getMinutesTensPlace(value : number): number {
+  public getMinutesTensPlace(value: number): number {
     return FlipClockComponent.getTensPlace(FlipClockComponent.getMinutes(value));
   }
 
-  public getMinutesOnesPlace(value : number): number {
+  public getMinutesOnesPlace(value: number): number {
     return FlipClockComponent.getOnesPlace(FlipClockComponent.getMinutes(value));
   }
 
-  public getSecondsTensPlace(value : number): number {
+  public getSecondsTensPlace(value: number): number {
     return FlipClockComponent.getTensPlace(FlipClockComponent.getSeconds(value));
   }
 

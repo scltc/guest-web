@@ -1,6 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 
+import { FlipClockComponent } from './flip-clock.component';
+
 @Component({
   selector: 'flip-clock-digit',
   styleUrls: ['./flip-clock.scss'],
@@ -8,20 +10,18 @@ import { Observable } from 'rxjs';
 })
 export class FlipClockDigitComponent implements OnInit {
 
-  @Input() timer: Observable<number>;
   @Input() digit: (value: number) => number;
 
-  public numbers : number[] = [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 ];
+  public numbers: number[] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 
   private currentValue: number = 0;
   private previousValue: number = 0;
 
-  constructor() {
+  constructor(private clock: FlipClockComponent) {
   }
 
   ngOnInit() {
-    this.timer.subscribe(value => {
-      //value *= 1000;
+    this.clock.timer.subscribe(value => {
 
       this.previousValue = this.currentValue;
       try {
