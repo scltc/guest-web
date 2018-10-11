@@ -1,6 +1,4 @@
 <br />
-<app-feature-panel>
-</app-feature-panel>
 <mat-accordion displayMode="flat">
     <!--
     <audio autoplay>
@@ -20,8 +18,7 @@
     </mat-card>    
 -->
 
-    <mat-expansion-panel app-feature-panel [style.display]="display[0]" [expanded]="expanded[0]" (opened)="onOpened(0)"
-        (closed)="onClosed()">
+    <mat-expansion-panel app-feature-panel="0" [expanded]="expanded[0]" (opened)="onOpened(0)" (closed)="onClosed()">
         <mat-expansion-panel-header>
             <mat-panel-title>
                 Cows!
@@ -30,8 +27,7 @@
         <app-feature-turning-heads (complete)="onClosed()"></app-feature-turning-heads>
     </mat-expansion-panel>
 
-    <mat-expansion-panel app-feature-panel [style.display]="display[1]" [expanded]="expanded[1]" (opened)="onOpened(1)"
-        (closed)="onClosed()">
+    <mat-expansion-panel app-feature-panel="1" [expanded]="expanded[1]" (opened)="onOpened(1)" (closed)="onClosed()">
         <mat-expansion-panel-header>
             <mat-panel-title>
                 Catch and Throw
@@ -40,8 +36,7 @@
         <app-feature-catch-and-throw (complete)="onClosed()"></app-feature-catch-and-throw>
     </mat-expansion-panel>
 
-    <mat-expansion-panel app-feature-panel [style.display]="display[2]" [expanded]="expanded[2]" (opened)="onOpened(2)"
-        (closed)="onClosed()">
+    <mat-expansion-panel app-feature-panel="2" [expanded]="expanded[2]" (opened)="onOpened(2)" (closed)="onClosed()">
         <mat-expansion-panel-header>
             <mat-panel-title>
                 Pick a Train

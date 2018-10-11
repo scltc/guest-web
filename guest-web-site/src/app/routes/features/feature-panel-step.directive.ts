@@ -1,19 +1,21 @@
 import { AfterContentInit, Directive, ElementRef, Input, Output, EventEmitter } from '@angular/core';
 
+import { FeaturePanelDirective } from './feature-panel.directive';
+
 @Directive({
     //exportAs: 'feature-panel',
-    selector: 'app-feature-panel-step, [app-feature-panel-step]'
+    selector: 'appFeaturePanelStep, [appFeaturePanelStep]'
 })
 export class FeaturePanelStepDirective implements AfterContentInit {
 
-    @Input('app-feature-panel-step')
+    @Input('appFeaturePanelStep')
     step: number;
 
     constructor(private element: ElementRef) {
-        console.log('feature-step: ' + this.element.nativeElement.tagName);
+        console.log('feature-panel-step: ' + this.element.nativeElement.tagName);
     }
 
     ngAfterContentInit() {
-        console.log('feature-step: ' + this.element.nativeElement.tagName + ', ' + this.step);
+        console.log('feature-panel-step: ' + this.element.nativeElement.tagName + ', ' + this.step);
     }
 }

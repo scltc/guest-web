@@ -142,8 +142,8 @@ export const appRoutes: Routes = [
     ],
     exports: [
         RouterModule,
-        FeaturePanelDirective,
-        FeaturePanelStepDirective
+        // FeaturePanelDirective,
+        // FeaturePanelStepDirective
     ],
     declarations: [
         AwayComponent,

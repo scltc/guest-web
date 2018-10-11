@@ -1,7 +1,7 @@
 import { AfterContentInit, AfterViewInit, Component, ContentChildren, OnInit, QueryList, ViewChildren } from '@angular/core';
-import { MatExpansionPanelHeader } from '@angular/material/expansion';
+import { MatExpansionPanel } from '@angular/material/expansion';
 
-import { FeaturePanelDirective } from './feature-panel.directive';
+// import { FeaturePanelDirective } from './feature-panel.directive';
 
 @Component({
   selector: 'app-features',
@@ -11,8 +11,8 @@ import { FeaturePanelDirective } from './feature-panel.directive';
 export class FeaturesComponent implements AfterContentInit, AfterViewInit {
 
   //@ContentChildren('@feature-panel', /*FeaturePanelDirective, */{ descendants: true })
-  @ContentChildren(MatExpansionPanelHeader, { descendants: true })
-  panels: QueryList<MatExpansionPanelHeader>;
+  @ViewChildren(MatExpansionPanel)
+  panels: QueryList<MatExpansionPanel>;
 
   display: string[] = [
     "block",
@@ -28,6 +28,8 @@ export class FeaturesComponent implements AfterContentInit, AfterViewInit {
 
   onOpened(index: number) {
     console.log('opened');
+
+    let panels:MatExpansionPanel[]  = this.panels.toArray();
 
     for (let i: number = 0; i < this.display.length; ++i) {
       this.display[i] = (i != index) ? "none" : "block";
@@ -49,7 +51,7 @@ export class FeaturesComponent implements AfterContentInit, AfterViewInit {
   }
 
   ngAfterContentInit() {
-    console.log('ngAfterContentInit(): ' + this.panels.length);
+    // console.log('ngAfterContentInit(): ' + this.panels.length);
   }
 
   ngAfterViewInit() {

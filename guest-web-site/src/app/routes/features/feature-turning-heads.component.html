@@ -1,5 +1,5 @@
 <div class="feature-wrapper">
-    <div app-featurepanel-step="0" [style.display]=" displayIntroduction">
+    <div #appFeaturePanelStep appFeaturePanelStep="1" [style.display]="displayIntroduction">
         <p class="feature-heading">
             Our cows gaze left and right. Even better, they can do it under your control!
             Our younger guests especially enjoy it when the cows follow their own movements
@@ -18,13 +18,13 @@
             </div>
         </div>
     </div>
-    <div app-feature-panel-step="1" [style.display]=" displayWaiting">
+    <div #appFeaturePanelStep appFeaturePanelStep="2" [style.display]="displayWaiting">
         <p class="feature-heading-centered">
             Be ready! Your turn starts in no more than:
         </p>
         <app-turn-queue [timer]="waitTimer" (canceled)="cancel()" (complete)="display('active')"></app-turn-queue>
     </div>
-    <div app-feature-panel-step="2" [style.display]="displayActive">
+    <div #appFeaturePanelStep appFeaturePanelStep="3" [style.display]="displayActive">
         <div class="actions action-one-centered">
             <app-feature-turning-heads-button></app-feature-turning-heads-button>
         </div>
