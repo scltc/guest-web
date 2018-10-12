@@ -11,7 +11,7 @@ export class FeaturePanelStepDirective implements AfterContentInit {
     @Input('appFeaturePanelStep')
     step: number;
 
-    constructor(private element: ElementRef) {
+    constructor(/* private panel: FeaturePanelDirective, */ private element: ElementRef) {
         console.log('feature-panel-step: ' + this.element.nativeElement.tagName);
     }
 
