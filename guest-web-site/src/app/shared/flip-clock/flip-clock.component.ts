@@ -5,7 +5,6 @@
 
 import { Component, Input, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
-import { share } from "rxjs/operators";
 
 @Component({
   selector: 'flip-clock',
