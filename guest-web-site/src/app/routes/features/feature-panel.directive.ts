@@ -1,3 +1,4 @@
+/*
 import { AfterContentInit, AfterViewInit, ContentChildren, Directive, ElementRef, EventEmitter, Input, HostBinding, OnDestroy, OnInit, Output, QueryList, ViewChildren } from '@angular/core';
 
 import { MatExpansionPanel } from '@angular/material/expansion';
@@ -9,12 +10,16 @@ import { FeaturePanelStepDirective } from './feature-panel-step.directive';
     //exportAs: 'feature-panel',
     selector: 'app-feature-panel, [app-feature-panel]'
 })
+export class FeaturePanelDirective {
+}
+*/
+/*
 export class FeaturePanelDirective implements AfterContentInit, AfterViewInit, OnInit, OnDestroy {
 
-    @ContentChildren(FeaturePanelStepDirective/*'appFeaturePanelStep'*//*FeaturePanelStepDirective*/, { descendants: true })
+    // @ContentChildren(FeaturePanelStepDirective, { descendants: true })
     steps: QueryList<FeaturePanelStepDirective>;
 
-    @ViewChildren(FeaturePanelStepDirective/*'appFeaturePaneStep'*/)
+    @ViewChildren(FeaturePanelStepDirective)
     viewSteps: QueryList<FeaturePanelStepDirective>;
 
     @Input("app-feature-panel")
@@ -57,3 +62,4 @@ export class FeaturePanelDirective implements AfterContentInit, AfterViewInit, O
 
     }
 }
+*/

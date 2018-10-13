@@ -8,12 +8,11 @@ import { MatExpansionPanel } from '@angular/material/expansion';
   templateUrl: './features.component.html',
   styleUrls: ['./features.scss']
 })
-export class FeaturesComponent implements AfterContentInit, AfterViewInit {
+export class FeaturesComponent implements AfterViewInit {
 
-  //@ContentChildren('@feature-panel', /*FeaturePanelDirective, */{ descendants: true })
   @ViewChildren(MatExpansionPanel)
   panels: QueryList<MatExpansionPanel>;
-
+/*
   display: string[] = [
     "block",
     "block",
@@ -49,10 +48,7 @@ export class FeaturesComponent implements AfterContentInit, AfterViewInit {
   constructor() {
     this.onClosed();
   }
-
-  ngAfterContentInit() {
-    // console.log('ngAfterContentInit(): ' + this.panels.length);
-  }
+  */
 
   ngAfterViewInit() {
     console.log('ngAfterViewInit(): ' + this.panels.length)

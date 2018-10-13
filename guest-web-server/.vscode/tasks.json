@@ -9,7 +9,7 @@
             "command": "gradle",
             "args": [
                 "--console=rich",
-//              "--info",
+                //              "--info",
                 "clean",
                 "serverDeploy",
                 "siteDeploy"
@@ -26,6 +26,34 @@
                 "reveal": "always",
                 "panel": "dedicated"
             }
-        }
+        },
+        {
+            "identifier": "ng serve",
+            "type": "npm",
+            "script": "start",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": {
+                "owner": "typescript",
+                "source": "ts",
+                "applyTo": "closedDocuments",
+                "fileLocation": [
+                    "relative",
+                    "${cwd}"
+                ],
+                "pattern": "$tsc",
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": {
+                        "regexp": "Compiling...|TS\\d+:"
+                    },
+                    "endsPattern": {
+                        "regexp": "Compiled |Failed to compile."
+                    }
+                }
+            }
+        },
     ]
 }

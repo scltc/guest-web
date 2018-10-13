@@ -11,6 +11,10 @@ import { ControllerService } from 'core';
 })
 export class FeatureTurningHeadsComponent implements OnInit {
 
+  constructor(private controller: ControllerService) {
+    this.display('introduction');
+  }
+
   @Output('complete')
   complete = new EventEmitter<any>();
 
@@ -48,10 +52,6 @@ export class FeatureTurningHeadsComponent implements OnInit {
 
   setHeadsDirection(direction: number) {
     this.controller.setHeadsDirection(0, direction);
-  }
-
-  constructor(private controller: ControllerService) {
-    this.display('introduction');
   }
 
   ngOnInit() {

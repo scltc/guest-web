@@ -1,5 +1,5 @@
-<div class="feature-wrapper">
-    <div #appFeaturePanelStep appFeaturePanelStep="1" [style.display]="displayIntroduction">
+<div app-expansion-panel-pager #pager="appExpansionPanelPager" class="feature-wrapper">
+    <div app-expansion-panel-page="1" [style.display]="displayIntroduction">
         <p class="feature-heading">
             Our cows gaze left and right. Even better, they can do it under your control!
             Our younger guests especially enjoy it when the cows follow their own movements
@@ -7,24 +7,24 @@
         </p>
         <div class="actions">
             <div style="width: 50%; margin: 0; text-align: center; display: inline-block;">
-                <button mat-stroked-button class="message-button message-button-positive" (click)="display('waiting')">
+                <button mat-stroked-button class="message-button message-button-positive" (click)="pager.display('waiting')">
                     <mat-icon [inline]="true">thumb_up</mat-icon><br />Let's do this!
                 </button>
             </div>
             <div style="width: 50%; margin: 0; text-align: center; display: inline-block;">
-                <button mat-stroked-button class="message-button message-button-negative" (click)="cancel();">
+                <button mat-stroked-button class="message-button message-button-negative" (click)="pager.close();">
                     <mat-icon [inline]="true">thumb_down</mat-icon><br />No thanks.
                 </button>
             </div>
         </div>
     </div>
-    <div #appFeaturePanelStep appFeaturePanelStep="2" [style.display]="displayWaiting">
+    <div app-expansion-panel-page="2" [style.display]="displayWaiting">
         <p class="feature-heading-centered">
             Be ready! Your turn starts in no more than:
         </p>
         <app-turn-queue [timer]="waitTimer" (canceled)="cancel()" (complete)="display('active')"></app-turn-queue>
     </div>
-    <div #appFeaturePanelStep appFeaturePanelStep="3" [style.display]="displayActive">
+    <div app-expansion-panel-page="3" [style.display]="displayActive">
         <div class="actions action-one-centered">
             <app-feature-turning-heads-button></app-feature-turning-heads-button>
         </div>

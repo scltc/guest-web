@@ -26,13 +26,14 @@ import { AwayComponent } from './routes/away/away.component';
 import { HomeComponent } from './routes/home/home.component';
 
 import {
+    ExpansionPanelConcealerDirective,
+    ExpansionPanelPagerDirective,
+    ExpansionPanelPageDirective,
     FeatureCatchAndThrowComponent,
     FeaturePickATrainComponent,
     FeatureTurningHeadsComponent,
     FeatureTurningHeadsButtonComponent,
     FeaturesComponent,
-    FeaturePanelDirective,
-    FeaturePanelStepDirective
 } from './routes/features';
 
 import { ScheduleComponent } from './routes/schedule/schedule.component';
@@ -148,13 +149,14 @@ export const appRoutes: Routes = [
     declarations: [
         AwayComponent,
         HomeComponent,
+        ExpansionPanelConcealerDirective,
+        ExpansionPanelPagerDirective,
+        ExpansionPanelPageDirective,
         FeaturesComponent,
         FeatureCatchAndThrowComponent,
         FeaturePickATrainComponent,
         FeatureTurningHeadsComponent,
         FeatureTurningHeadsButtonComponent,
-        FeaturePanelDirective,
-        FeaturePanelStepDirective,
         ScheduleComponent,
         SettingsComponent,
         TroubleshootingComponent,
