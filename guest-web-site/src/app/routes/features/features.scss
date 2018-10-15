@@ -26,10 +26,10 @@
 }
 
 .action-two-centered {
-    width: 50%;
+    display: inline-block;
     margin: 0;
     text-align: center;
-    display: inline-block;
+    width: 50% !important;
 }
 
 .message-button {

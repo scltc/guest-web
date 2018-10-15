@@ -16,9 +16,6 @@ export class FlipClockComponent {
   @Input('timer')
   timer: Observable<number>;
 
-  constructor() {
-  }
-
   private static MILISECONDS_IN_SECOND: number = 1000;
   private static MILISECONDS_IN_MINUTE: number = FlipClockComponent.MILISECONDS_IN_SECOND * 60;
   private static MILISECONDS_IN_HOUR: number = FlipClockComponent.MILISECONDS_IN_MINUTE * 60;

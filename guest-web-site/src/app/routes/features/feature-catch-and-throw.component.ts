@@ -9,9 +9,28 @@ import { ControllerService } from 'core';
 })
 export class FeatureCatchAndThrowComponent implements OnInit {
 
-  displayIntroduction: string = "block";
-
   constructor(private controller : ControllerService) {
+  }
+
+  public waitTime: number = 0;
+  public playTime: number = 0;
+
+  public pageOpened(page: string) {
+    if (page == 'waiting') {
+      this.waitTime = 20;
+    }
+    else if (page == 'playing') {
+      this.playTime = 30;
+    }
+  }
+
+  public pageClosed(page: string) {
+    if (page == "waiting") {
+      this.waitTime = 0;
+    }
+    else if (page == 'playing') {
+      this.playTime = 0;
+    }
   }
 
   onCatchAndThrowGo() {

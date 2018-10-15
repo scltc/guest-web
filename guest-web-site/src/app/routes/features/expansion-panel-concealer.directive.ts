@@ -23,52 +23,48 @@ import { Subscription, merge } from 'rxjs';
  */
 export class ExpansionPanelConcealerDirective implements AfterContentInit, OnDestroy {
 
-  elements: Array<ElementRef>;
+  private elements: Array<ElementRef>;
 
   @ContentChildren(MatExpansionPanel, { read: ElementRef })
-  elementList: QueryList<ElementRef>;
+  private elementList: QueryList<ElementRef>;
 
   @ContentChildren(MatExpansionPanel)
-  panels: QueryList<MatExpansionPanel>;
+  private panelList: QueryList<MatExpansionPanel>;
 
   constructor(private renderer: Renderer2) {
   }
 
-  closed() {
-    this.panels.forEach((panel, index) => {
+  private closed() {
+    this.panelList.forEach((panel, index) => {
       panel.expanded = false;
       this.renderer.setStyle(this.elements[index].nativeElement, 'display', 'block');
     });
   }
 
-  opened() {
-    this.panels.forEach((panel, index) => {
+  private opened() {
+    this.panelList.forEach((panel, index) => {
       this.renderer.setStyle(this.elements[index].nativeElement, 'display', (panel.expanded) ? 'block' : 'none');
     });
   }
 
-  closedSubscription: Subscription = null;
-  openedSubscription: Subscription = null;
+  private closedSubscription: Subscription = null;
+  private openedSubscription: Subscription = null;
 
   ngAfterContentInit() {
 
-    if (this.panels) {
+    if (this.panelList) {
 
       this.elements = this.elementList.toArray();
 
       let closedObservables = new Array<EventEmitter<void>>();
       let openedObservables = new Array<EventEmitter<void>>();
-      this.panels.forEach(panel => {
+      this.panelList.forEach(panel => {
         closedObservables.push(panel.closed);
         openedObservables.push(panel.opened);
       });
 
       this.closedSubscription = merge(...closedObservables).subscribe(() => this.closed());
       this.openedSubscription = merge(...openedObservables).subscribe(() => this.opened());
-    }
-
-    if (this.elements) {
-      console.log(this.elements.length);
     }
   }
 

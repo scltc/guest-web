@@ -1,4 +1,4 @@
-import { AfterViewInit, Directive, OnDestroy, ViewChildren, QueryList } from '@angular/core';
+import { AfterContentInit, AfterViewInit, ContentChildren, Directive, ElementRef, EventEmitter, HostBinding, Input, OnDestroy, Output, ViewChildren, QueryList, Renderer2 } from '@angular/core';
 
 import { MatExpansionPanel } from '@angular/material';
 
@@ -10,44 +10,83 @@ import { ExpansionPanelPageDirective } from './expansion-panel-page.directive';
     exportAs: 'appExpansionPanelPager',
     selector: '[app-expansion-panel-pager]'
 })
-export class ExpansionPanelPagerDirective implements AfterViewInit, OnDestroy {
+export class ExpansionPanelPagerDirective implements AfterContentInit, AfterViewInit, OnDestroy {
 
-    @ViewChildren('app-extension-panel-page')
-    pages: QueryList<ExpansionPanelPageDirective>
+    @Input('app-expansion-panel-pager')
+    private initialPage: string = null;
 
-    closedSubscription : Subscription = null;
-    openedSubscription : Subscription = null;
+    @Output('page-closed')
+    private pageClosed: EventEmitter<string> = new EventEmitter<string>();
 
-    constructor (private panel: MatExpansionPanel) {
-        if (this.panel) {
-            this.closedSubscription = panel.closed.subscribe(() =>
-                console.log('FeatureStepperDirective : Closed')
-            );
-            this.openedSubscription = panel.opened.subscribe(() =>
-                console.log('FeatureStepperDirective : Opened')
-            );
-        }
+    @Output('page-opened')
+    private pageOpened: EventEmitter<string> = new EventEmitter<string>();
+
+    @ContentChildren(ExpansionPanelPageDirective, { read: ElementRef })
+    private elementList: QueryList<ElementRef>;
+
+    @ContentChildren(ExpansionPanelPageDirective)
+    private pageList: QueryList<ExpansionPanelPageDirective>;
+
+    private currentPage: string = null;
+
+    private elements: Array<ElementRef> = new Array<ElementRef>();
+
+    private closedPanelSubscription: Subscription = null;
+    private openedPanelSubscription: Subscription = null;
+
+    constructor(private panel: MatExpansionPanel, private renderer: Renderer2) {
     }
 
-    close(): void {
+    public close() {
+        this.display(null);
         this.panel.close();
     }
 
-    display(page: string): void {
+    public display(page: string) {
+
+        console.log(page + '/' + this.currentPage);
+
+        if (page != this.currentPage) {
+
+            this.pageList.forEach((page, index) => {
+                this.renderer.setStyle(this.elements[index].nativeElement, 'display', 'none');
+                if (page.name == this.currentPage) {
+                    this.pageClosed.emit(this.currentPage);
+                }
+            });
+
+            this.currentPage = page;
+
+            this.pageList.forEach((page, index) => {
+                if (page.name == this.currentPage) {
+                    this.pageOpened.emit(this.currentPage);
+                    this.renderer.setStyle(this.elements[index].nativeElement, 'display', 'block');
+                }
+            });
+        }
     }
 
     ngAfterViewInit() {
-        if (this.pages) {
-            console.log(this.pages.length);
+        if (this.panel && this.pageList) {
+
+            this.elements = this.elementList.toArray();
+
+            this.closedPanelSubscription = this.panel.closed.subscribe(() =>
+                this.display(null)
+            );
+
+            this.openedPanelSubscription = this.panel.opened.subscribe(() =>
+                this.display(this.initialPage || this.pageList.first.name)
+            );
         }
     }
 
+    ngAfterContentInit() {
+        this.ngAfterViewInit();
+    }
+
     ngOnDestroy() {
-        if (this.closedSubscription) {
-            this.closedSubscription.unsubscribe();
-        }
-        if (this.openedSubscription) {
-            this.openedSubscription.unsubscribe();
-        }
+        this.closedPanelSubscription && this.closedPanelSubscription.unsubscribe();
+        this.openedPanelSubscription && this.openedPanelSubscription.unsubscribe();
     }
 }

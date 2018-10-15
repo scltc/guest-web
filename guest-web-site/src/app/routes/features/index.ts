@@ -3,7 +3,6 @@ export * from './feature-pick-a-train.component';
 export * from './feature-turning-heads.component';
 export * from './feature-turning-heads-button.component';
 export * from './features.component';
-export * from './expansion-panel-page.directive';
 export * from './turn-queue.component';
 export * from './expansion-panel-concealer.directive';
 export * from './expansion-panel-pager.directive';

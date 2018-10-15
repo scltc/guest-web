@@ -1,0 +1,26 @@
+.action-button {
+    display: inline-block;
+    font-size: 1.2em;
+    font-weight: bold;
+    line-height: 1.2em;
+
+    // vertical-align: middle;
+    text-align: center;
+    // align-items: center;
+    width: 8em;
+  }
+  
+  .action-button mat-icon {
+    vertical-align: middle;
+    text-align: center;
+    font-size: 1.5em;
+    line-height: 1.2em;
+  }
+  
+  .action-button-negative mat-icon {
+    color: red;
+  }
+  
+  .action-button-positive mat-icon {
+    color: green;
+  }

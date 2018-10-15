@@ -19,15 +19,16 @@ import {
   MatMenuModule,
   MatSelectModule,
   MatSidenavModule,
+  MatSnackBarModule,
   MatToolbarModule,
 } from '@angular/material';
 
 //import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { library } from '@fortawesome/fontawesome-svg-core';
-import { faBars } from '@fortawesome/free-solid-svg-icons';
+//import { library } from '@fortawesome/fontawesome-svg-core';
+//import { faBars } from '@fortawesome/free-solid-svg-icons';
 
 // Add an icon to the library for convenient access in other components
-library.add(faBars);
+//library.add(faBars);
 
 // Application root
 import { AppComponent } from './app.component';
@@ -64,12 +65,13 @@ import { ControllerModule } from './core/controller/controller.module';
     MatMenuModule,
     MatSelectModule,
     MatSidenavModule,
+    MatSnackBarModule,
     MatToolbarModule,
     // If we are running on 'localhost', we are debugging. Use the web socket server from there too.
     ControllerModule.forRoot(/* (window.location.hostname.toLowerCase() === 'localhost') ? 'ws://localhost' : */ 'wss://home.scltc.club'), //'ws://localhost'),
 //  ControllerModule.forRoot({ url: 'ws://192.168.2.201', reconnectAttempts: -1 }),
     // This must be last or some of the imports above may fail!
-    AppRoutingModule
+    AppRoutingModule,
   ],
   providers: [
     AppInitializeService,

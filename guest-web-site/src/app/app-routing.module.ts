@@ -27,8 +27,8 @@ import { HomeComponent } from './routes/home/home.component';
 
 import {
     ExpansionPanelConcealerDirective,
-    ExpansionPanelPagerDirective,
     ExpansionPanelPageDirective,
+    ExpansionPanelPagerDirective,
     FeatureCatchAndThrowComponent,
     FeaturePickATrainComponent,
     FeatureTurningHeadsComponent,
@@ -42,6 +42,8 @@ import { TroubleshootingComponent } from './routes/troubleshooting/troubleshooti
 
 import { ControllerPortComponent } from 'shared/controller-port';
 
+
+import { ButtonsModule } from './shared/buttons/buttons.module';
 import {
     FlipClockComponent,
     FlipClockDigitComponent,
@@ -139,10 +141,12 @@ export const appRoutes: Routes = [
         MatInputModule,
         // AppInitializeService,
         ReactiveFormsModule,
-        RouterModule.forRoot(appRoutes, { useHash: true })
+        RouterModule.forRoot(appRoutes, { useHash: true }),
+        ButtonsModule
     ],
     exports: [
-        RouterModule,
+        ButtonsModule,
+        RouterModule
         // FeaturePanelDirective,
         // FeaturePanelStepDirective
     ],

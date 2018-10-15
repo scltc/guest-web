@@ -1,32 +1,40 @@
-<div app-expansion-panel-pager #pager="appExpansionPanelPager" class="feature-wrapper">
-    <div app-expansion-panel-page="1" [style.display]="displayIntroduction">
+<div class="feature-wrapper" app-expansion-panel-pager #cowPager="appExpansionPanelPager" (page-closed)="pageClosed($event)"
+    (page-opened)="pageOpened($event)">
+
+    <div app-expansion-panel-page="introduction">
         <p class="feature-heading">
             Our cows gaze left and right. Even better, they can do it under your control!
             Our younger guests especially enjoy it when the cows follow their own movements
             and your secret is safe; our cows will never let anyone know who makes them move!
         </p>
         <div class="actions">
-            <div style="width: 50%; margin: 0; text-align: center; display: inline-block;">
-                <button mat-stroked-button class="message-button message-button-positive" (click)="pager.display('waiting')">
-                    <mat-icon [inline]="true">thumb_up</mat-icon><br />Let's do this!
-                </button>
+            <div class="action-two-centered">
+                <app-button-lets-do-this (click)="cowPager.display('waiting')"></app-button-lets-do-this>
             </div>
-            <div style="width: 50%; margin: 0; text-align: center; display: inline-block;">
-                <button mat-stroked-button class="message-button message-button-negative" (click)="pager.close();">
-                    <mat-icon [inline]="true">thumb_down</mat-icon><br />No thanks.
-                </button>
+            <div class="action-two-centered">
+                <app-button-no-thanks (click)="cowPager.close()"></app-button-no-thanks>
             </div>
         </div>
     </div>
-    <div app-expansion-panel-page="2" [style.display]="displayWaiting">
+
+    <div app-expansion-panel-page="waiting">
         <p class="feature-heading-centered">
             Be ready! Your turn starts in no more than:
         </p>
-        <app-turn-queue [timer]="waitTimer" (canceled)="cancel()" (complete)="display('active')"></app-turn-queue>
+        <flip-clock [countdown-timer]="waitTime" #waitTimer="countdownTimer" [timer]="waitTimer.value" (complete)="show('Your turn has begun!'); cowPager.display('playing');"></flip-clock>
+        <div class="actions action-one-centered">
+            <app-button-no-thanks (click)="cowPager.close()"></app-button-no-thanks>
+        </div>
     </div>
-    <div app-expansion-panel-page="3" [style.display]="displayActive">
+
+    <div app-expansion-panel-page="playing">
+        <p class="feature-heading-centered">
+            Our cows are now under your control! Your turn ends in:
+        </p>
+        <flip-clock [countdown-timer]="playTime" #playTimer="countdownTimer" [timer]="playTimer.value" (complete)="show('Thanks for playing!'); cowPager.close();"></flip-clock>
         <div class="actions action-one-centered">
             <app-feature-turning-heads-button></app-feature-turning-heads-button>
         </div>
     </div>
+
 </div>

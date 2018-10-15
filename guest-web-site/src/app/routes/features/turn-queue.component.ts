@@ -7,10 +7,10 @@ import { finalize, map, takeWhile } from 'rxjs/operators';
   templateUrl: './turn-queue.component.html',
   styleUrls: ['./features.scss']
 })
-export class TurnQueueComponent implements OnDestroy {
+export class TurnQueueComponent implements OnDestroy, OnInit {
 
   @Input('timer')
-  timer : Observable<number>;
+  timer: Observable<number>;
 
   @Output('canceled')
   canceled = new EventEmitter<any>();
@@ -24,6 +24,13 @@ export class TurnQueueComponent implements OnDestroy {
 
   ngOnDestroy() {
     console.log('onDestroy');
+  }
+
+  ngOnInit() {
+    this.timer.subscribe({complete: () => {
+      console.log('complete');
+      this.complete.emit(null)
+    }});
   }
 
   constructor() {

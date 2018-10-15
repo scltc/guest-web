@@ -1,6 +1,5 @@
-import { Component, HostListener, OnInit, Output, EventEmitter } from '@angular/core';
-import { Observable, Observer, PartialObserver, interval } from 'rxjs';
-import { finalize, map, takeWhile } from 'rxjs/operators';
+import { Component, OnInit } from '@angular/core';
+import { MatSnackBar } from '@angular/material';
 
 import { ControllerService } from 'core';
 
@@ -11,44 +10,33 @@ import { ControllerService } from 'core';
 })
 export class FeatureTurningHeadsComponent implements OnInit {
 
-  constructor(private controller: ControllerService) {
-    this.display('introduction');
+  constructor(private controller: ControllerService, public snackBar: MatSnackBar) {
   }
 
-  @Output('complete')
-  complete = new EventEmitter<any>();
+  public waitTime: number = 0;
+  public playTime: number = 0;
 
-  displayIntroduction: string;
-  displayWaiting: string;
-  displayActive: string;
-
-  cancel() {
-    this.complete.emit(null);
+  public pageOpened(page: string) {
+    if (page == 'waiting') {
+      this.waitTime = 15;
+    }
+    else if (page == 'playing') {
+      this.playTime = 20;
+    }
   }
 
-  display(page: string) {
-    this.displayIntroduction
-      = (page == 'introduction') ? 'block' : 'none';
-    this.displayWaiting
-      = (page == 'waiting') ? 'block' : 'none';
-    this.displayActive
-      = (page == 'active') ? 'block' : 'none';
+  public pageClosed(page: string) {
+    if (page == 'waiting') {
+      this.waitTime = 0;
+    }
+    else if (page == 'playing') {
+      this.playTime = 0;
+    }
   }
-  
-  private interval: number = 1000;
-  private isCanceled: boolean = false;
 
-  // @Input('wait-time')
-  time: number = 60000;
-  
-  public waitTimer: Observable<number> = interval(this.interval).pipe(
-    map(value => this.time - value * this.interval),
-    takeWhile(value => !this.isCanceled && value >= 0),
-    finalize(() => {
-      console.log('finalize');
-      // if (this.isCanceled) this.canceled.emit(null); else this.complete.emit(null);
-    })
-  );
+  public show(message: string) {
+    this.snackBar.open(message, null, { duration: 2000, panelClass: 'center', verticalPosition: 'top' });
+  }
 
   setHeadsDirection(direction: number) {
     this.controller.setHeadsDirection(0, direction);

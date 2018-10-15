@@ -9,27 +9,70 @@
 import { Directive, Input, Output, EventEmitter, OnChanges, OnDestroy } from '@angular/core';
 
 import { Subject, Observable, SubscriptionLike, timer } from 'rxjs';
-import { switchMap, take, tap } from 'rxjs/operators';
+import { switchMap, take, takeWhile, tap, share, finalize } from 'rxjs/operators';
+
+interface TimerDirectiveParameters {
+  aborted: boolean;
+  duration: number;
+  period: number;
+}
 
 @Directive({
-  selector: '[counter]'
+  exportAs: 'countdownTimer',
+  selector: '[countdown-timer]'
 })
 export class TimerDirective implements OnChanges, OnDestroy {
 
+  private parameters: TimerDirectiveParameters = null;
   private counterSubject = new Subject<any>();
   private countSubscription: SubscriptionLike;
 
-  @Input() counter: number;
-  @Input() interval: number;
-  @Output() value = new EventEmitter<number>();
+  @Input('countdown-timer')
+  counter: number = 0;
+  @Input()
+  interval: number = 1000;
+  @Output()
+  value = new EventEmitter<number>();
+  @Output()
+  complete = new EventEmitter<void>();
 
+  /*
   constructor() {
     console.log("TimerDirective");
     this.countSubscription = this.counterSubject.pipe(
       switchMap((options: any) =>
         timer(0, options.interval).pipe(
           take(options.count),
-          tap(() => this.value.emit(--options.count))
+          tap((value) => {
+            console.log(value);
+            this.value.emit((options.count - value) * options.interval)
+          }),
+          finalize(() => this.complete.emit()),
+          share()
+        )
+      )
+    ).subscribe();
+  }
+  */
+  constructor() {
+    console.log("TimerDirective");
+    this.countSubscription = this.counterSubject.pipe(
+      switchMap((options: TimerDirectiveParameters) =>
+        timer(0, options.period).pipe(
+          takeWhile(value => !options.aborted && value < options.duration),
+          tap(value => {
+            console.log(value);
+            this.value.emit((options.duration - value) * options.period)
+          }),
+          finalize(() => {
+            if (options.aborted) {
+              this.value.emit(0);
+            }
+            else {
+              this.complete.emit();
+            }
+          }),
+          share()
         )
       )
     ).subscribe();
@@ -37,7 +80,13 @@ export class TimerDirective implements OnChanges, OnDestroy {
 
   ngOnChanges() {
     console.log('ngOnChanges()');
-    this.counterSubject.next({ count: this.counter, interval: this.interval });
+    if (this.counter <= 0 || this.interval <= 0) {
+      this.parameters && (this.parameters.aborted = true);
+    }
+    else {
+      this.parameters = { aborted: false, duration: this.counter, period: this.interval }
+      this.counterSubject.next(this.parameters);
+    }
   }
 
   ngOnDestroy() {
