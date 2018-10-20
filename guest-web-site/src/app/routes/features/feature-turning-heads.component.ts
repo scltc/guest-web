@@ -15,17 +15,20 @@ export class FeatureTurningHeadsComponent implements OnInit {
 
   public waitTime: number = 0;
   public playTime: number = 0;
+  public playSound: boolean = false;
 
   public pageOpened(page: string) {
     if (page == 'waiting') {
-      this.waitTime = 15;
+      this.waitTime = 60;
     }
     else if (page == 'playing') {
-      this.playTime = 20;
+      this.playTime = 10;
+      this.playSound = true;
     }
   }
 
   public pageClosed(page: string) {
+    this.playSound = false;
     if (page == 'waiting') {
       this.waitTime = 0;
     }
@@ -35,7 +38,7 @@ export class FeatureTurningHeadsComponent implements OnInit {
   }
 
   public show(message: string) {
-    this.snackBar.open(message, null, { duration: 2000, panelClass: 'center', verticalPosition: 'top' });
+    this.snackBar.open(message, null, { duration: 3000, panelClass: 'center-snackbar', verticalPosition: 'bottom' });
   }
 
   setHeadsDirection(direction: number) {

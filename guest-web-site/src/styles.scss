@@ -47,6 +47,14 @@ h1, h2, h3, h4 {
   user-select: none;
 }
 
+.center-snackbar {
+  margin-bottom: 30px !important;
+}
+
+.center-snackbar > .mat-simple-snackbar {
+  justify-content: center;
+}
+
 /* Prevent super and subscripts from messing up line height. */
 sup,
 sub {

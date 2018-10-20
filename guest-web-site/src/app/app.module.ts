@@ -20,7 +20,7 @@ import {
   MatSelectModule,
   MatSidenavModule,
   MatSnackBarModule,
-  MatToolbarModule,
+  MatToolbarModule
 } from '@angular/material';
 
 //import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -37,8 +37,10 @@ import { AppComponent } from './app.component';
 // Application routing
 import { AppRoutingModule } from './app-routing.module';
 import { AppInitializeService } from './app-initialize.service';
+import { AppOverlayContainer } from './app-overlay-container';
 
 import { ControllerModule } from './core/controller/controller.module';
+import { OverlayContainer } from '@angular/cdk/overlay';
 //import { ControllerPortComponent } from 'shared/controller-port';
 //import { TimePeriodComponent } from 'shared/time-period';
 
@@ -76,6 +78,10 @@ import { ControllerModule } from './core/controller/controller.module';
   providers: [
     AppInitializeService,
     { provide: APP_INITIALIZER, useFactory: AppInitializeService.init_app, deps: [AppInitializeService], multi: true },
+    // feat(SnackBar): allow to define a container in which to render the snackbar
+    // https://github.com/angular/material2/issues/7764
+    // https://material.angular.io/cdk/overlay/overview
+    // { provide: OverlayContainer, useFactory: (): AppOverlayContainer => new AppOverlayContainer() }
     // { provide: APP_BASE_HREF, useValue: '/settings' } // AppRoutingModule.Routes[0] }
     // { provide: APP_BASE_HREF, useFactory: AppInitializeService.init_app, deps: [AppInitializeService], useValue: "/", multi: true },
 

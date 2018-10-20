@@ -14,17 +14,20 @@ export class FeatureCatchAndThrowComponent implements OnInit {
 
   public waitTime: number = 0;
   public playTime: number = 0;
+  public playSound: boolean = false;
 
   public pageOpened(page: string) {
     if (page == 'waiting') {
-      this.waitTime = 20;
+      this.waitTime = 60;
     }
     else if (page == 'playing') {
       this.playTime = 30;
+      this.playSound = true;
     }
   }
 
   public pageClosed(page: string) {
+    this.playSound = false;
     if (page == "waiting") {
       this.waitTime = 0;
     }

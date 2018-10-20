@@ -28,6 +28,9 @@
     </div>
 
     <div app-expansion-panel-page="playing">
+        <audio autoplay *ngIf="playSound">
+            <source type="audio/mpeg" src="../../../assets/Cow_Moo-Mike_Koenig-42670858.mp3" />
+        </audio>
         <p class="feature-heading-centered">
             Our cows are now under your control! Your turn ends in:
         </p>
