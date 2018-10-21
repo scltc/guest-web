@@ -52,6 +52,10 @@
 //   CSS3 Rotate Animation
 //   https://stackoverflow.com/questions/16771225/css3-rotate-animation
 
+.animate > .animate-blink {
+  animation: animate-blink 1.5s linear infinite;
+}
+
 .animate > .animate-blink-one {
   animation: animate-blink 1.5s linear infinite;
 }

@@ -1,7 +1,7 @@
 <button mat-stroked-button (click)="direction = direction * -1">
     <span class="direction-button-control" [class.animate]="running" [class.animate-forward]="running && direction &gt; 0" [class.animate-reverse]="running && direction &lt; 0">
-        <mat-icon [inline]="true" class="action-state animate-blink-one">{{arrow}}</mat-icon>
+        <mat-icon [inline]="true" class="action-state animate-blink">{{arrow}}</mat-icon>
         <mat-icon [inline]="true" class="action-icon animate-spin" [style.transform]="transform">{{icon}}</mat-icon>
-        <mat-icon [inline]="true" class="action-state animate-blink-two">{{arrow}}</mat-icon>
+        <mat-icon [inline]="true" class="action-state animate-blink">{{arrow}}</mat-icon>
     </span>
 </button>
