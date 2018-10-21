@@ -50,7 +50,6 @@ import {
     FeatureCatchAndThrowComponent,
     FeaturePickATrainComponent,
     FeatureTurningHeadsComponent,
-    FeatureTurningHeadsButtonComponent,
     FeaturesComponent,
     TurnQueueComponent
 } from './features';
@@ -179,7 +178,6 @@ export const appRoutes: Routes = [
         FeatureCatchAndThrowComponent,
         FeaturePickATrainComponent,
         FeatureTurningHeadsComponent,
-        FeatureTurningHeadsButtonComponent,
         ScheduleComponent,
         SettingsComponent,
         TroubleshootingComponent,
