@@ -7,7 +7,11 @@ import com.brickintellect.ev3dev.LegoPortFactory;
 public class HeadTurner {
 
     public static class Settings {
+
+        public boolean enabled = true;
+
         public String controller = null;
+        
         public String port = "D";
         public int leftDutyCycle = -33;
         public int rightDutyCycle = +33;

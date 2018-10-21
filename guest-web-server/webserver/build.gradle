@@ -18,8 +18,6 @@ dependencies {
 	compile project(':nanohttpd-webserver')
   compile project(':nanohttpd-websocket')
 
-  compile project(":railroad")
-
   compile 'com.github.briandilley.jsonrpc4j:jsonrpc4j:1.5.3'
   // compile 'javax.portlet:portlet-api:3.0.1'
   // compile 'javax.servlet:javax.servlet-api:4.0.1'

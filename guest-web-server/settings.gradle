@@ -20,9 +20,6 @@ project(':nanohttpd-nanolets').projectDir = "$rootDir/../nanohttpd-2.3.2/nanolet
 // include ':nanohttpd-apache-fileupload'
 // project(':nanohttpd-apache-fileupload').projectDir = "$rootDir/../nanohttpd-2.3.2/fileupload" as File
 
-include ':railroad'
-project(':railroad').projectDir = "$rootDir/railroad" as File
-
 include ':webserver'
 project(':webserver').projectDir = "$rootDir/webserver" as File
 

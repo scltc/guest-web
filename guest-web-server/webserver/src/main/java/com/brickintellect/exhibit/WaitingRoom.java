@@ -6,6 +6,12 @@ public class WaitingRoom {
 
     public static class Settings {
 
+        int timeToPlay = 5 * 60 * 1000;
+
+    }
+
+    public static class QueueEntry {
+        
     }
 
     private Settings settings;

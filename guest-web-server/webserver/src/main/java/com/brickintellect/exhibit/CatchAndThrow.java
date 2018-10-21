@@ -8,6 +8,8 @@ public class CatchAndThrow implements Runnable {
 
         public boolean enabled = true;
 
+        public String controller = null;
+
         public String westPort = "A";
         public int westMinIdle = 1000 * 20;
         public int westMaxIdle = 1000 * 60;
