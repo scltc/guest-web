@@ -8,19 +8,83 @@
     text-align: center;
     // align-items: center;
     width: 8em;
-  }
+}
   
-  .action-button mat-icon {
+.action-button mat-icon {
     vertical-align: middle;
     text-align: center;
     font-size: 1.5em;
     line-height: 1.2em;
-  }
+}
   
-  .action-button-negative mat-icon {
-    color: red;
-  }
+.action-button-negative mat-icon {
+  color: red;
+}
   
-  .action-button-positive mat-icon {
-    color: green;
+.action-button-positive mat-icon {
+  color: green;
+}
+
+.direction-button-control {
+  bottom: -.10em;
+  font-size: 4em;
+  line-height: .75em;
+  position: relative;
+}
+
+.direction-button-control mat-icon {
+  font-weight: bold;
+}
+
+.direction-button-control .action-icon {
+  color: green;
+}
+
+.direction-button-control .action-state {
+  color: grey;
+}
+
+// Animation concepts from:
+//
+//   How to make blinking/flashing text with CSS 3?
+//   https://stackoverflow.com/questions/16344354/how-to-make-blinking-flashing-text-with-css-3
+//
+//   CSS3 Rotate Animation
+//   https://stackoverflow.com/questions/16771225/css3-rotate-animation
+
+.animate > .animate-blink-one {
+  animation: animate-blink 1.5s linear infinite;
+}
+
+.animate > .animate-blink-two {
+  animation: animate-blink 1.5s linear infinite;
+  animation-delay: 0.750s;
+}
+
+@keyframes animate-blink {
+  50% {
+    opacity: 0;
   }
+}
+
+.animate.animate-forward > .animate-spin {
+  animation: animate-spin-forward 5s linear infinite;
+  color: grey;
+}
+
+@keyframes animate-spin-forward {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.animate.animate-reverse > .animate-spin {
+  animation: animate-spin-reverse 5s linear infinite;
+  color: grey;
+}
+
+@keyframes animate-spin-reverse {
+  100% {
+    transform: rotate(-360deg);
+  }
+}

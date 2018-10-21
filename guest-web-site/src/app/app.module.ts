@@ -1,48 +1,35 @@
-import { NgModule, APP_INITIALIZER } from '@angular/core';
-import { Route, Router } from "@angular/router";
-import { APP_BASE_HREF } from '@angular/common';
-
-import { BrowserModule } from '@angular/platform-browser';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { FlexLayoutModule } from '@angular/flex-layout';
 import {
-  FormsModule,
-  ReactiveFormsModule
-} from '@angular/forms';
-import { HttpModule } from '@angular/http';
+  APP_INITIALIZER,
+  NgModule
+} from '@angular/core';
+import {
+  BrowserModule
+} from '@angular/platform-browser';
+import {
+  FlexLayoutModule
+} from '@angular/flex-layout';
 import {
   MatButtonModule,
-  MatCardModule,
-  MatIconModule,
-  MatInputModule,
   MatListModule,
-  MatMenuModule,
-  MatSelectModule,
   MatSidenavModule,
-  MatSnackBarModule,
   MatToolbarModule
 } from '@angular/material';
+import {
+  BrowserAnimationsModule
+} from '@angular/platform-browser/animations';
 
-//import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-//import { library } from '@fortawesome/fontawesome-svg-core';
-//import { faBars } from '@fortawesome/free-solid-svg-icons';
-
-// Add an icon to the library for convenient access in other components
-//library.add(faBars);
+// import { APP_BASE_HREF } from '@angular/common';
+// import { OverlayContainer } from '@angular/cdk/overlay';
 
 // Application root
 import { AppComponent } from './app.component';
-//import { AppInitializeModule } from './app-initialize.module';
 
 // Application routing
-import { AppRoutingModule } from './app-routing.module';
+import { AppRoutingModule } from './routes/routing.module';
 import { AppInitializeService } from './app-initialize.service';
-import { AppOverlayContainer } from './app-overlay-container';
 
+// Application controller communication services
 import { ControllerModule } from './core/controller/controller.module';
-import { OverlayContainer } from '@angular/cdk/overlay';
-//import { ControllerPortComponent } from 'shared/controller-port';
-//import { TimePeriodComponent } from 'shared/time-period';
 
 @NgModule({
   declarations: [
@@ -51,27 +38,20 @@ import { OverlayContainer } from '@angular/cdk/overlay';
     // TimePeriodComponent
   ],
   imports: [
- //   AppInitializeModule,
+    // AppInitializeModule,
+    // AppInitializeService,
     BrowserAnimationsModule,
     BrowserModule,
-    FormsModule,
-    ReactiveFormsModule,
     FlexLayoutModule,
-//    FontAwesomeModule,
-    HttpModule,
     MatButtonModule,
-    MatCardModule,
-    MatIconModule,
-    MatInputModule,
     MatListModule,
-    MatMenuModule,
-    MatSelectModule,
     MatSidenavModule,
-    MatSnackBarModule,
     MatToolbarModule,
+
     // If we are running on 'localhost', we are debugging. Use the web socket server from there too.
     ControllerModule.forRoot(/* (window.location.hostname.toLowerCase() === 'localhost') ? 'ws://localhost' : */ 'wss://home.scltc.club'), //'ws://localhost'),
-//  ControllerModule.forRoot({ url: 'ws://192.168.2.201', reconnectAttempts: -1 }),
+    //  ControllerModule.forRoot({ url: 'ws://192.168.2.201', reconnectAttempts: -1 }),
+
     // This must be last or some of the imports above may fail!
     AppRoutingModule,
   ],

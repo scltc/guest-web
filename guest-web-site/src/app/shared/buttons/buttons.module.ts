@@ -4,6 +4,7 @@ import { MatIconModule } from '@angular/material/icon';
 
 import { ButtonLetsDoThisComponent } from './button-lets-do-this.component';
 import { ButtonNoThanksComponent } from './button-no-thanks.component';
+import { ButtonDirectionComponent } from './button-direction.component';
 
 @NgModule({
     imports: [
@@ -13,11 +14,13 @@ import { ButtonNoThanksComponent } from './button-no-thanks.component';
     exports: [
         ButtonLetsDoThisComponent,
         ButtonNoThanksComponent,
+        ButtonDirectionComponent,
         MatIconModule
     ],
     declarations: [
         ButtonLetsDoThisComponent,
-        ButtonNoThanksComponent
+        ButtonNoThanksComponent,
+        ButtonDirectionComponent
     ],
 })
 export class ButtonsModule {

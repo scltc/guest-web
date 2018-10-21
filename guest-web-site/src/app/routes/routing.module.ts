@@ -1,30 +1,48 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
-import { ReactiveFormsModule } from '@angular/forms';
-import { Routes, RouterModule } from '@angular/router';
-
 import {
+    FlexLayoutModule
+  } from '@angular/flex-layout';
+  import {
+    FormsModule,
+    ReactiveFormsModule
+  } from '@angular/forms';
+  import {
+    HttpModule
+  } from '@angular/http';
+  import {
     MatButtonModule,
+    MatCardModule,
     MatCheckboxModule,
     MatExpansionModule,
     MatFormFieldControl,
     MatFormFieldModule,
-    MatInputModule,
-    MatCardModule,
     MatIconModule,
+    MatInputModule,
     MatListModule,
     MatMenuModule,
     MatSelectModule,
     MatSidenavModule,
-    MatToolbarModule,
-} from '@angular/material';
+    MatSnackBarModule,
+    MatToolbarModule
+  } from '@angular/material';
+import { Route, Router } from "@angular/router";
+import { Routes, RouterModule } from '@angular/router';
 
-import { AppInitializeService } from './app-initialize.service';
+import { AppInitializeService } from '../app-initialize.service';
+import { AppModule } from '../app.module'
 
-import { AwayComponent } from './routes/away/away.component';
-import { HomeComponent } from './routes/home/home.component';
+import { ButtonsModule } from 'shared/buttons/buttons.module';
+import { ControllerPortComponent } from 'shared/controller-port';
+import {
+    FlipClockComponent,
+    FlipClockDigitComponent,
+    TimerDirective
+} from 'shared/flip-clock';
+import { TimePeriodComponent } from 'shared/time-period';
 
+import { AwayComponent } from './away/away.component';
+import { HomeComponent } from './home/home.component';
 import {
     ExpansionPanelConcealerDirective,
     ExpansionPanelPageDirective,
@@ -34,25 +52,13 @@ import {
     FeatureTurningHeadsComponent,
     FeatureTurningHeadsButtonComponent,
     FeaturesComponent,
-} from './routes/features';
+    TurnQueueComponent
+} from './features';
+import { ScheduleComponent } from './schedule/schedule.component';
+import { SettingsComponent } from './settings/settings.component';
+import { TroubleshootingComponent } from './troubleshooting/troubleshooting.component';
 
-import { ScheduleComponent } from './routes/schedule/schedule.component';
-import { SettingsComponent } from './routes/settings/settings.component';
-import { TroubleshootingComponent } from './routes/troubleshooting/troubleshooting.component';
-
-import { ControllerPortComponent } from 'shared/controller-port';
-
-
-import { ButtonsModule } from './shared/buttons/buttons.module';
-import {
-    FlipClockComponent,
-    FlipClockDigitComponent,
-    TimerDirective
-} from 'shared/flip-clock';
-import { TimePeriodComponent } from 'shared/time-period';
-import { TurnQueueComponent } from './routes/features/turn-queue.component';
-
-// Must use only exported functions in the routing table!
+// Must use only exported functions (no lambdas) in the routing table!
 
 export function isInitialRouteAway(): boolean {
     return AppInitializeService.isInitialRouteAway();
@@ -132,6 +138,15 @@ export const appRoutes: Routes = [
 @NgModule({
     imports: [
         CommonModule,
+        ButtonsModule,
+        //   AppInitializeModule,
+        // AppInitializeService,
+
+        FormsModule,
+        ReactiveFormsModule,
+        // FlexLayoutModule,
+        //    FontAwesomeModule,
+        HttpModule,
         MatButtonModule,
         MatCardModule,
         MatCheckboxModule,
@@ -139,10 +154,14 @@ export const appRoutes: Routes = [
         MatFormFieldModule,
         MatIconModule,
         MatInputModule,
-        // AppInitializeService,
+        // MatListModule,
+        MatMenuModule,
+        MatSelectModule,
+        MatSidenavModule,
+        MatSnackBarModule,
+        // MatToolbarModule,
         ReactiveFormsModule,
-        RouterModule.forRoot(appRoutes, { useHash: true }),
-        ButtonsModule
+        RouterModule.forRoot(appRoutes, { useHash: true })
     ],
     exports: [
         ButtonsModule,

@@ -5,7 +5,7 @@ import { ControllerService } from 'core';
 @Component({
   selector: 'app-feature-catch-and-throw',
   templateUrl: './feature-catch-and-throw.component.html',
-  styleUrls: ['./features.scss']
+  styleUrls: ['../features.scss']
 })
 export class FeatureCatchAndThrowComponent implements OnInit {
 
@@ -16,13 +16,35 @@ export class FeatureCatchAndThrowComponent implements OnInit {
   public playTime: number = 0;
   public playSound: boolean = false;
 
+  private currentDirection: number =  +1;
+  
+  public get direction(): number {
+    return this.currentDirection;
+  }
+
+  private count: number = 0;
+
+  public set direction(direction: number) {
+    console.log("turn!");
+    if (direction != this.currentDirection) {
+      this.currentDirection = direction;
+      this.count = (this.count + 1) % 4;
+      this.controller.setHeadsDirection(0, this.currentDirection);
+    }
+  }
+
+  public get running(): boolean {
+    console.log('running: ' + (this.currentDirection != +1) + ', currentDirection: ' + this.currentDirection);
+    return this.count > 1;
+  }
+
   public pageOpened(page: string) {
     if (page == 'waiting') {
-      this.waitTime = 60;
+      this.waitTime = 2;
     }
     else if (page == 'playing') {
-      this.playTime = 30;
-      this.playSound = true;
+      this.playTime = 120;
+      // this.playSound = true;
     }
   }
 

@@ -1,4 +1,4 @@
-<button mat-stroked-button (click)="onHeadDirectionToggle()">
+<button mat-stroked-button (click)="this.direction = this.direction * -1">
     <span class="feature-control">
         <mat-icon [inline]="true" style="color: lightgrey;">{{westArrowIcon}}</mat-icon>
         <mat-icon [inline]="true" [style.transform]="transform" class="circle-icon">swap_horiz</mat-icon>

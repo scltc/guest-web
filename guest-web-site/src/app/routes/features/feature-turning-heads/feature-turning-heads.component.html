@@ -36,7 +36,7 @@
         </p>
         <flip-clock [countdown-timer]="playTime" #playTimer="countdownTimer" [timer]="playTimer.value" (complete)="show('Thanks for playing!'); cowPager.close();"></flip-clock>
         <div class="actions action-one-centered">
-            <app-feature-turning-heads-button></app-feature-turning-heads-button>
+            <app-button-direction [(direction)]="direction"></app-button-direction>
         </div>
     </div>
 

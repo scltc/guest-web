@@ -5,7 +5,7 @@ import { filter, map } from 'rxjs/operators'
 
 // import { ControllerService } from "core";
 
-import { AppRoutingModule } from './app-routing.module';
+import { AppRoutingModule } from './routes/routing.module';
 import { AppInitializeService } from './app-initialize.service';
 
 @Component({

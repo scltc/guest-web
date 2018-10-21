@@ -6,7 +6,7 @@ import { ControllerService } from 'core';
 @Component({
   selector: 'app-feature-turning-heads',
   templateUrl: './feature-turning-heads.component.html',
-  styleUrls: ['./features.scss']
+  styleUrls: ['../features.scss']
 })
 export class FeatureTurningHeadsComponent implements OnInit {
 
@@ -19,10 +19,10 @@ export class FeatureTurningHeadsComponent implements OnInit {
 
   public pageOpened(page: string) {
     if (page == 'waiting') {
-      this.waitTime = 60;
+      this.waitTime = 10;
     }
     else if (page == 'playing') {
-      this.playTime = 10;
+      this.playTime = 20;
       this.playSound = true;
     }
   }
@@ -41,8 +41,18 @@ export class FeatureTurningHeadsComponent implements OnInit {
     this.snackBar.open(message, null, { duration: 3000, panelClass: 'center-snackbar', verticalPosition: 'bottom' });
   }
 
-  setHeadsDirection(direction: number) {
-    this.controller.setHeadsDirection(0, direction);
+  currentDirection: number =  +1;
+
+  public get direction(): number {
+    return this.currentDirection;
+  }
+
+  public set direction(direction: number) {
+    console.log("turn!");
+    if (direction != this.currentDirection) {
+      this.currentDirection = direction;
+      this.controller.setHeadsDirection(0, this.currentDirection);
+    }
   }
 
   ngOnInit() {

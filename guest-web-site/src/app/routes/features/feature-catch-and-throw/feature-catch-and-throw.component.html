@@ -31,13 +31,7 @@
         </p>
         <flip-clock [countdown-timer]="playTime" #playTimer="countdownTimer" [timer]="playTimer.value" (complete)="pager.close()"></flip-clock>
         <div class="actions action-one-centered">
-            <span class="feature-control" style="font-size: 42pt; vertical-align: middle;">
-                <mat-icon [inline]="true" [style.color]="westArrowColor" style="vertical-align: middle">arrow_back</mat-icon>
-                <button mat-fab (click)="onCatchAndThrowGo()" style="vertical-align: middle; font-size: 42pt;">
-                    <mat-icon [inline]="true" style="padding-bottom: 6px;">swap_horiz</mat-icon>
-                </button>
-                <mat-icon [inline]="true" [style.color]="eastArrowColor" style="vertical-align: middle">arrow_forward</mat-icon>
-            </span>
+            <app-button-direction [(direction)]="direction" [running]="running"></app-button-direction>
         </div>
         <audio autoplay *ngIf="playSound">
             <source type="audio/mpeg" src="../../../assets/Train Whistle-SoundBible.com-458982136.mp3" />
