@@ -16,17 +16,17 @@ import { Observable, Observer, Subject, Subscriber, Subscription, interval } fro
 import { distinctUntilChanged, filter, map, share, take, takeWhile } from 'rxjs/operators';
 import { WebSocketSubject, WebSocketSubjectConfig, webSocket } from 'rxjs/websocket';
 
+export interface JsonRpcError {
+    code: number;
+    message: string;
+    data?: any;
+}
+
 export interface JsonRpcRequest {
     jsonrpc: string;
     method: string;
     params?: any;
     id?: number;
-}
-
-export interface JsonRpcError {
-    code: number;
-    message: string;
-    data?: any;
 }
 
 export interface JsonRpcResponse {
@@ -39,8 +39,21 @@ export interface JsonRpcResponse {
 }
 
 export type JsonRpcMessage
-    = JsonRpcRequest
+    = JsonRpcError
+    | JsonRpcRequest
     | JsonRpcResponse;
+
+export function isJsonRpcError(message: JsonRpcError | JsonRpcRequest | JsonRpcResponse): message is JsonRpcError {
+    return (message as JsonRpcError).code !== undefined;
+}
+
+export function isJsonRpcRequest(message: JsonRpcError | JsonRpcRequest | JsonRpcResponse): message is JsonRpcRequest {
+    return (message as JsonRpcRequest).method !== undefined;
+}
+
+export function isJsonRpcResponse(message: JsonRpcError | JsonRpcRequest | JsonRpcResponse): message is JsonRpcResponse {
+    return (message as JsonRpcError).code === undefined && (message as JsonRpcRequest).method === undefined;
+}
 
 export interface JsonRpcWebSocketConfiguration {
     url: string;
@@ -75,7 +88,7 @@ export class JsonRpcWebSocket {
         }
     }
 
-    private incoming$: Subject<JsonRpcResponse>
+    private incoming$: Subject<JsonRpcMessage>
         = new Subject<JsonRpcResponse>();
     private outgoing$: Subject<JsonRpcRequest>
         = new Subject<JsonRpcRequest>();
@@ -96,8 +109,16 @@ export class JsonRpcWebSocket {
 
         this.websocket$.subscribe(
             (message) => {
-                this.logMessage('receive', message);
-                this.incoming$.next(message);
+                if (isJsonRpcRequest(message)) {
+                    this.logMessage('request', message);
+                }
+                else if (isJsonRpcResponse(message)) {
+                    this.logMessage('response', message);
+                    this.incoming$.next(message);
+                }
+                else {
+                    this.logMessage('error, ', message);
+                }
             },
             (error: Event) => {
                 this.logError('WebSocket error!', error);
@@ -174,47 +195,47 @@ export class JsonRpcWebSocket {
         this.connect();
     }
 
-    private id : number = 0;
-/*
-    public call<TResponse, TRequest>(method: string, parameters: TRequest): Observable<TResponse> {
+    private id: number = 0;
+    /*
+        public call<TResponse, TRequest>(method: string, parameters: TRequest): Observable<TResponse> {
+            return Observable.create((observer: Observer<TResponse>) => {
+                let id = ++this.id;
+                const result = this.incoming$
+                    .pipe(
+                        filter(response => response.id === id && response.result),
+                        take(1),
+                        map(response => response.result))
+                    .pipe(
+                        filter(response => response.id === id && response.error),
+                        take(1),
+                        map(response => response.error)
+                    )
+                    .subscribe(observer);
+                this.websocket$.next({
+                    jsonrpc: '2.0',
+                    method: method,
+                    params: parameters,
+                    id: id
+                });
+                return result;
+            })
+        }
+    */
+    public call<TResponse>(method: string, parameters?: any): Observable<TResponse> {
         return Observable.create((observer: Observer<TResponse>) => {
             let id = ++this.id;
             const result = this.incoming$
                 .pipe(
-                    filter(response => response.id === id && response.result),
+                    filter(response => isJsonRpcResponse(response) && response.id === id),
                     take(1),
-                    map(response => response.result))
-                .pipe(
-                    filter(response => response.id === id && response.error),
-                    take(1),
-                    map(response => response.error)
-                )
-                .subscribe(observer);
-            this.websocket$.next({
-                jsonrpc: '2.0',
-                method: method,
-                params: parameters,
-                id: id
-            });
-            return result;
-        })
-    }
-*/
-    public call<TResponse>(method : string, parameters? : any): Observable<TResponse> {
-        return Observable.create((observer: Observer<TResponse>) => {
-            let id = ++this.id;
-            const result = this.incoming$
-                .pipe(
-                    filter(response => response.id === id),
-                    take(1),
-                    map(response => response.result))
-                    /*
-                .pipe(
-                    filter(response => response.id === id && response.error),
-                    take(1),
-                    map(response => response.error)
-                )
-                */
+                    map(response => (response as JsonRpcResponse).result))
+                /*
+            .pipe(
+                filter(response => response.id === id && response.error),
+                take(1),
+                map(response => response.error)
+            )
+            */
                 .subscribe(observer);
             this.websocket$.next({
                 jsonrpc: '2.0',

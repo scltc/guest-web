@@ -19,6 +19,7 @@ dependencies {
   compile project(':nanohttpd-websocket')
 
   compile 'com.github.briandilley.jsonrpc4j:jsonrpc4j:1.5.3'
+  compile 'com.github.mob41:ev3dev-lang-java:master-SNAPSHOT'
   // compile 'javax.portlet:portlet-api:3.0.1'
   // compile 'javax.servlet:javax.servlet-api:4.0.1'
 
