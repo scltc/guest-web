@@ -177,6 +177,14 @@ export class JsonRpcWebSocket {
                     this.connectedSubscriber.next(true);
                 }
             },
+            deserializer: (event: MessageEvent) => {
+                console.log('endpoint: ' + event.data.substring(0, event.data.indexOf(':')));
+                return JSON.parse(event.data.substring(event.data.indexOf(':') + 1));
+            },
+            serializer: (value: any) => {
+                return '1:' + JSON.stringify(value);
+            }
+
         };
 
         this.reconnectionAttempts = configuration.reconnectionAttempts || 10; // number of connection attempts
