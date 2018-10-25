@@ -1,0 +1,7 @@
+remotes {
+  webServer {
+    host = '192.168.2.201'
+    user = 'robot'
+    password = 'maker'
+  }
+}
