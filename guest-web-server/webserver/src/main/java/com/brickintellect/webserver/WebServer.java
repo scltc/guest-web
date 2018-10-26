@@ -222,6 +222,7 @@ public class WebServer extends NanoWSD implements IHandler<IHTTPSession, Respons
 
         int setHeadsDirection(@JsonRpcParam(value = "index") int index,
                 @JsonRpcParam(value = "direction") int direction);
+
         int runCatchAndThrow(@JsonRpcParam(value = "index") int index);
     }
 
@@ -260,13 +261,15 @@ public class WebServer extends NanoWSD implements IHandler<IHTTPSession, Respons
         }
     }
 
-    final Exhibit exhibit = new Exhibit();
+    final Exhibit exhibit;
     final HttpHandler router = new HttpHandler();
     final WebSocketSessionFactory webSocketSessionFactory;
 
     public WebServer(String host, int port) {
         super(host, port);
         System.out.println("WebServer()");
+        // We can provide only basic functionality when running on Windows.
+        exhibit = (System.getProperty("os.name").toLowerCase().startsWith("windows")) ? null : new Exhibit();
         webSocketSessionFactory = new WebSocketSessionFactory();
     }
 
