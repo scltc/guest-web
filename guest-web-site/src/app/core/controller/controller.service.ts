@@ -8,7 +8,7 @@ import { Observable, Observer, Subject, Subscriber, Subscription, interval } fro
 import { distinctUntilChanged, filter, map, share, takeWhile, tap } from 'rxjs/operators';
 import { WebSocketSubject, WebSocketSubjectConfig, webSocket } from 'rxjs/websocket';
 
-import { JsonRpcWebSocket, JsonRpcWebSocketConfiguration } from './json-rpc-websocket';
+import { JsonRpcWebSocket } from './json-rpc-websocket';
 
 export class CatchAndThrowSettings {
     public westMinIdle: number = 0;
@@ -87,7 +87,6 @@ export class ControllerService extends JsonRpcWebSocket implements OnDestroy {
     constructor(@Inject('string') private url: string) {
         super({
             url: url,
-            reconnectionAttempts: -1,
             closeObserver: {
                 next: (event: CloseEvent) => {
                     this.logError('WebSocket disconnected.', event);

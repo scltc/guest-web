@@ -21,8 +21,7 @@ export class AppComponent {
   showBackground = false;
   footerContent = "";
 
-  constructor(
-    private router: Router) {
+  constructor(private router: Router) {
     console.log("AppComponent.constructor()");
 
     router.navigateByUrl(AppInitializeService.initialRoute);
@@ -33,11 +32,11 @@ export class AppComponent {
       // console.log(typeof(route.data.showMain));
     }
 
-    return route.data && route.data.showMain && ((typeof(route.data.showMain) === 'function') ? route.data.showMain() : route.data.showMain);
+    return route.data && route.data.showMain && ((typeof (route.data.showMain) === 'function') ? route.data.showMain() : route.data.showMain);
   }
 
   public showSide(route: Route): boolean {
-    return route.data && route.data.showSide && ((typeof(route.data.showSide) === 'function') ? route.data.showSide() : route.data.showSide)
+    return route.data && route.data.showSide && ((typeof (route.data.showSide) === 'function') ? route.data.showSide() : route.data.showSide)
   }
 
   @HostListener('window:blur')
@@ -61,8 +60,8 @@ export class AppComponent {
 
         this.footerContent
           = (this.showBackground)
-          ? 'LEGO<sup>®</sup> is a trademark of the LEGO Group which does not sponsor, authorize, or endorse SCLTC nor this site.'
-          : '&#169; 2018 - Southern California LEGO Train Club';
+            ? 'LEGO<sup>®</sup> is a trademark of the LEGO Group which does not sponsor, authorize, or endorse SCLTC nor this site.'
+            : '&#169; 2018 - Southern California LEGO Train Club';
       });
   }
 }

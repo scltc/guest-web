@@ -20,10 +20,15 @@ export class AppInitializeService {
     ) {
     }
 
-    initialize(): Promise<any> {
+    initialize(): Subject<boolean> {
         console.log('initialize() {');
 
-        this.connectWaiter = this.controller.connected$.pipe(auditTime(1000 * 2), takeWhile(connected => connected)).subscribe(connected => {
+        // Show our "initializing" page for two seconds, even when connected
+        // because it looks cool!
+        this.connectWaiter = this.controller.connected$.pipe(
+            auditTime(1000 * 2),
+            takeWhile(connected => connected)
+        ).subscribe(connected => {
             console.log('initialize() : status=' + connected);
 
             AppInitializeService.initialRoute = '/home';
@@ -31,6 +36,10 @@ export class AppInitializeService {
             this.initializeDone.complete();
         })
 
+        // Wait up to ten seconds for a connection.  The EV3 takes some time
+        // to initialize the first time after power-up and this is likely
+        // not long enough that one time but longer is annoying when really
+        // not connected.
         this.timeoutWaiter = timer(1000 * 10).subscribe(n => {
             console.log('initialize() : interval elapsed.');
 
@@ -39,18 +48,16 @@ export class AppInitializeService {
             this.initializeDone.complete();
         });
 
-        this.initializeDone.subscribe(() => {}, () => {}, () => {
+        this.initializeDone.subscribe({ complete: () => {
             console.log('initialize() : initializeDone');
 
             this.connectWaiter.unsubscribe();
             this.timeoutWaiter.unsubscribe();
-            //this.initializeDone.unsubscribe();
-        })
-
+        }});
 
         console.log('initialize() }');
 
-        return this.initializeDone.toPromise();
+        return this.initializeDone;
     }
 
     public static isInitialRouteAway() {
@@ -62,6 +69,6 @@ export class AppInitializeService {
     }
 
     public static init_app(appLoadService: AppInitializeService) {
-        return () => appLoadService.initialize();
+        return () => appLoadService.initialize().toPromise();
     }
 }

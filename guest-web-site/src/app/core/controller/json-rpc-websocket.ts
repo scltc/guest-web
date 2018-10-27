@@ -18,11 +18,20 @@ References:
   https://stackoverflow.com/questions/44911251/how-to-create-an-rxjs-retrywhen-with-delay-and-limit-on-tries
 */
 
-import { Observable, Observer, Subject, Subscriber, Subscription, iif, of, throwError } from 'rxjs';
-import { concatMap, delay, distinctUntilChanged, filter, map, retryWhen, share, take, tap } from 'rxjs/operators';
-import { WebSocketSubject, WebSocketSubjectConfig, webSocket } from 'rxjs/websocket';
+import { Observable, Observer, Subject, Subscription } from 'rxjs';
+import { filter, map, take } from 'rxjs/operators';
+import { WebSocketSubject, WebSocketSubjectConfig } from 'rxjs/websocket';
 
-import { ReconnectingWebSocket, ReconnectingWebSocketConfiguration } from "./reconnecting-websocket";
+import { retryAfterDelay } from './retryAfterDelay.operator';
+
+export class MultiEndpointMessage {
+    constructor(public endpoint: number, public payload: string) { }
+}
+
+export interface JsonRpcChannel {
+    send(message:string): void;
+    incoming: Observable<string>;
+}
 
 export interface JsonRpcError {
     code: number;
@@ -63,31 +72,66 @@ export function isJsonRpcResponse(message: JsonRpcError | JsonRpcRequest | JsonR
     return (message as JsonRpcError).code === undefined && (message as JsonRpcRequest).method === undefined;
 }
 
-export interface JsonRpcWebSocketConfiguration extends ReconnectingWebSocketConfiguration<JsonRpcMessage> {
-}
+export class JsonRpcWebSocket {
 
-export class JsonRpcWebSocket extends ReconnectingWebSocket<JsonRpcMessage>{
+    public logMessage(message: any, data?: any) {
+        if (data) {
+            console.log(message, JSON.stringify(data));
+        }
+        else {
+            console.log(message);
+        }
+    }
 
+    protected logError(message: any, data?: any) {
+        if (data) {
+            console.error(message, JSON.stringify(data));
+        }
+        else {
+            console.error(message);
+        }
+    }
+
+
+    private webSocketSubject: WebSocketSubject<MultiEndpointMessage>;
+
+    private endpoint:number = 1;
     private incoming$: Subject<JsonRpcMessage>
         = new Subject<JsonRpcResponse>();
+    private webSocketSubscription: Subscription;
 
-    private websocketSubscription: Subscription;
 
-    constructor(configuration: JsonRpcWebSocketConfiguration) {
-        super({
+    constructor(configuration: WebSocketSubjectConfig<MultiEndpointMessage>) {
+
+        let config = {
             ...configuration,
             deserializer: (event: MessageEvent) => {
-                console.log('endpoint: ' + event.data.substring(0, event.data.indexOf(':')));
-                return JSON.parse(event.data.substring(event.data.indexOf(':') + 1));
+                // console.log('response: ' + event.data);
+                return new MultiEndpointMessage(parseInt(event.data.substring(0, event.data.indexOf(':'))),
+                    event.data.substring(event.data.indexOf(':') + 1));
             },
-            serializer: (value: any) => {
-                return '1:' + JSON.stringify(value);
+            serializer: (message: MultiEndpointMessage) => {
+                let serialized = message.endpoint + ':' + message.payload;
+                // console.log('request: ' + serialized);
+                return serialized;
             }
-        });
+        };
+
+        this.webSocketSubject = new WebSocketSubject<MultiEndpointMessage>(config);
 
         // Attempt the connection!
-//        this.websocketSubscription = this.websocketObservable.subscribe(
-        this.websocketSubscription = this.websocket$.subscribe(
+        //        this.websocketSubscription = this.websocketObservable.subscribe(
+        this.webSocketSubscription = this.webSocketSubject.multiplex(
+            () => new MultiEndpointMessage(this.endpoint, '{"jsonrpc":"2.0","method":"connect"}'),
+            () => new MultiEndpointMessage(this.endpoint, '{"jsonrpc":"2.0","method":"disconnect"}'),
+            (message) => {
+                // console.log('endpoint: ' + message.endpoint);
+                return message.endpoint == this.endpoint;
+            }
+        ).pipe(
+            retryAfterDelay(5 * 1000, -1),
+            map(message => message.payload)
+        ).subscribe(
             (message) => {
                 if (isJsonRpcRequest(message)) {
                     this.logMessage('request', message);
@@ -107,6 +151,10 @@ export class JsonRpcWebSocket extends ReconnectingWebSocket<JsonRpcMessage>{
                 this.logMessage('WebSocket complete.');
             }
         );
+    }
+
+    private send<TRequest>(request: TRequest): void {
+        this.webSocketSubject.next(new MultiEndpointMessage(this.endpoint, JSON.stringify(request)));
     }
 
     private id: number = 0;
@@ -151,7 +199,7 @@ export class JsonRpcWebSocket extends ReconnectingWebSocket<JsonRpcMessage>{
             )
             */
                 .subscribe(observer);
-            this.websocket$.next({
+            this.send({
                 jsonrpc: '2.0',
                 method: method,
                 params: parameters,
