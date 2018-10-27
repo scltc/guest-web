@@ -18,8 +18,8 @@ References:
   https://stackoverflow.com/questions/44911251/how-to-create-an-rxjs-retrywhen-with-delay-and-limit-on-tries
 */
 
-import { Observable, Observer, Subject, Subscriber, Subscription, interval, timer } from 'rxjs';
-import { distinctUntilChanged, filter, map, mergeMap, retryWhen, share, take, takeWhile } from 'rxjs/operators';
+import { Observable, Observer, Subject, Subscriber, Subscription, iif, of, throwError } from 'rxjs';
+import { concatMap, delay, distinctUntilChanged, filter, map, retryWhen, share, take, tap } from 'rxjs/operators';
 import { WebSocketSubject, WebSocketSubjectConfig, webSocket } from 'rxjs/websocket';
 
 export interface JsonRpcError {
@@ -39,8 +39,8 @@ export interface JsonRpcResponse {
     jsonrpc: string;
     result?: any;
     error?: JsonRpcError;
-    // 'id' isn't really optional, but must be marked that way to create
-    // the 'JsonRpcMessage' union below.
+    // 'id' isn't really optional here but must match the JsonRpcRequest's
+    // specification to create the 'JsonRpcMessage' union below.
     id?: number;
 }
 
@@ -70,9 +70,10 @@ export interface JsonRpcWebSocketConfiguration {
 
 export class JsonRpcWebSocket {
 
-    private websocket$: WebSocketSubject<JsonRpcMessage>
-        = null;
-    private websocketconfiguration: WebSocketSubjectConfig<any>
+    private websocket$: WebSocketSubject<JsonRpcMessage> = null;
+    private websocketConfiguration: WebSocketSubjectConfig<any>;
+    private websocketObservable: Observable<JsonRpcMessage>;
+    private websocketSubscription: Subscription;
     private reconnectionAttempts: number;
     private reconnectionInterval: number;
 
@@ -96,39 +97,39 @@ export class JsonRpcWebSocket {
 
     private incoming$: Subject<JsonRpcMessage>
         = new Subject<JsonRpcResponse>();
-    private messages$: Subscription
-        = new Subscription;
-    private outgoing$: Subject<JsonRpcRequest>
-        = new Subject<JsonRpcRequest>();
 
     private connectedSubscriber: Subscriber<boolean>;
-    private connectedSubscription: Subscription;
-    private reconnector$: Observable<number>;
 
     public isConnected: boolean = false;
 
     // The connection status observable (true=connected, false=disconnectd).
     public connected$: Observable<boolean> = new Observable<boolean>((subscriber) => {
         this.connectedSubscriber = subscriber;
-    }).pipe(share(), distinctUntilChanged());
+    }).pipe(
+        share(),
+        distinctUntilChanged(),
+        tap(state => this.isConnected = state)
+    );
 
     private connect() {
-        this.websocket$ = webSocket<JsonRpcMessage>(this.websocketconfiguration)
 
-        this.messages$ = this.websocket$.pipe(
-            retryWhen(errors => errors.pipe(mergeMap(error => {
-                console.log('retryWhen: ' + JSON.stringify(error));
-                return timer(5 * 1000);
-            }))) /* ,
-            map(msg => {
-                console.log('msg: ' + JSON.stringify(msg));
-                return msg;
-            }) */
-        ).subscribe(message => {
-            console.log('message: ' + JSON.stringify(message));
-        });
+        this.websocket$ = webSocket<JsonRpcMessage>(this.websocketConfiguration);
 
-        this.websocket$.subscribe(
+        this.websocketObservable = this.websocket$.pipe(
+            retryWhen(errors => {
+                this.logError('retryWhen');
+                return errors.pipe(
+                    concatMap((error, index) =>
+                        iif(() => this.reconnectionAttempts > 0 && index >= this.reconnectionAttempts,
+                            throwError(error),
+                            of(error).pipe(delay(this.reconnectionInterval))
+                        )
+                    )
+                )
+            })
+        );
+        
+        this.websocketSubscription = this.websocketObservable.subscribe(
             (message) => {
                 if (isJsonRpcRequest(message)) {
                     this.logMessage('request', message);
@@ -143,10 +144,6 @@ export class JsonRpcWebSocket {
             },
             (error: Event) => {
                 this.logError('WebSocket error!', error);
-                /* if (!this.websocket$) */ {
-                    // run reconnect if errors
-                    // this.reconnect();
-                }
             },
             () => {
                 this.logMessage('WebSocket complete.');
@@ -154,73 +151,30 @@ export class JsonRpcWebSocket {
         );
     }
 
-    private reconnect(): void {
-        this.reconnector$ = interval(this.reconnectionInterval)
-            .pipe(
-                takeWhile((v, index) => (this.reconnectionAttempts < 0 || index < this.reconnectionAttempts) && !this.websocket$)
-            );
-
-        this.reconnector$.subscribe(
-            () => {
-                this.logMessage('Reconnect attempt. reconectAtempts: ' + this.reconnectionAttempts)
-                this.connect();
-            },
-            null,
-            () => {
-                this.logError('reconnect failed.');
-                // Subject complete if reconnect attempts ending
-                this.reconnector$ = null;
-
-                if (!this.websocket$) {
-                    // this.wsMessages$.complete();
-                    // this.connection$.complete();
-                }
-            }
-        );
-    }
-
     constructor(configuration: JsonRpcWebSocketConfiguration) {
 
         // Create the WebSocketSubject configuration.
-        this.websocketconfiguration = {
+        this.websocketConfiguration = {
             url: configuration.url,
             closeObserver: {
                 next: (event: CloseEvent) => {
-                    this.logMessage('WebSocket.closeObserver()', event);
-                    // this.websocket$ = null;
+                    this.logError('WebSocket disconnected.', event);
                     this.connectedSubscriber.next(false);
                 }
             },
             openObserver: {
                 next: (event: Event) => {
-                    this.logMessage('WebSocket.openObserver()', event);
                     this.logMessage('WebSocket connected!');
                     this.connectedSubscriber.next(true);
                 }
             },
-            deserializer: (event: MessageEvent) => {
-                console.log('endpoint: ' + event.data.substring(0, event.data.indexOf(':')));
-                return JSON.parse(event.data.substring(event.data.indexOf(':') + 1));
-            },
-            serializer: (value: any) => {
-                return '1:' + JSON.stringify(value);
-            }
-
         };
 
+        // Store away the reconnection parameters.
         this.reconnectionAttempts = configuration.reconnectionAttempts || 10; // number of connection attempts
         this.reconnectionInterval = configuration.reconnectionInterval || 5000; // pause between connections
 
-        // run reconnect if not connection
-        this.connectedSubscription = this.connected$.subscribe((isConnected) => {
-
-            this.isConnected = isConnected;
-
-            if (!this.reconnector$ && !isConnected) {
-                // this.reconnect();
-            }
-        });
-
+        // Attempt the connection!
         this.connect();
     }
 

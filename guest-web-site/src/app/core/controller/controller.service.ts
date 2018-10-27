@@ -4,11 +4,11 @@
 
 import { Injectable, OnDestroy, Inject } from '@angular/core';
 
-import { Observable, Observer, Subject, Subscription, interval } from 'rxjs';
-import { distinctUntilChanged, filter, map, share, takeWhile } from 'rxjs/operators';
+import { Observable, Observer, Subject, Subscriber, Subscription, interval } from 'rxjs';
+import { distinctUntilChanged, filter, map, share, takeWhile, tap } from 'rxjs/operators';
 import { WebSocketSubject, WebSocketSubjectConfig, webSocket } from 'rxjs/websocket';
 
-import { JsonRpcWebSocket, JsonRpcWebSocketConfiguration } from '../json-rpc/JsonRpcWebSocket';
+import { JsonRpcWebSocket, JsonRpcWebSocketConfiguration } from './json-rpc-websocket';
 
 export class CatchAndThrowSettings {
     public westMinIdle: number = 0;
@@ -21,8 +21,8 @@ export class CatchAndThrowSettings {
 }
 
 export class HeadTurnerSettings {
-    public controller : string = null;
-    public port : string = null;
+    public controller: string = null;
+    public port: string = null;
     public leftDutyCycle: number = 0;
     public rightDutyCycle: number = 0;
     public motorRunTime: number = 0;
@@ -46,7 +46,7 @@ export class ControllerService extends JsonRpcWebSocket implements OnDestroy {
     public status: Observable<boolean>;
 
     public processSettings(settings: ControllerSettings) {
-        super.logMessage(settings);
+        super.logMessage('settings: ', settings);
     }
 
     public getControllerSettings(): void {
@@ -61,18 +61,46 @@ export class ControllerService extends JsonRpcWebSocket implements OnDestroy {
 
     public getHeadsDirection(index: number) {
         this.call<number>("getHeadsDirection", { index: index }).subscribe(this.logMessage);
-    } 
+    }
 
     public setHeadsDirection(index: number, direction: number) {
         this.call<number>("setHeadsDirection", { index: index, direction: direction }).subscribe(this.logMessage);
     }
 
-    public runCatchAndThrow(index : number) {
+    public runCatchAndThrow(index: number) {
         this.call<number>("runCatchAndThrow", { index: index }).subscribe(this.logMessage);
     }
 
+    private connectedSubscriber: Subscriber<boolean>;
+
+    public isConnected: boolean = false;
+
+    // The connection status observable (true=connected, false=disconnectd).
+    public connected$: Observable<boolean> = new Observable<boolean>((subscriber) => {
+        this.connectedSubscriber = subscriber;
+    }).pipe(
+        share(),
+        distinctUntilChanged(),
+        tap(state => this.isConnected = state)
+    );
+
     constructor(@Inject('string') private url: string) {
-        super({ url: url, reconnectionAttempts: -1 });
+        super({
+            url: url,
+            reconnectionAttempts: -1,
+            closeObserver: {
+                next: (event: CloseEvent) => {
+                    this.logError('WebSocket disconnected.', event);
+                    this.connectedSubscriber.next(false);
+                }
+            },
+            openObserver: {
+                next: (event: Event) => {
+                    this.logMessage('WebSocket connected!');
+                    this.connectedSubscriber.next(true);
+                }
+            }
+        });
 
         this.logMessage('WebSocket.constructor(' + url + ')');
 
@@ -87,6 +115,7 @@ export class ControllerService extends JsonRpcWebSocket implements OnDestroy {
         });
 
         this.pingerSubscription = this.pinger.subscribe(x => {
+            this.logMessage('pinger', this.isConnected);
             if (this.isConnected) {
                 this.call<string>('ping', { value: x })
                     .subscribe((message) => this.logMessage('ping received', message));
