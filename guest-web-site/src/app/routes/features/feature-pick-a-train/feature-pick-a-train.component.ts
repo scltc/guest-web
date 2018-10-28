@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import { ControllerService } from 'core';
+import { ControllerSocketService } from 'core';
 
 @Component({
   selector: 'app-feature-pick-a-train',
@@ -9,7 +9,7 @@ import { ControllerService } from 'core';
 })
 export class FeaturePickATrainComponent implements OnInit {
 
-  constructor(private controller : ControllerService) {
+  constructor(private controller : ControllerSocketService) {
   }
 
   ngOnInit() {

@@ -3,9 +3,11 @@ import { Injectable } from '@angular/core';
 import { Subject, Subscription, timer } from 'rxjs';
 import { auditTime, takeWhile } from 'rxjs/operators';
 
-import { ControllerService } from "core";
+import { ControllerStatusService } from "core";
 
-@Injectable()
+@Injectable({
+    providedIn: 'root'
+})
 export class AppInitializeService {
 
     public static initialRoute = '/';
@@ -15,9 +17,7 @@ export class AppInitializeService {
     private timeoutWaiter: Subscription;
     private connectWaiter: Subscription;
 
-    constructor(
-        private controller: ControllerService,
-    ) {
+    constructor(private status: ControllerStatusService) {
     }
 
     initialize(): Subject<boolean> {
@@ -25,7 +25,7 @@ export class AppInitializeService {
 
         // Show our "initializing" page for two seconds, even when connected
         // because it looks cool!
-        this.connectWaiter = this.controller.connected$.pipe(
+        this.connectWaiter = this.status.connected$.pipe(
             auditTime(1000 * 2),
             takeWhile(connected => connected)
         ).subscribe(connected => {

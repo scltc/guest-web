@@ -57,7 +57,6 @@ import { ControllerModule } from './core/controller/controller.module';
     AppRoutingModule,
   ],
   providers: [
-    AppInitializeService,
     { provide: APP_INITIALIZER, useFactory: AppInitializeService.init_app, deps: [AppInitializeService], multi: true },
     // feat(SnackBar): allow to define a container in which to render the snackbar
     // https://github.com/angular/material2/issues/7764

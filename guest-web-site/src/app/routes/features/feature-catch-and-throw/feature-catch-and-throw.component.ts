@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import { ControllerService } from 'core';
+import { FeatureCatchAndThrowService } from './feature-catch-and-throw.service';
 
 @Component({
   selector: 'app-feature-catch-and-throw',
@@ -9,7 +9,7 @@ import { ControllerService } from 'core';
 })
 export class FeatureCatchAndThrowComponent implements OnInit {
 
-  constructor(private controller : ControllerService) {
+  constructor(private controller : FeatureCatchAndThrowService) {
   }
 
   public waitTime: number = 0;
@@ -29,7 +29,7 @@ export class FeatureCatchAndThrowComponent implements OnInit {
     if (direction != this.currentDirection) {
       this.currentDirection = direction;
       this.count = (this.count + 1) % 4;
-      this.controller.setHeadsDirection(0, this.currentDirection);
+      this.controller.runCatchAndThrow(direction);
     }
   }
 
@@ -56,12 +56,6 @@ export class FeatureCatchAndThrowComponent implements OnInit {
     else if (page == 'playing') {
       this.playTime = 0;
     }
-  }
-
-  onCatchAndThrowGo() {
-    console.log('go');
-
-    this.controller.runCatchAndThrow(0);
   }
 
   ngOnInit() {

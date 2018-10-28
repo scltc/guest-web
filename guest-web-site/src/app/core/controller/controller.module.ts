@@ -1,23 +1,22 @@
 import { ModuleWithProviders, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { ControllerService } from './controller.service';
+import { ControllerSocketService } from './controller-socket.service';
 
 @NgModule({
   imports: [
     CommonModule,
-    // ControllerService
   ],
   declarations: [],
   providers: [
-    ControllerService
+    ControllerSocketService
   ]
 })
 export class ControllerModule {
   public static forRoot(url: string): ModuleWithProviders {
     return {
       ngModule: ControllerModule,
-      providers: [ ControllerService, { provide: 'string', useValue: url } ]
+      providers: [ControllerSocketService, { provide: 'string', useValue: url }]
     };
   }
 }

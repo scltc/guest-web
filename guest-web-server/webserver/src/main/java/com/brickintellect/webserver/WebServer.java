@@ -212,7 +212,7 @@ public class WebServer extends NanoWSD implements IHandler<IHTTPSession, Respons
     }
 
     public interface IWebSocketService {
-        String ping(@JsonRpcParam(value = "value") int value);
+        int ping(@JsonRpcParam(value = "value") int value) throws Exception;
 
         Settings getSettings();
 
@@ -234,10 +234,13 @@ public class WebServer extends NanoWSD implements IHandler<IHTTPSession, Respons
             this.exhibit = exhibit;
         }
 
-        public String ping(int value) {
+        public int ping(int value) throws Exception{
             String result = "ping received: " + value;
+            if (value % 10 == 0) {
+                throw new Exception("ping # " + value + " failed.");
+            }
             System.out.println(result);
-            return result;
+            return value;
         }
 
         public Settings getSettings() {

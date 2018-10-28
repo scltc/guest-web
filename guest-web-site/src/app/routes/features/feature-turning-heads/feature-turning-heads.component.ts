@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material';
 
-import { ControllerService } from 'core';
+import { FeatureTurningHeadsService } from './feature-turning-heads.service';
 
 @Component({
   selector: 'app-feature-turning-heads',
@@ -10,7 +10,7 @@ import { ControllerService } from 'core';
 })
 export class FeatureTurningHeadsComponent implements OnInit {
 
-  constructor(private controller: ControllerService, public snackBar: MatSnackBar) {
+  constructor(private controller: FeatureTurningHeadsService, public snackBar: MatSnackBar) {
   }
 
   public waitTime: number = 0;
