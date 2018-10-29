@@ -24,18 +24,21 @@ import java.util.Map.Entry;
 import com.googlecode.jsonrpc4j.IJsonRpcClient;
 import com.googlecode.jsonrpc4j.JsonRpcClient;
 
+import org.nanohttpd.protocols.websockets.WebSocket;
+
 import static com.googlecode.jsonrpc4j.JsonRpcBasicServer.ACCEPT_ENCODING;
 import static com.googlecode.jsonrpc4j.JsonRpcBasicServer.CONTENT_ENCODING;
 import static com.googlecode.jsonrpc4j.JsonRpcBasicServer.JSONRPC_CONTENT_TYPE;
 
 /**
- * A JSON-RPC client that uses the HTTP protocol.
+ * A wrapper around com.googlecode.jsonrpc4j.JsonRpcClient to allow its use with
+ * WebSockets instead of the HTTP protocol.
  */
 @SuppressWarnings("unused")
-public class WebSocketJsonRpcClient extends JsonRpcClient implements IJsonRpcClient {
+public class WebSocketJsonRpcClient extends JsonRpcClient implements IJsonRpcClient, WebSocketSession.IEndpoint {
 
-	private int connectionTimeoutMillis = 60 * 1000;
-	private int readTimeoutMillis = 60 * 1000 * 2;
+	private WebSocketSession session;
+	private int endpoint;
 
 	/**
 	 * Creates the {@link JsonRpcHttpClient} bound to the given {@code serviceUrl}.
@@ -45,8 +48,11 @@ public class WebSocketJsonRpcClient extends JsonRpcClient implements IJsonRpcCli
 	 * @param mapper the {@link ObjectMapper} to use for json&lt;-&gt;java
 	 *               conversion
 	 */
-	public WebSocketJsonRpcClient(ObjectMapper mapper) {
+	public WebSocketJsonRpcClient(WebSocketSession session, int endpoint, ObjectMapper mapper) {
 		super(mapper);
+
+		this.session = session;
+		this.endpoint = endpoint;
 	}
 
 	/**
@@ -72,37 +78,25 @@ public class WebSocketJsonRpcClient extends JsonRpcClient implements IJsonRpcCli
 	public Object invoke(String methodName, Object argument, Type returnType, Map<String, String> extraHeaders)
 			throws Throwable {
 
-		HttpURLConnection connection = prepareConnection();
-
-		try {
-			connection.connect();
-			try (OutputStream send = connection.getOutputStream()) {
-				super.invoke(methodName, argument, send);
-			}
-
-			// read and return value
-			try {
-				try (InputStream answer = connection.getInputStream()) {
-					return super.readResponse(returnType, answer);
-				}
-			} catch (JsonMappingException e) {
-				// JsonMappingException inherits from IOException
-				throw e;
-			} catch (IOException e) {
-				if (connection.getErrorStream() == null) {
-					throw new Exception("Caught error with no response body.", e);
-				}
-
-				try (InputStream answer = connection.getErrorStream()) {
-					return super.readResponse(returnType, answer);
-				} catch (IOException ef) {
-					throw new Exception(readErrorString(connection), ef);
-				}
-			}
-		} finally {
-			connection.disconnect();
+		// Send the request.
+		try (OutputStream output = new WebSocketOutputStream(session, endpoint)) {
+			super.invoke(methodName, argument, output);
 		}
 
+		return null;
+/*
+		// Read and return response.
+		try {
+			try (InputStream output = session.GetInputStream(endpoint)) {
+				return super.readResponse(returnType, output);
+			}
+		} catch (JsonMappingException e) {
+			// JsonMappingException inherits from IOException
+			throw e;
+		} catch (IOException e) {
+			throw e;
+		}
+		*/
 	}
 
 	/**
@@ -124,70 +118,11 @@ public class WebSocketJsonRpcClient extends JsonRpcClient implements IJsonRpcCli
 		return (T) invoke(methodName, argument, Type.class.cast(clazz), extraHeaders);
 	}
 
-	/**
-	 * Prepares a connection to the server.
-	 *
-	 * @param extraHeaders extra headers to add to the request
-	 * @return the unopened connection
-	 * @throws IOException
-	 */
-	private HttpURLConnection prepareConnection() throws IOException {
-
-		// create URLConnection
-		HttpURLConnection connection = null;
-
-		// connection.setConnectTimeout(connectionTimeoutMillis);
-		// connection.setReadTimeout(readTimeoutMillis);
-		// connection.setAllowUserInteraction(false);
-		// connection.setDefaultUseCaches(false);
-		// connection.setDoInput(true);
-		// connection.setDoOutput(true);
-		// connection.setUseCaches(false);
-		// connection.setInstanceFollowRedirects(true);
-		// connection.setRequestMethod("POST");
-
-		return connection;
+	public int endpointNumber() {
+		return 2;
 	}
 
-	private static String readErrorString(final HttpURLConnection connection) {
-		try (InputStream stream = connection.getErrorStream()) {
-			StringBuilder buffer = new StringBuilder();
-			try (BufferedReader reader = new BufferedReader(new InputStreamReader(stream, "UTF-8"))) {
-				for (int ch = reader.read(); ch >= 0; ch = reader.read()) {
-					buffer.append((char) ch);
-				}
-			}
-			return buffer.toString();
-		} catch (IOException e) {
-			return e.getMessage();
-		}
-	}
+	public void onMessage(WebSocketInputStream input) {
 
-	/**
-	 * @return the connectionTimeoutMillis
-	 */
-	public int getConnectionTimeoutMillis() {
-		return connectionTimeoutMillis;
-	}
-
-	/**
-	 * @param connectionTimeoutMillis the connectionTimeoutMillis to set
-	 */
-	public void setConnectionTimeoutMillis(int connectionTimeoutMillis) {
-		this.connectionTimeoutMillis = connectionTimeoutMillis;
-	}
-
-	/**
-	 * @return the readTimeoutMillis
-	 */
-	public int getReadTimeoutMillis() {
-		return readTimeoutMillis;
-	}
-
-	/**
-	 * @param readTimeoutMillis the readTimeoutMillis to set
-	 */
-	public void setReadTimeoutMillis(int readTimeoutMillis) {
-		this.readTimeoutMillis = readTimeoutMillis;
 	}
 }

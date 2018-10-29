@@ -35,18 +35,18 @@ export interface JsonRpcError {
 
 export interface JsonRpcRequest {
     jsonrpc: string;
+    id?: number;
     method: string;
     params?: any;
-    id?: number;
 }
 
 export interface JsonRpcResponse {
     jsonrpc: string;
+    id?: number;
     result?: any;
     error?: JsonRpcError;
     // 'id' isn't really optional here but must match the JsonRpcRequest's
     // specification to create the 'JsonRpcMessage' union below.
-    id?: number;
 }
 
 export type JsonRpcMessage
@@ -71,9 +71,11 @@ export function isJsonRpcResponse(message: JsonRpcError | JsonRpcRequest | JsonR
 })
 export class JsonRpcService {
 
-    private endpoint: number = 1;
+    private serverEndpoint: number = 1;
+    private clientEndpoint: number = 2;
     private requestQueue: Subject<JsonRpcRequest>
         = new Subject<JsonRpcRequest>();
+    private requestSubscription: Subscription;
     private responseQueue: Subject<JsonRpcResponse>
         = new Subject<JsonRpcResponse>();
     private webSocketSubscription: Subscription;
@@ -81,11 +83,11 @@ export class JsonRpcService {
     constructor(private controller: ControllerSocketService, private logger: LoggerService) {
 
         this.webSocketSubscription = controller.webSocketSubject.multiplex(
-            () => new MultiEndpointMessage(this.endpoint, '{"jsonrpc":"2.0","method":"connect"}'),
-            () => new MultiEndpointMessage(this.endpoint, '{"jsonrpc":"2.0","method":"disconnect"}'),
+            () => new MultiEndpointMessage(this.serverEndpoint, '{"jsonrpc":"2.0","method":"connect"}'),
+            () => new MultiEndpointMessage(this.serverEndpoint, '{"jsonrpc":"2.0","method":"disconnect"}'),
             (message) => {
                 // console.log('endpoint: ' + message.endpoint);
-                return message.endpoint == this.endpoint;
+                return message.endpoint === this.serverEndpoint || message.endpoint === this.clientEndpoint;
             }
         ).pipe(
             retryAfterDelay(5 * 1000, -1),
@@ -94,6 +96,7 @@ export class JsonRpcService {
             (message) => {
                 if (isJsonRpcRequest(message)) {
                     this.logger.logMessage('request', message);
+                    this.requestQueue.next(message);
                 }
                 else if (isJsonRpcResponse(message)) {
                     // this.logger.logMessage('response', message);
@@ -110,38 +113,22 @@ export class JsonRpcService {
                 this.logger.logMessage('WebSocket complete.');
             }
         );
+
+        this.requestSubscription = this.requestQueue.subscribe(request => {
+            this.send(this.clientEndpoint, {
+                jsonrpc: '2.0',
+                id: request.id,
+                result: request.params
+            });
+        })
     }
 
-    private send<TRequest>(request: TRequest): void {
-        this.controller.webSocketSubject.next(new MultiEndpointMessage(this.endpoint, JSON.stringify(request)));
+    private send<TRequest>(endpoint: number, request: TRequest): void {
+        this.controller.webSocketSubject.next(new MultiEndpointMessage(endpoint, JSON.stringify(request)));
     }
 
     private id: number = 0;
-    /*
-        public call<TResponse, TRequest>(method: string, parameters: TRequest): Observable<TResponse> {
-            return Observable.create((observer: Observer<TResponse>) => {
-                let id = ++this.id;
-                const result = this.incoming$
-                    .pipe(
-                        filter(response => response.id === id && response.result),
-                        take(1),
-                        map(response => response.result))
-                    .pipe(
-                        filter(response => response.id === id && response.error),
-                        take(1),
-                        map(response => response.error)
-                    )
-                    .subscribe(observer);
-                this.websocket$.next({
-                    jsonrpc: '2.0',
-                    method: method,
-                    params: parameters,
-                    id: id
-                });
-                return result;
-            })
-        }
-    */
+
     public call<TResponse>(method: string, parameters?: any): Observable<TResponse> {
         return Observable.create((observer: Observer<TResponse>) => {
             let id = ++this.id;
@@ -152,11 +139,11 @@ export class JsonRpcService {
                         response.error ? throwError(response.error) : of(response.result))
                 )
                 .subscribe(observer);
-            this.send({
+            this.send(this.serverEndpoint, {
                 jsonrpc: '2.0',
+                id: id,
                 method: method,
-                params: parameters,
-                id: id
+                params: parameters
             });
             return result;
         });

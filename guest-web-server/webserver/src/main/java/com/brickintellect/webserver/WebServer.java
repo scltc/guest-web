@@ -25,6 +25,8 @@ import com.brickintellect.exhibit.LatchingRelay;
 import com.brickintellect.exhibit.TrackSwitch;
 import com.brickintellect.exhibit.HeadTurner;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 public class WebServer extends NanoWSD implements IHandler<IHTTPSession, Response> {
 
     private static CatchAndThrow trainRunner = null;
@@ -228,16 +230,30 @@ public class WebServer extends NanoWSD implements IHandler<IHTTPSession, Respons
 
     public class WebSocketService implements IWebSocketService {
 
+        private final WebSocketJsonRpcClient client;
         private final Exhibit exhibit;
 
-        public WebSocketService(Exhibit exhibit) {
+        public WebSocketService(final WebSocketJsonRpcClient client, final Exhibit exhibit) {
+            this.client = client;
             this.exhibit = exhibit;
         }
 
-        public int ping(int value) throws Exception{
+        public int sendPing(int value) {
+            try {
+                return client.invoke("ping", value, int.class);
+            }
+            catch (Throwable exception) {
+                System.out.println(exception.getMessage());
+                return -1;
+            }
+        }
+
+        public int ping(int value) throws Exception {
             String result = "ping received: " + value;
             if (value % 10 == 0) {
+                sendPing(value);
                 throw new Exception("ping # " + value + " failed.");
+
             }
             System.out.println(result);
             return value;
@@ -266,14 +282,12 @@ public class WebServer extends NanoWSD implements IHandler<IHTTPSession, Respons
 
     final Exhibit exhibit;
     final HttpHandler router = new HttpHandler();
-    final WebSocketSessionFactory webSocketSessionFactory;
 
     public WebServer(String host, int port) {
         super(host, port);
         System.out.println("WebServer()");
         // We can provide only basic functionality when running on Windows.
         exhibit = (System.getProperty("os.name").toLowerCase().startsWith("windows")) ? null : new Exhibit();
-        webSocketSessionFactory = new WebSocketSessionFactory();
     }
 
     public void start(File root) throws IOException {
@@ -308,11 +322,18 @@ public class WebServer extends NanoWSD implements IHandler<IHTTPSession, Respons
         // return router.process(session);
     }
 
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+
     @Override
     protected WebSocket openWebSocket(IHTTPSession session) {
         System.out.println("WebServer.openWebSocket()");
 
-        return webSocketSessionFactory.createSession(session, new WebSocketService(exhibit), IWebSocketService.class);
+        WebSocketSession webSocketSession = new WebSocketSession(session);
+        WebSocketJsonRpcClient client = new WebSocketJsonRpcClient(webSocketSession, 2, objectMapper);
+        webSocketSession.addEndpoint(new WebSocketJsonRpcServer(webSocketSession, 1, objectMapper, new WebSocketService(client, exhibit), IWebSocketService.class));
+        webSocketSession.addEndpoint(client);
+
+        return webSocketSession;
     }
 
     protected Response addCORSHeaders(Map<String, String> queryHeaders, Response resp, String cors) {

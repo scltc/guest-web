@@ -75,13 +75,13 @@ export class ControllerSocketService implements OnDestroy {
                 }
             },
             deserializer: (event: MessageEvent) => {
-                // console.log('response: ' + event.data);
+                console.log('received: ' + event.data);
                 return new MultiEndpointMessage(parseInt(event.data.substring(0, event.data.indexOf(':'))),
                     event.data.substring(event.data.indexOf(':') + 1));
             },
             serializer: (message: MultiEndpointMessage) => {
                 let serialized = message.endpoint + ':' + message.payload;
-                // console.log('request: ' + serialized);
+                console.log('sending: ' + serialized);
                 return serialized;
             }
         };

@@ -21,8 +21,8 @@ export class ControllerStatusService {
         return this.socket.connectedEvents;
     }
 
-    private ping(value: number = 0, callback: (reply: string) => void = null): void {
-        this.rpc.call<string>('ping', { value: value }).subscribe(message => {
+    private ping(value: number = 0, callback: (reply: number) => void = null): void {
+        this.rpc.call<number>('ping', { value: value }).subscribe(message => {
             console.log('ping call back');
             if (callback) callback(message);
         }, error => {
