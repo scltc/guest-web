@@ -19,9 +19,13 @@ public class WebSocketOutputStream extends ByteArrayOutputStream {
 
     @Override
     public void flush() throws IOException {
-        super.flush();
-        System.out.println(StandardCharsets.UTF_8.decode(ByteBuffer.wrap(toByteArray())).toString());
-        socket.send(this.toString(StandardCharsets.UTF_8.name()));
+        if (size() > 0) {
+            super.flush();
+            System.out.println(StandardCharsets.UTF_8.decode(ByteBuffer.wrap(toByteArray())).toString());
+            socket.send(this.toString(StandardCharsets.UTF_8.name()));
+
+            reset();
+        }
     }
 
     @Override
