@@ -73,7 +73,8 @@ export class JsonRpcService {
 
     private serverEndpoint: number = 1;
     private clientEndpoint: number = 2;
-    private requestQueue: Subject<JsonRpcRequest>
+
+    public requestQueue: Subject<JsonRpcRequest>
         = new Subject<JsonRpcRequest>();
     private requestSubscription: Subscription;
     private responseQueue: Subject<JsonRpcResponse>
@@ -113,7 +114,7 @@ export class JsonRpcService {
                 this.logger.logMessage('WebSocket complete.');
             }
         );
-
+/*
         this.requestSubscription = this.requestQueue.subscribe(request => {
             this.send(this.clientEndpoint, {
                 jsonrpc: '2.0',
@@ -121,10 +122,11 @@ export class JsonRpcService {
                 result: request.params
             });
         })
+        */
     }
 
-    private send<TRequest>(endpoint: number, request: TRequest): void {
-        this.controller.webSocketSubject.next(new MultiEndpointMessage(endpoint, JSON.stringify(request)));
+    private send<TMesssage>(endpoint: number, message: TMesssage): void {
+        this.controller.webSocketSubject.next(new MultiEndpointMessage(endpoint, JSON.stringify(message)));
     }
 
     private id: number = 0;
@@ -146,6 +148,15 @@ export class JsonRpcService {
                 params: parameters
             });
             return result;
+        });
+    }
+
+    public reply(request: JsonRpcRequest, response?: any)
+    {
+        this.send(this.clientEndpoint, {
+            jsonrpc: '2.0',
+            id: request.id,
+            result: request.params
         });
     }
 }
