@@ -1,4 +1,4 @@
-import { Injectable, OnDestroy, OnInit } from '@angular/core';
+import { EventEmitter, Injectable, OnDestroy, OnInit } from '@angular/core';
 
 import { Observable, Observer, Subject, Subscriber, Subscription, interval } from 'rxjs';
 import { distinctUntilChanged, filter, map, share, takeWhile, tap } from 'rxjs/operators';
@@ -17,7 +17,7 @@ export class ControllerStatusService {
     public isConnected: boolean = false;
 
     // The connection status observable (true=connected, false=disconnectd).
-    public get connected$() {
+    public get connected$(): EventEmitter<boolean> {
         return this.socket.connectedEvents;
     }
 
