@@ -61,7 +61,7 @@ export class AppComponent implements OnDestroy, OnInit {
 
     ngOnInit() {
 
-        // Change route (if required) after connection
+        // Change route (if required) after connection established or lost.
         this.controllerConnectedSubscription = this.controllerStatus.connected$.pipe(
             distinctUntilChanged()
         ).subscribe(connected => {
@@ -78,7 +78,10 @@ export class AppComponent implements OnDestroy, OnInit {
             else {
                 console.log('AppComponent: disconnected!');
                 if (!(this.controllerConnectedRoute && this.controllerConnectedRoute != '')) {
-                    this.bottomSheet.open(AppConnectionLostComponent);
+                    this.bottomSheet.open(AppConnectionLostComponent, {
+                        disableClose: true,
+                        panelClass: 'centered-sheet'
+                    });
                 }
             }
         });

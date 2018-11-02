@@ -40,6 +40,7 @@ export class ExpansionPanelPagerDirective implements AfterContentInit, AfterView
     public close() {
         this.display(null);
         this.panel.close();
+        // this.panel.toggle();
     }
 
     public display(page: string) {
