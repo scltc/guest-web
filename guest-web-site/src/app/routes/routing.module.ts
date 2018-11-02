@@ -26,7 +26,7 @@ import {
     MatSnackBarModule,
     MatToolbarModule
   } from '@angular/material';
-import { Route, Router } from "@angular/router";
+import { Route, Router } from '@angular/router';
 import { Routes, RouterModule } from '@angular/router';
 
 import { AppInitializeService } from '../app-initialize.service';
@@ -72,7 +72,8 @@ export const appRoutes: Routes = [
         path: 'away',
         component: AwayComponent,
         data: {
-            title: "Home",
+            title: 'Home',
+            routeWhenConnected: '/home',
             showBackground: true,
             showMain: isInitialRouteAway,
             showSide: isInitialRouteAway
@@ -82,7 +83,8 @@ export const appRoutes: Routes = [
         path: 'home',
         component: HomeComponent,
         data: {
-            title: "Home",
+            title: 'Home',
+            routeWhenConnected: null,
             showBackground: true,
             showMain: isInitialRouteHome,
             showSide: isInitialRouteHome
@@ -92,7 +94,8 @@ export const appRoutes: Routes = [
         path: 'features',
         component: FeaturesComponent,
         data: {
-            title: "Features",
+            title: 'Features',
+            routeWhenConnected: null,
             showBackground: false,
             showMain: true,
             showSide: true
@@ -102,7 +105,8 @@ export const appRoutes: Routes = [
         path: 'schedule',
         component: ScheduleComponent,
         data: {
-            title: "Schedule",
+            title: 'Schedule',
+            routeWhenConnected: null,
             showBackground: false,
             showMain: false,
             showSide: false
@@ -112,7 +116,8 @@ export const appRoutes: Routes = [
         path: 'settings',
         component: SettingsComponent,
         data: {
-            title: "Settings",
+            title: 'Settings',
+            routeWhenConnected: null,
             showBackground: false,
             showMain: true,
             showSide: true
@@ -122,7 +127,8 @@ export const appRoutes: Routes = [
         path: 'troubleshooting',
         component: TroubleshootingComponent,
         data: {
-            title: "Settings",
+            title: 'Connect',
+            routeWhenConnected: '/home',
             showBackground: false,
             showMain: false,
             showSide: false
