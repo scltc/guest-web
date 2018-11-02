@@ -34,6 +34,21 @@ export class ControllerSettings {
     public headTurner: HeadTurnerSettings[];
 }
 
+const PingingWebSocket = function(url: string, protocols?: string | string[]){
+    const self = new WebSocket(url,protocols);
+
+    const baseOnmessage = self.onmessage;
+
+    /* Add hooks here. */
+    return self;
+} as any;
+/*
+export class MyWebSocket extends WebSocket {
+    constructor(url:string, protocols?:string | string[]) {
+        super(url, protocols);
+    }
+}
+*/
 
 export class MultiEndpointMessage {
     constructor(public endpoint: number, public payload: string) { }
@@ -83,7 +98,8 @@ export class ControllerSocketService implements OnDestroy {
                 let serialized = message.endpoint + ':' + message.payload;
                 console.log('sending: ' + serialized);
                 return serialized;
-            }
+            },
+            WebSocketCtor: PingingWebSocket
         };
 
         this.webSocketSubject = new WebSocketSubject<MultiEndpointMessage>(configuration);

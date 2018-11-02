@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 
 import { Subscription } from 'rxjs';
 
@@ -7,7 +7,7 @@ import { JsonRpcService, LoggerService } from 'core';
 @Injectable({
     providedIn: 'root'
 })
-export class FeatureTurningHeadsService {
+export class FeatureTurningHeadsService implements OnDestroy {
 
     private requestSubscription: Subscription;
 
@@ -16,7 +16,7 @@ export class FeatureTurningHeadsService {
         this.requestSubscription = rpc.requestQueue.subscribe(request => {
 
             switch (request.method) {
-                case 'ping':
+                case 'pingx':
                     logger.logMessage("got ping!")
                     rpc.reply(request, request.params);
                     break;
@@ -34,5 +34,9 @@ export class FeatureTurningHeadsService {
 
     public setHeadsDirection(index: number, direction: number) {
         this.rpc.call<number>("setHeadsDirection", { index: index, direction: direction }).subscribe(this.logger.logMessage);
+    }
+
+    ngOnDestroy() {
+        this.requestSubscription.unsubscribe();
     }
 }
