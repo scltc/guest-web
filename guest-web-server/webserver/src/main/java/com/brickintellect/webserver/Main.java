@@ -32,9 +32,9 @@ public class Main {
     }
 
     /**
-     * Reads
+     * Reads the first line (of possibly many) from a text file.
      */
-    public static String readOneLine(File file) throws IOException {
+    public static String readFirstLine(File file) throws IOException {
         String result;
 
         if (file == null || !file.exists()) {
@@ -118,7 +118,7 @@ public class Main {
             WebServer server = new WebServer(host, port);
 
             // Create a HTTPS socket factory if key store specified.
-            SSLServerSocketFactory socketFactory = makeSSLSocketFactory(keyStoreFile, readOneLine(getFileWithNewExtension(keyStoreFile, ".password")));
+            SSLServerSocketFactory socketFactory = makeSSLSocketFactory(keyStoreFile, readFirstLine(getFileWithNewExtension(keyStoreFile, ".password")));
 
             if (socketFactory != null) {
                 server.makeSecure(socketFactory, null);

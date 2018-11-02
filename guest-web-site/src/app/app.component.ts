@@ -65,7 +65,21 @@ export class AppComponent implements OnDestroy, OnInit {
         this.controllerConnectedSubscription = this.controllerStatus.connected$.pipe(
             distinctUntilChanged()
         ).subscribe(connected => {
-            if (connected) {
+            // The controller connection status has changed.
+            if (!connected) {
+                // We are disconnected.  Display the page overly if configured
+                // for the curernt route.
+                console.log('AppComponent: disconnected!');
+                if (!(this.controllerConnectedRoute && this.controllerConnectedRoute != '')) {
+                    this.bottomSheet.open(AppConnectionLostComponent, {
+                        disableClose: true,
+                        panelClass: 'centered-sheet'
+                    });
+                }
+            }
+            else {
+                // We are now connected.  Depending upon the current route, we
+                // either remove the page overlay or route to a specific page.
                 console.log('AppComponent: connected!');
                 console.log('AppComponent: route=' + this.controllerConnectedRoute);
                 if (this.controllerConnectedRoute && this.controllerConnectedRoute != '') {
@@ -75,18 +89,9 @@ export class AppComponent implements OnDestroy, OnInit {
                     this.bottomSheet.dismiss();
                 }
             }
-            else {
-                console.log('AppComponent: disconnected!');
-                if (!(this.controllerConnectedRoute && this.controllerConnectedRoute != '')) {
-                    this.bottomSheet.open(AppConnectionLostComponent, {
-                        disableClose: true,
-                        panelClass: 'centered-sheet'
-                    });
-                }
-            }
         });
 
-        // Enable/disable background wallpaper as specified for route.
+        // Enable/disable background wallpaper as configured for current route.
         this.routerSubscription = this.router.events.pipe(
             filter(e => e instanceof RoutesRecognized),
             map(e => <RoutesRecognized>e)
