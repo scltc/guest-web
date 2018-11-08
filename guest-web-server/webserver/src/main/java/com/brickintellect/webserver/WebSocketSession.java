@@ -19,6 +19,7 @@ public class WebSocketSession extends WebSocket {
 
     public interface IEndpoint {
         int endpointNumber();
+
         void onMessage(WebSocketInputStream input);
     }
 
@@ -26,7 +27,7 @@ public class WebSocketSession extends WebSocket {
         super(session);
 
         // We use a "Client-Identifier" cookie (UUID) to uniquely identify
-        // each client.  Retrieve the identifier provided with this WebSocket
+        // each client. Retrieve the identifier provided with this WebSocket
         // connection or create a new one if none provided.
         CookieHandler cookies = session.getCookies();
         clientIdentifier = cookies.read("Client-Identifier");
@@ -34,15 +35,13 @@ public class WebSocketSession extends WebSocket {
             clientIdentifier = UUID.randomUUID().toString();
             System.out.println("Client identifier missing, created: " + clientIdentifier);
             cookies.set("Client-Identifier", clientIdentifier, 1);
-        }
-        else {
+        } else {
             System.out.println("Client identifier provided: " + clientIdentifier);
         }
         System.out.println("WebSocketSession()");
     }
 
-    public void addEndpoint(IEndpoint instance)
-    {
+    public void addEndpoint(IEndpoint instance) {
         int endpointNumber = instance.endpointNumber();
 
         while (endpoints.size() <= endpointNumber) {
@@ -51,7 +50,7 @@ public class WebSocketSession extends WebSocket {
 
         endpoints.set(instance.endpointNumber(), instance);
     }
-    
+
     @Override
     protected void onOpen() {
         System.out.println("WebSocketSession.OnOpen()");
@@ -90,10 +89,32 @@ public class WebSocketSession extends WebSocket {
         System.out.println("WebSocketSession.OnMessage() }");
     }
 
+    private int pingCount = 0;
+    private int pongCount = 0;
+
+    public void ping() throws IOException {
+
+        System.out.println("ping: " + pingCount + "/" + pongCount);
+
+        if (pingCount - pongCount > 3) {
+            throw new IOException("pong count, expected " + pingCount);
+        }
+
+        pingCount += 1;
+
+        super.ping(new byte[] { (byte) (pingCount >> 24), (byte) (pingCount >> 16), (byte) (pingCount >> 8),
+                (byte) (pingCount >> 0) });
+    }
+
     @Override
-    protected void onPong(WebSocketFrame pong) {
-        if (debug) {
-            System.out.println("P " + pong);
+    protected void onPong(WebSocketFrame frame) {
+        byte[] bytes = frame.getBinaryPayload();
+        if (bytes != null && bytes.length == 4) {
+            pongCount
+                = ((bytes[0] & 0xFF) << 24)
+                + ((bytes[1] & 0xFF) << 16)
+                + ((bytes[2] & 0xFF) << 8)
+                + ((bytes[3] & 0xFF) << 0);
         }
     }
 
