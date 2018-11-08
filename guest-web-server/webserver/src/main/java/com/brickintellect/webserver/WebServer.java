@@ -313,6 +313,12 @@ public class WebServer extends NanoWSD implements IHandler<IHTTPSession, Respons
         System.out.println("WebServer.start() }");
     }
 
+    @Override
+    public void stop() {
+        WebSocketSessionManager.stop();
+        super.stop();
+    }
+
     // @Override
     public Response xhandle(IHTTPSession session) {
         System.out.println("WebServer.handle()");

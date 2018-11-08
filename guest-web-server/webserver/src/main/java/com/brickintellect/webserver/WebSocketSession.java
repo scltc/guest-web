@@ -26,7 +26,7 @@ public class WebSocketSession extends WebSocket {
     public WebSocketSession(final IHTTPSession session) {
         super(session);
 
-        // We use a "Client-Identifier" cookie (UUID) to uniquely identify
+        // We use a "Client-Identifier" cookie (a UUID) to uniquely identify
         // each client. Retrieve the identifier provided with this WebSocket
         // connection or create a new one if none provided.
         CookieHandler cookies = session.getCookies();
@@ -49,6 +49,10 @@ public class WebSocketSession extends WebSocket {
         }
 
         endpoints.set(instance.endpointNumber(), instance);
+    }
+
+    @Override
+    protected void onException(IOException exception) {
     }
 
     @Override
@@ -89,6 +93,14 @@ public class WebSocketSession extends WebSocket {
         System.out.println("WebSocketSession.OnMessage() }");
     }
 
+    // Ping/pong support.
+    // The WebSocket connection will disconnect (due to a timeout) if
+    // not kept active.
+    // Issue a ping with a monotonically increasing integer payload and
+    // store the pong values.  Throw an exception in ping (because that
+    // returns to the "mainline thread" and is easily reported) if more
+    // than three pong replies are missed.
+
     private int pingCount = 0;
     private int pongCount = 0;
 
@@ -102,7 +114,7 @@ public class WebSocketSession extends WebSocket {
 
         pingCount += 1;
 
-        super.ping(new byte[] { (byte) (pingCount >> 24), (byte) (pingCount >> 16), (byte) (pingCount >> 8),
+        ping(new byte[] { (byte) (pingCount >> 24), (byte) (pingCount >> 16), (byte) (pingCount >> 8),
                 (byte) (pingCount >> 0) });
     }
 
@@ -110,15 +122,8 @@ public class WebSocketSession extends WebSocket {
     protected void onPong(WebSocketFrame frame) {
         byte[] bytes = frame.getBinaryPayload();
         if (bytes != null && bytes.length == 4) {
-            pongCount
-                = ((bytes[0] & 0xFF) << 24)
-                + ((bytes[1] & 0xFF) << 16)
-                + ((bytes[2] & 0xFF) << 8)
-                + ((bytes[3] & 0xFF) << 0);
+            pongCount = ((bytes[0] & 0xFF) << 24) + ((bytes[1] & 0xFF) << 16) + ((bytes[2] & 0xFF) << 8)
+                    + ((bytes[3] & 0xFF) << 0);
         }
-    }
-
-    @Override
-    protected void onException(IOException exception) {
     }
 }

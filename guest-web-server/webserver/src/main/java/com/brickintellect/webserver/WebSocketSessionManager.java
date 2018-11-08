@@ -1,5 +1,6 @@
 package com.brickintellect.webserver;
 
+import org.nanohttpd.protocols.websockets.CloseCode;
 import org.nanohttpd.protocols.http.IHTTPSession;
 
 import java.util.concurrent.Executors;
@@ -16,7 +17,7 @@ import java.util.List;
 class WebSocketSessionManager {
     // A list of currently connected sessions.
     private static final List<WebSocketSession> connections = new LinkedList<WebSocketSession>();
-    // Queue connection list additions and deletions list so lock stimes are minimized.
+    // Queue connection list additions and deletions list so lock times are minimized.
     private static final List<WebSocketSession> additions = new LinkedList<WebSocketSession>();
     private static final List<WebSocketSession> deletions = new LinkedList<WebSocketSession>();
 
@@ -39,6 +40,19 @@ class WebSocketSessionManager {
     }
 
     private static final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+
+    public static void stop() {
+        if (!scheduler.isShutdown()) {
+            scheduler.shutdown();
+
+            for (WebSocketSession session : connections) {
+                try {
+                    session.close(CloseCode.GoingAway, "Server shutdown.", false);
+                } catch (Exception ignored) {
+                }
+            }
+        }
+    }
 
     static {
         scheduler.scheduleAtFixedRate(() -> {
@@ -66,7 +80,7 @@ class WebSocketSessionManager {
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             System.out.println("pinger shutdown.");
-            scheduler.shutdown();
+            stop();
         }));
     }
 }
