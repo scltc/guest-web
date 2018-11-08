@@ -2,7 +2,9 @@ package com.brickintellect.webserver;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.UUID;
 
+import org.nanohttpd.protocols.http.content.CookieHandler;
 import org.nanohttpd.protocols.http.IHTTPSession;
 import org.nanohttpd.protocols.websockets.CloseCode;
 import org.nanohttpd.protocols.websockets.WebSocket;
@@ -11,6 +13,7 @@ import org.nanohttpd.protocols.websockets.WebSocketFrame;
 public class WebSocketSession extends WebSocket {
 
     private static final boolean debug = true;
+    private static String clientIdentifier = null;
 
     private ArrayList<IEndpoint> endpoints = new ArrayList<IEndpoint>();
 
@@ -21,6 +24,20 @@ public class WebSocketSession extends WebSocket {
 
     public WebSocketSession(final IHTTPSession session) {
         super(session);
+
+        // We use a "Client-Identifier" cookie (UUID) to uniquely identify
+        // each client.  Retrieve the identifier provided with this WebSocket
+        // connection or create a new one if none provided.
+        CookieHandler cookies = session.getCookies();
+        clientIdentifier = cookies.read("Client-Identifier");
+        if (clientIdentifier == null) {
+            clientIdentifier = UUID.randomUUID().toString();
+            System.out.println("Client identifier missing, created: " + clientIdentifier);
+            cookies.set("Client-Identifier", clientIdentifier, 1);
+        }
+        else {
+            System.out.println("Client identifier provided: " + clientIdentifier);
+        }
         System.out.println("WebSocketSession()");
     }
 
