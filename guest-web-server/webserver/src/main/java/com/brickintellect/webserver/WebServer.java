@@ -334,7 +334,7 @@ public class WebServer extends NanoWSD implements IHandler<IHTTPSession, Respons
     protected WebSocket openWebSocket(IHTTPSession session) {
         System.out.println("WebServer.openWebSocket()");
 
-        WebSocketSession webSocketSession = WebSocketSessionManager.CreateSession(session); //new WebSocketSession(session);
+        WebSocketSession webSocketSession = WebSocketSessionManager.createSession(session); //new WebSocketSession(session);
         WebSocketJsonRpcClient client = new WebSocketJsonRpcClient(webSocketSession, 2, objectMapper);
         webSocketSession.addEndpoint(new WebSocketJsonRpcServer(webSocketSession, 1, objectMapper, new WebSocketService(client, exhibit), IWebSocketService.class));
         webSocketSession.addEndpoint(client);

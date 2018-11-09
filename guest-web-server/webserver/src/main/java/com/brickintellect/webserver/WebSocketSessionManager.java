@@ -21,7 +21,7 @@ class WebSocketSessionManager {
     private static final List<WebSocketSession> additions = new LinkedList<WebSocketSession>();
     private static final List<WebSocketSession> deletions = new LinkedList<WebSocketSession>();
 
-    public static WebSocketSession CreateSession(IHTTPSession session) {
+    public static WebSocketSession createSession(IHTTPSession session) {
         WebSocketSession result = new WebSocketSession(session);
         synchronized (additions) {
             if (!additions.contains(result)) {
@@ -31,7 +31,7 @@ class WebSocketSessionManager {
         return result;
     }
 
-    public static void DeleteSession(WebSocketSession session) {
+    public static void deleteSession(WebSocketSession session) {
         synchronized (deletions) {
             if (!deletions.contains(session)) {
                 deletions.add(session);
@@ -73,7 +73,7 @@ class WebSocketSessionManager {
                     session.ping();
                 } catch (Exception e) {
                     System.out.println(e.getMessage());
-                    DeleteSession(session);
+                    deleteSession(session);
                 }
             }
         }, 5, 5, TimeUnit.SECONDS);
