@@ -9,10 +9,10 @@
         </p>
         <div class="actions">
             <div class="action-two-centered">
-                <app-button-lets-do-this (click)="cowPager.display('waiting')"></app-button-lets-do-this>
+                <app-button-lets-do-this (click)="reserve()"></app-button-lets-do-this>
             </div>
             <div class="action-two-centered">
-                <app-button-no-thanks (click)="cowPager.close()"></app-button-no-thanks>
+                <app-button-no-thanks (click)="abandon()"></app-button-no-thanks>
             </div>
         </div>
     </div>
@@ -23,7 +23,7 @@
         </p>
         <flip-clock [countdown-timer]="waitTime" #waitTimer="countdownTimer" [timer]="waitTimer.value" (complete)="show('Your turn has begun!'); cowPager.display('playing');"></flip-clock>
         <div class="actions action-one-centered">
-            <app-button-no-thanks (click)="cowPager.close()"></app-button-no-thanks>
+            <app-button-no-thanks (click)="abandon()"></app-button-no-thanks>
         </div>
     </div>
 

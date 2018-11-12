@@ -2,6 +2,7 @@ package com.brickintellect.exhibit;
 
 import org.ev3dev.hardware.motors.DCMotor;
 
+import com.brickintellect.ev3dev.HWInformation;
 import com.brickintellect.ev3dev.LegoPortFactory;
 
 public class HeadTurner {
@@ -11,7 +12,7 @@ public class HeadTurner {
         public boolean enabled = true;
 
         public String controller = null;
-        
+
         public String port = "D";
         public int leftDutyCycle = -33;
         public int rightDutyCycle = +33;
@@ -20,8 +21,7 @@ public class HeadTurner {
 
     private Settings settings;
 
-    public Settings getSettings()
-    {
+    public Settings getSettings() {
         return this.settings;
     }
 
@@ -29,13 +29,18 @@ public class HeadTurner {
         return this.settings = settings;
     }
 
-    private DCMotor motor;
+    final private DCMotor motor;
 
-    public HeadTurner(Settings settings) {
+    public HeadTurner(final Settings settings) {
 
-        motor = new DCMotor(LegoPortFactory.createDCMotor(settings.port));
-        motor.setStopAction("coast");
-        motor.stop();
+        if (!HWInformation.isHardware()) {
+            System.out.println("HeadTurner()");
+            motor = null;
+        } else {
+            motor = new DCMotor(LegoPortFactory.createDCMotor(settings.port));
+            motor.setStopAction("coast");
+            motor.stop();
+        }
 
         this.settings = settings;
 
@@ -58,15 +63,19 @@ public class HeadTurner {
             direction = this.direction * -1;
         }
 
-        if (direction < 0) {
-            motor.setDutyCycleSP(settings.leftDutyCycle);
+        if (motor == null) {
+            System.out.println("HeadTurner.setDirection(" + direction + ")");
         } else {
-            motor.setDutyCycleSP(settings.rightDutyCycle);
+            if (direction < 0) {
+                motor.setDutyCycleSP(settings.leftDutyCycle);
+            } else {
+                motor.setDutyCycleSP(settings.rightDutyCycle);
+            }
+
+            motor.setTime_SP(settings.motorRunTime);
+            motor.runTimed();
         }
 
-        motor.setTime_SP(settings.motorRunTime);
-        motor.runTimed();
-
         return this.direction = direction;
-   }
+    }
 }

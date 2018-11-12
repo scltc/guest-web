@@ -13,7 +13,7 @@ import org.nanohttpd.protocols.websockets.WebSocketFrame;
 public class WebSocketSession extends WebSocket {
 
     private static final boolean debug = true;
-    private static String clientIdentifier = null;
+    private final UUID clientIdentifier;
 
     private ArrayList<IEndpoint> endpoints = new ArrayList<IEndpoint>();
 
@@ -30,7 +30,7 @@ public class WebSocketSession extends WebSocket {
         // each client. Retrieve the identifier provided with this WebSocket
         // connection or create a new one if none provided.
         CookieHandler cookies = session.getCookies();
-        clientIdentifier = cookies.read("Client-Identifier");
+        String clientIdentifier = cookies.read("Client-Identifier");
         if (clientIdentifier == null) {
             clientIdentifier = UUID.randomUUID().toString();
             System.out.println("Client identifier missing, created: " + clientIdentifier);
@@ -38,6 +38,7 @@ public class WebSocketSession extends WebSocket {
         } else {
             System.out.println("Client identifier provided: " + clientIdentifier);
         }
+        this.clientIdentifier = UUID.fromString(clientIdentifier);
         System.out.println("WebSocketSession()");
     }
 
@@ -49,6 +50,10 @@ public class WebSocketSession extends WebSocket {
         }
 
         endpoints.set(instance.endpointNumber(), instance);
+    }
+
+    public UUID getClientIdentifier() {
+        return clientIdentifier;
     }
 
     @Override

@@ -1,4 +1,4 @@
-description = 'web-server'
+description = 'Exhibit Web Server'
 
 buildscript {
     repositories {
@@ -38,11 +38,11 @@ task wrapper(type: Wrapper) {
 // Create a single *.jar with all dependencies
 task fatJar(type: Jar) {
 	manifest {
-        attributes 'Implementation-Title': 'Mindstorms Web Server',  
+        attributes 'Implementation-Title': 'Exhibit Web Server',  
         	'Implementation-Version': version,
-        	'Main-Class': 'com.brickintellect.webserver.Main'
+        	'Main-Class': 'com.brickintellect.exhibit.Main'
     }
-    baseName = 'mindstorms-webserver-all' //project.name + '-all'
+    baseName = 'exhibit-web-server-all' //project.name + '-all'
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
     with jar
 }
@@ -51,9 +51,9 @@ task fatJar(type: Jar) {
 task ('proguard', dependsOn: 'fatJar', type: proguard.gradle.ProGuardTask) {
 
   // Specify the input and output jars.
-  injars 'build/libs/mindstorms-webserver-all-1.0.0-SNAPSHOT.jar',
+  injars 'build/libs/exhibit-web-server-all-1.0.0-SNAPSHOT.jar',
     filter:'!META-INF/LICENSE,!META-INF/NOTICE,!com/googlecode/jsonrpc4j/ProxyUtil**,!com/googlecode/jsonrpc4j/spring/**'
-  outjars 'build/libs/mindstorms-webserver-1.0.0-SNAPSHOT.jar'
+  outjars 'build/libs/exhibit-web-server-1.0.0-SNAPSHOT.jar'
 
   // Automatically handle the Java version of this build.
   if (System.getProperty('java.version').startsWith('1.')) {
@@ -183,11 +183,6 @@ task ('proguard', dependsOn: 'fatJar', type: proguard.gradle.ProGuardTask) {
     <methods>; \
   }'
 
-/*
-  keep 'class com.fasterxml.jackson.databind.ObjectMapper { \
-    <methods>; \
-  }'
-*/
   // Jackson
   
   keepnames 'class com.fasterxml.jackson.** { \

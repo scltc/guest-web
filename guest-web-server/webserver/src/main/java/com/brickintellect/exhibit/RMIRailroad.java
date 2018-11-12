@@ -1,4 +1,4 @@
-package com.brickintellect.webserver;
+package com.brickintellect.exhibit;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;

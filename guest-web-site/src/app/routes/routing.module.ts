@@ -113,6 +113,17 @@ export const appRoutes: Routes = [
         }
     },
     {
+        path: 'about',
+        component: ScheduleComponent,
+        data: {
+            title: 'About',
+            routeWhenConnected: null,
+            showBackground: false,
+            showMain: true,
+            showSide: true
+        }
+    },    
+    {
         path: 'settings',
         component: SettingsComponent,
         data: {

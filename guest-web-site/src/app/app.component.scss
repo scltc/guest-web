@@ -28,6 +28,24 @@ header {
   // padding-bottom: 2px;
 }
 
+.menu-buttons button {
+  font-size: 1em;
+}
+
+button.logo img {
+  padding-top: 2px;
+}
+
+button.logo span {
+  color: black;
+  display: inline-block;
+  line-height: 1.15em;
+  font-size: 1.15em;
+  font-weight: 500;
+  padding-left: 0.4em;
+  text-align: left;
+}
+
 main {
   border-top: 1px black solid;
 	-webkit-flex-grow: 1; /* 3 */
@@ -119,6 +137,19 @@ mat-toolbar {
   background-color: rgb(255, 255, 255);
   // max-width: 800px;
   // margin: 0 auto;
+}
+
+/* Reduce the width of the tab columns */
+a.mat-tab-link {
+  min-width: 90px;
+}
+
+/* Workaround for bug/feature described in:
+https://github.com/angular/material2/issues/5903
+*/
+.mat-tab-label-active{
+  color: rgba(0,0,0,.87) !important;
+  opacity: 1 !important;
 }
 
 // Under Construction overlay (apply to <main>).

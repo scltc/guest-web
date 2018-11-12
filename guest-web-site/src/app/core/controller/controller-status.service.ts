@@ -22,13 +22,11 @@ export class ControllerStatusService implements OnDestroy {
     }
 
     private ping(value: number = 0, callback: (reply: number) => void = null): void {
-/*
         this.rpc.call<number>('ping', { value: value }).subscribe(message => {
             if (callback) callback(message);
         }, error => {
             console.log('ping error: ' + error.message);
         });
-*/
     }
 
     /*
@@ -72,7 +70,7 @@ export class ControllerStatusService implements OnDestroy {
         });
 
         this.pingerSubscription = interval(1000 * 5).subscribe(x => {
-            this.ping(x, (reply) => this.logger.logMessage('ping received', reply));
+            // this.ping(x, (reply) => this.logger.logMessage('ping received', reply));
         });
 
         this.statusSubscription = this.socket.connectedEvents.pipe(

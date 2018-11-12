@@ -3,6 +3,7 @@ package com.brickintellect.exhibit;
 import org.ev3dev.hardware.ports.LegoPort;
 import org.ev3dev.hardware.motors.DCMotor;
 
+import com.brickintellect.ev3dev.HWInformation;
 import com.brickintellect.ev3dev.LegoPortFactory;
 
 public class LatchingRelay {
@@ -21,10 +22,15 @@ public class LatchingRelay {
     private boolean state;
     private boolean invert;
 
-    public LatchingRelay(LegoPort port, boolean invert, boolean state) {
-        motor = new DCMotor(port);
-        motor.setStopAction("brake");
-        motor.stop();
+    private LatchingRelay(LegoPort port, boolean invert, boolean state) {
+        if (port == null) {
+            System.out.println("LatchingRelay(" + port + ", " + invert + ", " + state + ")");
+            motor = null;
+        } else {
+            motor = new DCMotor(port);
+            motor.setStopAction("brake");
+            motor.stop();
+        }
 
         this.invert = invert;
 
@@ -59,15 +65,19 @@ public class LatchingRelay {
 
         this.state = state;
 
-        if ((invert ^ state) == LATCH) {
-            motor.setTime_SP(LatchTime);
-            motor.setDutyCycleSP(+100);
+        if (motor == null) {
+            System.out.println("LatchingRelay.set(" + state + ")");
         } else {
-            motor.setTime_SP(ResetTime);
-            motor.setDutyCycleSP(-100);
-        }
+            if ((invert ^ state) == LATCH) {
+                motor.setTime_SP(LatchTime);
+                motor.setDutyCycleSP(+100);
+            } else {
+                motor.setTime_SP(ResetTime);
+                motor.setDutyCycleSP(-100);
+            }
 
-        motor.runTimed();
+            motor.runTimed();
+        }
     }
 
     public boolean get() {

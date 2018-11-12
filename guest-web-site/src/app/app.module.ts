@@ -13,6 +13,7 @@ import {
     MatButtonModule,
     MatListModule,
     MatSidenavModule,
+    MatTabsModule,
     MatToolbarModule
 } from '@angular/material';
 import {
@@ -53,10 +54,11 @@ import { ControllerModule } from './core/controller/controller.module';
         MatButtonModule,
         MatListModule,
         MatSidenavModule,
+        MatTabsModule,
         MatToolbarModule,
 
         // If we are running on 'localhost', we are debugging. Use the web socket server from there too.
-        // ControllerModule.forRoot(/* (window.location.hostname.toLowerCase() === 'localhost') ? 'ws://localhost' : */ 'wss://exhibit.scltc.club'), //'ws://localhost'),
+        // ControllerModule.forRoot(/* (window.location.hostname.toLowerCase() === 'localhost') ? 'ws://localhost' : */ 'wss://home.scltc.club'), //'ws://localhost'),
         ControllerModule.forRoot(/* (window.location.hostname.toLowerCase() === 'localhost') ? 'ws://localhost' : */ 'ws://localhost'), //'ws://localhost'),
         //  ControllerModule.forRoot({ url: 'ws://192.168.2.201', reconnectAttempts: -1 }),
         // This must be last or some of the imports above may fail!

@@ -1,4 +1,4 @@
-package com.brickintellect.webserver;
+package com.brickintellect.exhibit;
 
 import java.net.MalformedURLException;
 import java.rmi.Naming;

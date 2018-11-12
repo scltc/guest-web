@@ -14,7 +14,7 @@ import java.util.List;
 // https://github.com/NanoHttpd/nanohttpd/issues/441
 // http://tutorials.jenkov.com/java-util-concurrent/scheduledexecutorservice.html#scheduledexecutorservice-example
 
-class WebSocketSessionManager {
+public class WebSocketSessionManager {
     // A list of currently connected sessions.
     private static final List<WebSocketSession> connections = new LinkedList<WebSocketSession>();
     // Queue connection list additions and deletions list so lock times are minimized.

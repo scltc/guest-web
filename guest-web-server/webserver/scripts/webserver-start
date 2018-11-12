@@ -2,4 +2,4 @@
 DIRECTORY="$( cd "$( dirname "$0" )" && pwd )"
 #echo $DIRECTORY
 #echo "$@"
-sudo /opt/ejre1.8.0_171/bin/java -agentlib:jdwp=transport=dt_socket,server=y,address=8000,suspend=n -jar $DIRECTORY/mindstorms-webserver-all-1.0.0-SNAPSHOT.jar --key-store /home/robot/certificates/exhibit.scltc.club.jks --port 443 --root $DIRECTORY/site "$@"
+sudo /opt/ejre1.8.0_171/bin/java -agentlib:jdwp=transport=dt_socket,server=y,address=8000,suspend=n -jar $DIRECTORY/exhibit-web-server-all-1.0.0-SNAPSHOT.jar --key-store /home/robot/certificates/exhibit.scltc.club.jks --port 443 --root $DIRECTORY/site "$@"

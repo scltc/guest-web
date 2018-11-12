@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.UUID;
 
 import com.googlecode.jsonrpc4j.IJsonRpcClient;
 import com.googlecode.jsonrpc4j.JsonRpcClient;
@@ -53,6 +54,10 @@ public class WebSocketJsonRpcClient extends JsonRpcClient implements IJsonRpcCli
 
 		this.session = session;
 		this.endpoint = endpoint;
+	}
+
+	public UUID getClientIdentifier() {
+		return session.getClientIdentifier();
 	}
 
 	/**

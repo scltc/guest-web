@@ -30,7 +30,7 @@ public class PlaytimeManager implements PlaytimeTimer.IPlayTimerComplete {
         CANCELED, WAITING, PLAYING
     }
 
-    private interface IPlaytimeStatus {
+    public interface IPlaytimeStatus {
         void playtimeStatus(UUID guest, PlaytimeState state, int timeRemaining);
     }
 

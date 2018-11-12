@@ -75,9 +75,9 @@ public class Main {
     }
 
     /**
-     * Starts as a standalone file server and waits for Enter.
+     * The server entry point.
      */
-    public static void main(String[] args) {
+    public static void xmain(String[] args) {
 
         // Set parameter defaults.
         String host = null; // bind to all interfaces by default
@@ -126,7 +126,7 @@ public class Main {
 
             server.start(root);
 
-            RMIRailroad rmi = RMIRailroadServer.Create();
+            // RMIRailroad rmi = RMIRailroadServer.Create();
 
             if (daemon) {
                 System.out.println("Webserver running as daemon!");
