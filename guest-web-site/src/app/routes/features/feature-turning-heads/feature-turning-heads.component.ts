@@ -21,9 +21,19 @@ export class FeatureTurningHeadsStatus {
 })
 export class FeatureTurningHeadsComponent implements OnDestroy {
 
-  @ViewChild('cowPager')
-  //@ContentChild('cowPager')
+  @ViewChild(ExpansionPanelPagerDirective)
   pager: ExpansionPanelPagerDirective;
+
+  //@ContentChild('cowPager')
+  /*
+  thePager: ExpansionPanelPagerDirective;
+
+  set pager(value: ExpansionPanelPagerDirective) {
+    console.log('set pager');
+    console.log(value == null)
+    this.thePager = value;
+  }
+  */
 
   public instance: number = 0;
 
@@ -62,16 +72,19 @@ export class FeatureTurningHeadsComponent implements OnDestroy {
   public set direction(direction: number) {
     console.log("turn!");
     if (direction != this.currentDirection) {
-      this.rpc.call<FeatureTurningHeadsStatus>('headsOperate', { instance: this.instance, direction: this.currentDirection }).subscribe(this.update);
+      this.rpc.call<FeatureTurningHeadsStatus>('headsOperate', { instance: this.instance, direction: this.currentDirection })
+        .subscribe((status) => this.update(status));
     }
   }
 
   public abandon() {
-    this.rpc.call<FeatureTurningHeadsStatus>("headsAbandon", { instance: this.instance }).subscribe(this.update);
+    this.rpc.call<FeatureTurningHeadsStatus>("headsAbandon", { instance: this.instance })
+      .subscribe((status) => this.update(status));
   }
 
   public reserve() {
-    this.rpc.call<FeatureTurningHeadsStatus>("headsReserve", { instance: this.instance }).subscribe(this.update);
+    this.rpc.call<FeatureTurningHeadsStatus>("headsReserve", { instance: this.instance })
+      .subscribe((status) => this.update(status));
   }
 
   public pageOpened(page: string) {

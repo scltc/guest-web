@@ -47,6 +47,14 @@ public class Exhibit {
         Settings setSettings(@JsonRpcParam(value = "settings") Settings settings);
 
         int runCatchAndThrow(@JsonRpcParam(value = "index") int index);
+
+        public HeadTurnerState headsAbandon(@JsonRpcParam(value = "instance") int instance);
+
+        public HeadTurnerState headsOperate(@JsonRpcParam(value = "instance") int instance,
+                @JsonRpcParam(value = "direction") int direction);
+
+        public HeadTurnerState headsReserve(@JsonRpcParam(value = "instance") int instance);
+
     }
 
     public static class WebSocketService implements IWebSocketService, PlaytimeManager.IPlaytimeStatus {
