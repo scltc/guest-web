@@ -84,7 +84,7 @@ export class FeatureTurningHeadsComponent implements OnDestroy {
 
   public reserve() {
     this.rpc.call<FeatureTurningHeadsStatus>("headsReserve", { instance: this.instance })
-      .subscribe((status) => this.update(status));
+      .subscribe((status) => this.logger.logMessage("headsReserve result: ", status));
   }
 
   public pageOpened(page: string) {
@@ -123,6 +123,7 @@ export class FeatureTurningHeadsComponent implements OnDestroy {
       request.method == 'headsChanged'
     )).subscribe(request => {
       this.logger.logMessage('headsChanged', request);
+      this.update(request.params as FeatureTurningHeadsStatus);
     });
   }
 }

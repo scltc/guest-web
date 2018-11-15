@@ -111,7 +111,7 @@ public class WebSocketSession extends WebSocket {
 
     public void ping() throws IOException {
 
-        System.out.println("ping: " + pingCount + "/" + pongCount);
+        // System.out.println("ping: " + pingCount + "/" + pongCount);
 
         if (pingCount - pongCount > 3) {
             throw new IOException("pong count, expected " + pingCount);

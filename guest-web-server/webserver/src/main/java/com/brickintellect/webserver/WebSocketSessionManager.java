@@ -56,7 +56,7 @@ public class WebSocketSessionManager {
 
     static {
         scheduler.scheduleAtFixedRate(() -> {
-            System.out.println("pinger");
+            // System.out.println("pinger");
 
             synchronized (additions) {
                 connections.addAll(additions);
