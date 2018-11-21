@@ -13,7 +13,7 @@ public class Exhibit {
 
     public Settings settings = new Settings();
 
-    public final List<HeadTurner> heads = new ArrayList<HeadTurner>();
+    public final List<HeadTurnerPlayController> heads = new ArrayList<HeadTurnerPlayController>();
     public final List<CatchAndThrow> catchers = new ArrayList<CatchAndThrow>();
 
     public Exhibit() {
@@ -26,7 +26,9 @@ public class Exhibit {
         }
 
         for (HeadTurner.Settings setting : settings.headTurner) {
-            heads.add(new HeadTurner(setting));
+            heads.add(new HeadTurnerPlayController(setting, (UUID guest, HeadTurnerState state) -> {
+                this.client.invoke("headsChanged", state);
+            }));
         }
     }
 
@@ -57,7 +59,7 @@ public class Exhibit {
 
     }
 
-    public static class WebSocketService implements IWebSocketService, PlaytimeManager.IPlaytimeStatus {
+    public static class WebSocketService implements IWebSocketService {
 
         private final WebSocketJsonRpcClient client;
         private final Exhibit exhibit;
@@ -94,69 +96,24 @@ public class Exhibit {
             return exhibit.settings = settings;
         }
 
-        static final PlaytimeManager headsManager = new PlaytimeManager(new PlaytimeManager.Settings());
-
-        @Override
-        public void playtimeStatus(UUID guest, PlaytimeState state, int timeRemaining) {
-            HeadTurnerState request = new HeadTurnerState();
-            if (state == PlaytimeManager.PlaytimeState.WAITING) {
-                request.direction = 0;
-                request.status = -1;
-            } else if (state == PlaytimeManager.PlaytimeState.CANCELED) {
-                request.direction = 0;
-                request.status = 0;
-            } else {
-                request.direction = request.status = +1;
-            }
-            request.timer = timeRemaining;
-            try {
-                this.client.invoke("headsChanged", request);
-            } catch (Throwable ignored) {
-
-            }
-        }
+        // IHeadTurnerWebSocketService implementation.
 
         public HeadTurnerState headsAbandon(int instance) {
-            HeadTurnerState result;
-            if (instance >= exhibit.heads.size()) {
-                result = null;
-            } else {
-                result = new HeadTurnerState();
-                result.status = 0;
-                result.direction = exhibit.heads.get(instance).getDirection();
-                result.timer = 1000 * 10;
-            }
-            return result;
+            System.out.println("headsAbandon");
+            return (instance >= exhibit.heads.size()) ? null
+                    : exhibit.heads.get(instance).headsAbandon(client.getClientIdentifier());
         }
 
         public HeadTurnerState headsOperate(int instance, int direction) {
-            HeadTurnerState result;
-            if (instance >= exhibit.heads.size()) {
-                result = null;
-            } else {
-                result = new HeadTurnerState();
-                result.status = +1;
-                result.direction = exhibit.heads.get(instance).setDirection(direction);
-                result.timer = 1000 * 10;
-            }
-            return result;
+            System.out.println("headsOperate");
+            return (instance >= exhibit.heads.size()) ? null
+                    : exhibit.heads.get(instance).headsOperate(client.getClientIdentifier(), direction);
         }
 
         public HeadTurnerState headsReserve(int instance) {
             System.out.println("headsReserve");
-
-            headsManager.reserve(client.getClientIdentifier(), this);
-
-            HeadTurnerState result;
-            if (instance >= exhibit.heads.size()) {
-                result = null;
-            } else {
-                result = new HeadTurnerState();
-                result.status = -1;
-                result.direction = exhibit.heads.get(instance).getDirection();
-                result.timer = 1000 * 20;
-            }
-            return result;
+            return (instance >= exhibit.heads.size()) ? null
+                    : exhibit.heads.get(instance).headsReserve(client.getClientIdentifier());
         }
 
         public int runCatchAndThrow(int index) {

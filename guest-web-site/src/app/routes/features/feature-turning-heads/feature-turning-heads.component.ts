@@ -43,6 +43,7 @@ export class FeatureTurningHeadsComponent implements OnDestroy {
   public currentDirection: number = +1;
 
   private update(status: FeatureTurningHeadsStatus) {
+    this.logger.logMessage('FeatureTurningHeads.update(' + status.status + ', ' + status.direction + ', ' + status.timer + ')');
     if (status.status < 0) {
       // Waiting.
       this.playTime = 0;

@@ -59,6 +59,31 @@ public class PlaytimeManager implements PlaytimeTimer.IPlayTimerComplete {
         }
     }
 
+    /**
+     * Get the playing status of a guest.
+     * @param guest The guest identifier to test.
+     * @return -1=playing, 0=unknown (not playing or waiting), +1=waiting.
+     */
+    public int getStatus(UUID guest) {
+        int result = 0;
+
+        synchronized (queue) {
+            for (Iterator<QueueEntry> iterator = queue.iterator(); iterator.hasNext();) {
+
+                QueueEntry entry = iterator.next();
+
+                if (entry.guest.equals(guest)) {
+                    // Is guest first in queue (currently playing guest)?
+                    result = (entry == queue.getFirst()) ? -1 : +1;
+                    break;
+                }
+
+            }
+        }
+
+        return result;
+    }
+
     PlaytimeTimer timer = new PlaytimeTimer();
 
     public void playtimeTimerComplete(UUID guest, boolean aborted) {
@@ -134,7 +159,7 @@ public class PlaytimeManager implements PlaytimeTimer.IPlayTimerComplete {
     /**
      * Reserve a playtime.
      * 
-     * @param guest    The guest identifier to reserve a playtime.
+     * @param guest    The guest identifier for which to reserve a playtime.
      * @param observer A callback to notify when the guest's state changes.
      */
     public void reserve(UUID guest, IPlaytimeStatus observer) {

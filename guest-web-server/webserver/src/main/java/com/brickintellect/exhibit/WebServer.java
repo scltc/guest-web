@@ -109,7 +109,9 @@ public class WebServer extends NanoWSD implements IHandler<IHTTPSession, Respons
 
     @Override
     public void stop() {
-        WebSocketSessionManager.stop();
+        // Shutdown web socket manager and close all connected websockets.
+        WebSocketSessionManager.shutdown();
+        // Shutdown the web server.
         super.stop();
     }
 
@@ -119,8 +121,7 @@ public class WebServer extends NanoWSD implements IHandler<IHTTPSession, Respons
     protected WebSocket openWebSocket(IHTTPSession session) {
         System.out.println("WebServer.openWebSocket()");
 
-        WebSocketSession webSocketSession = WebSocketSessionManager.createSession(session); // new
-                                                                                            // WebSocketSession(session);
+        WebSocketSession webSocketSession = WebSocketSessionManager.createSession(session);
         WebSocketJsonRpcClient client = new WebSocketJsonRpcClient(webSocketSession, 2, objectMapper);
         webSocketSession.addEndpoint(new WebSocketJsonRpcServer(webSocketSession, 1, objectMapper,
                 new Exhibit.WebSocketService(client, exhibit), Exhibit.IWebSocketService.class));

@@ -8,6 +8,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 
 // Inspiration:
 // Websocket closes after being open
@@ -17,10 +18,17 @@ import java.util.List;
 public class WebSocketSessionManager {
     // A list of currently connected sessions.
     private static final List<WebSocketSession> connections = new LinkedList<WebSocketSession>();
-    // Queue connection list additions and deletions list so lock times are minimized.
+    // Queue connection list additions and deletions list so lock times are
+    // minimized.
     private static final List<WebSocketSession> additions = new LinkedList<WebSocketSession>();
     private static final List<WebSocketSession> deletions = new LinkedList<WebSocketSession>();
 
+    /**
+     * Create a new WebSocketSession.
+     * 
+     * @param session
+     * @return
+     */
     public static WebSocketSession createSession(IHTTPSession session) {
         WebSocketSession result = new WebSocketSession(session);
         synchronized (additions) {
@@ -31,6 +39,11 @@ public class WebSocketSessionManager {
         return result;
     }
 
+    /**
+     * Delete a WebSocketSession.
+     * 
+     * @param session
+     */
     public static void deleteSession(WebSocketSession session) {
         synchronized (deletions) {
             if (!deletions.contains(session)) {
@@ -39,13 +52,44 @@ public class WebSocketSessionManager {
         }
     }
 
+    public static List<WebSocketSession> getConnections() {
+
+        synchronized (additions) {
+            connections.addAll(additions);
+            additions.clear();
+        }
+
+        synchronized (deletions) {
+            connections.removeAll(deletions);
+            deletions.clear();
+        }
+
+        return connections;
+    }
+
+    public static WebSocketSession getConnection(UUID identifier) {
+        WebSocketSession result = null;
+        synchronized (connections) {
+            for (WebSocketSession session : getConnections()) {
+                if (session.getClientIdentifier().equals(identifier)) {
+                    result = session;
+                    break;
+                }
+            }
+        }
+        return result;
+    }
+
     private static final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
-    public static void stop() {
+    /**
+     * Shutdown the WebSocketSessionManager and close all connected WebSockets.
+     */
+    public static void shutdown() {
         if (!scheduler.isShutdown()) {
             scheduler.shutdown();
 
-            for (WebSocketSession session : connections) {
+            for (WebSocketSession session : getConnections()) {
                 try {
                     session.close(CloseCode.GoingAway, "Server shutdown.", false);
                 } catch (Exception ignored) {
@@ -58,17 +102,7 @@ public class WebSocketSessionManager {
         scheduler.scheduleAtFixedRate(() -> {
             // System.out.println("pinger");
 
-            synchronized (additions) {
-                connections.addAll(additions);
-                additions.clear();
-            }
-
-            synchronized (deletions) {
-                connections.removeAll(deletions);
-                deletions.clear();
-            }
-
-            for (WebSocketSession session : connections) {
+            for (WebSocketSession session : getConnections()) {
                 try {
                     session.ping();
                 } catch (Exception e) {
@@ -80,7 +114,7 @@ public class WebSocketSessionManager {
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             System.out.println("pinger shutdown.");
-            stop();
+            shutdown();
         }));
     }
 }
