@@ -61,6 +61,7 @@ public class PlaytimeManager implements PlaytimeTimer.IPlayTimerComplete {
 
     /**
      * Get the playing status of a guest.
+     * 
      * @param guest The guest identifier to test.
      * @return -1=playing, 0=unknown (not playing or waiting), +1=waiting.
      */
@@ -84,11 +85,41 @@ public class PlaytimeManager implements PlaytimeTimer.IPlayTimerComplete {
         return result;
     }
 
+    public int getTime(UUID guest) {
+
+        synchronized (queue) {
+
+            int waitTime = 0;
+
+            if (!queue.isEmpty()) {
+
+                boolean first = true;
+                for (Iterator<QueueEntry> iterator = queue.iterator(); iterator.hasNext();) {
+                    QueueEntry entry = iterator.next();
+                    if (entry.guest.equals(guest)) {
+                        break;
+                    }
+                    if (!first) {
+                        waitTime += settings.timeToPlay + settings.timeToPause;
+                    }
+
+                }
+
+                waitTime += timer.remaining() + settings.timeToPause;
+
+                if (!first) {
+                    waitTime *= -1;
+                }
+            }
+            return waitTime;
+        }
+    }
+
     PlaytimeTimer timer = new PlaytimeTimer();
 
     public void playtimeTimerComplete(UUID guest, boolean aborted) {
         if (!aborted) {
-            abandon(guest);
+            abandon(guest, false);
         }
     }
 
@@ -97,7 +128,7 @@ public class PlaytimeManager implements PlaytimeTimer.IPlayTimerComplete {
      * 
      * @param guest The guest to abandon.
      */
-    public int abandon(UUID guest) {
+    public int abandon(UUID guest, boolean silent) {
 
         synchronized (queue) {
 
@@ -120,7 +151,9 @@ public class PlaytimeManager implements PlaytimeTimer.IPlayTimerComplete {
                     queue.remove(entry);
 
                     // Notify that this guest's turn is canceled.
-                    entry.observer.playtimeStatus(entry.guest, PlaytimeState.CANCELED, 0);
+                    if (!silent) {
+                        entry.observer.playtimeStatus(entry.guest, PlaytimeState.CANCELED, 0);
+                    }
 
                     if (first) {
 
@@ -167,7 +200,7 @@ public class PlaytimeManager implements PlaytimeTimer.IPlayTimerComplete {
         synchronized (queue) {
 
             // Ensure this guest not already waiting and get current wait time.
-            int waitTime = abandon(guest);
+            int waitTime = abandon(guest, true);
 
             // Add guest to wait queue
             queue.add(new QueueEntry(guest, observer));

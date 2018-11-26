@@ -29,14 +29,17 @@ public class WebSocketSessionManager {
      * @param session
      * @return
      */
-    public static WebSocketSession createSession(IHTTPSession session) {
-        WebSocketSession result = new WebSocketSession(session);
+    public static WebSocketSession createSession(WebSocketSession session) {
         synchronized (additions) {
-            if (!additions.contains(result)) {
-                additions.add(result);
+            if (!additions.contains(session)) {
+                additions.add(session);
             }
         }
-        return result;
+        return session;
+    }
+
+    public static WebSocketSession createSession(IHTTPSession session) {
+        return createSession(new WebSocketSession(session));
     }
 
     /**

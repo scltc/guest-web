@@ -3,7 +3,6 @@ package com.brickintellect.exhibit;
 import org.ev3dev.hardware.ports.LegoPort;
 import org.ev3dev.hardware.motors.DCMotor;
 
-import com.brickintellect.ev3dev.HWInformation;
 import com.brickintellect.ev3dev.LegoPortFactory;
 
 public class LatchingRelay {

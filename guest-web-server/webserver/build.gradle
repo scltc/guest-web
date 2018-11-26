@@ -90,11 +90,15 @@ task ('proguard', dependsOn: 'fatJar', type: proguard.gradle.ProGuardTask) {
 
   printmapping 'out.map'
   renamesourcefileattribute 'SourceFile'
-  keepattributes 'SourceFile,LineNumberTable'
+//  keepattributes 'SourceFile,LineNumberTable'
+
 
   // Preserve all annotations.
 
-  keepattributes '*Annotation*'
+  keepattributes '*Annotation*,EnclosingMethod,Exceptions,Signature'
+
+  //keepattributes 'Signature'
+  // keepparameternames
 
   // You can print out the seeds that are matching the keep options below.
 
@@ -153,9 +157,28 @@ task ('proguard', dependsOn: 'fatJar', type: proguard.gradle.ProGuardTask) {
     *; \
   }'
 
+  // Keep exhibit public interface.
+
+/*
+  keepattributes 'Signature'
+  keepparameternames
+*/
+keep 'class com.brickintellect.exhibit.HeadTurnerState { \
+  *; \
+}'
+
+keep 'interface com.brickintellect.exhibit.Exhibit$** { \
+  *; \
+}'
+
+keep 'class com.brickintellect.exhibit.Exhibit$** { \
+  public <methods>; \
+}'
+
+
   // Keep Java RMI implementations.
 
-  keepattributes 'Exceptions'
+  // keepattributes 'Exceptions'
 
   keep 'interface com.brickintellect.webserver.WebServer$IWebSocketService { \
     <methods>; \

@@ -19,7 +19,7 @@ export class FeatureTurningHeadsStatus {
   templateUrl: './feature-turning-heads.component.html',
   styleUrls: ['../features.scss']
 })
-export class FeatureTurningHeadsComponent implements OnDestroy {
+export class FeatureTurningHeadsComponent implements OnDestroy, OnInit {
 
   @ViewChild(ExpansionPanelPagerDirective)
   pager: ExpansionPanelPagerDirective;
@@ -40,7 +40,7 @@ export class FeatureTurningHeadsComponent implements OnDestroy {
   public waitTime: number = 0;
   public playTime: number = 0;
   public playSound: boolean = false;
-  public currentDirection: number = +1;
+  public currentDirection: number = 0;
 
   private update(status: FeatureTurningHeadsStatus) {
     this.logger.logMessage('FeatureTurningHeads.update(' + status.status + ', ' + status.direction + ', ' + status.timer + ')');
@@ -67,20 +67,22 @@ export class FeatureTurningHeadsComponent implements OnDestroy {
   }
 
   public get direction(): number {
+    console.log('heads get: ' + this.currentDirection);
     return this.currentDirection;
   }
 
-  public set direction(direction: number) {
-    console.log("turn!");
-    if (direction != this.currentDirection) {
-      this.rpc.call<FeatureTurningHeadsStatus>('headsOperate', { instance: this.instance, direction: this.currentDirection })
-        .subscribe((status) => this.update(status));
+  public change(value: number) {
+    console.log('heads set current: ' + this.currentDirection + ', requested: ' + value);
+    if (value !== this.currentDirection) {
+      console.log("heads set changed!")
+      this.rpc.call<FeatureTurningHeadsStatus>('headsOperate', { instance: this.instance, direction: value })
+        .subscribe((status) => /* this.logger.logMessage("headsDirection result: ", status)); // */ this.update(status));
     }
   }
 
   public abandon() {
     this.rpc.call<FeatureTurningHeadsStatus>("headsAbandon", { instance: this.instance })
-      .subscribe((status) => this.update(status));
+      .subscribe((status) => this.logger.logMessage("headsAbandon result: ", status)); //this.update(status));
   }
 
   public reserve() {
@@ -120,6 +122,7 @@ export class FeatureTurningHeadsComponent implements OnDestroy {
   }
 
   ngOnInit() {
+    this.currentDirection = 0;
     this.requestSubscription = this.rpc.requestQueue.pipe(filter(request =>
       request.method == 'headsChanged'
     )).subscribe(request => {

@@ -34,7 +34,7 @@ public class Main {
 
         // Create and launch the server!
         try {
-
+            
             WebServer server = new WebServer(host, port, keyStore, root);
 
             // The default NanoHTTPD socket read timeout is 5 seconds. While that
@@ -42,8 +42,6 @@ public class Main {
             // bidirectional WebSockets. Our client "pings" every 5 seconds, three
             // times that period should work better.
             server.start(15 * 1000/* NanoHTTPD.SOCKET_READ_TIMEOUT */, false);
-
-            // trainRunner = new CatchAndThrow();
 
             if (daemon) {
                 System.out.println("Exhibit controller running as daemon!");

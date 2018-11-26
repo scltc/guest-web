@@ -18,23 +18,25 @@ export class FeatureCatchAndThrowComponent implements OnInit {
 
   private currentDirection: number =  +1;
   
+  private count: number = 0;
+
   public get direction(): number {
     return this.currentDirection;
   }
 
-  private count: number = 0;
-
   public set direction(direction: number) {
+    /*
     console.log("turn!");
     if (direction != this.currentDirection) {
       this.currentDirection = direction;
       this.count = (this.count + 1) % 4;
       this.controller.runCatchAndThrow(direction);
     }
+    */
   }
 
   public get running(): boolean {
-    console.log('running: ' + (this.currentDirection != +1) + ', currentDirection: ' + this.currentDirection);
+    // console.log('running: ' + (this.currentDirection != +1) + ', currentDirection: ' + this.currentDirection);
     return this.count > 1;
   }
 

@@ -6,8 +6,6 @@ import java.util.Map;
 
 import javax.net.ssl.SSLServerSocketFactory;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.nanohttpd.protocols.http.IHTTPSession;
 import org.nanohttpd.protocols.http.NanoHTTPD;
 import org.nanohttpd.util.IHandler;
@@ -22,9 +20,7 @@ import org.nanohttpd.router.RouterNanoHTTPD.UriResource;
 import org.nanohttpd.router.RouterNanoHTTPD.UriRouter;
 
 import com.brickintellect.webserver.SSLServerSocketFactoryCreator;
-import com.brickintellect.webserver.WebSocketJsonRpcClient;
-import com.brickintellect.webserver.WebSocketJsonRpcServer;
-import com.brickintellect.webserver.WebSocketSession;
+
 import com.brickintellect.webserver.WebSocketSessionManager;
 
 public class WebServer extends NanoWSD implements IHandler<IHTTPSession, Response> {
@@ -78,8 +74,6 @@ public class WebServer extends NanoWSD implements IHandler<IHTTPSession, Respons
         }
     }
 
-    final Exhibit exhibit;
-
     public WebServer(String host, int port, File keyStore, File root) {
         super(host, port);
 
@@ -103,8 +97,6 @@ public class WebServer extends NanoWSD implements IHandler<IHTTPSession, Respons
         router.setNotFoundHandler(IndexRedirectHandler.class);
         this.setHTTPHandler(router);
 
-        // We can provide only basic functionality when running on Windows.
-        exhibit = new Exhibit();
     }
 
     @Override
@@ -115,18 +107,10 @@ public class WebServer extends NanoWSD implements IHandler<IHTTPSession, Respons
         super.stop();
     }
 
-    private static final ObjectMapper objectMapper = new ObjectMapper();
-
     @Override
     protected WebSocket openWebSocket(IHTTPSession session) {
         System.out.println("WebServer.openWebSocket()");
 
-        WebSocketSession webSocketSession = WebSocketSessionManager.createSession(session);
-        WebSocketJsonRpcClient client = new WebSocketJsonRpcClient(webSocketSession, 2, objectMapper);
-        webSocketSession.addEndpoint(new WebSocketJsonRpcServer(webSocketSession, 1, objectMapper,
-                new Exhibit.WebSocketService(client, exhibit), Exhibit.IWebSocketService.class));
-        webSocketSession.addEndpoint(client);
-
-        return webSocketSession;
+        return WebSocketSessionManager.createSession(new Exhibit.WebSocketService(session));
     }
 }

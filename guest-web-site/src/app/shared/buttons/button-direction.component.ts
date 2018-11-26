@@ -7,7 +7,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 })
 export class ButtonDirectionComponent {
 
-  private currentDirection: number = -1;
+  private currentDirection: number = 0;
 
   public get arrow(): string {
     return (this.currentDirection < 0) ? 'chevron_left' : 'chevron_right';
@@ -24,17 +24,19 @@ export class ButtonDirectionComponent {
   };
 
   @Output()
-  directionChange = new EventEmitter<number>();
+  change = new EventEmitter<number>();
 
   @Input()
   get direction() {
+    console.log('direction button get: ' + this.currentDirection);
     return this.currentDirection;
   }
   set direction(direction) {
+    console.log('direction button set, current: ' + this.currentDirection + ', direction: ' + direction);
     if (direction != this.currentDirection) {
-      console.log('changed');
       this.currentDirection = direction;
-      this.directionChange.emit(direction);
+      this.change.emit(direction);
+      console.error('direction button emit: ' + direction);
     }
   }
 

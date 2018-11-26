@@ -1,20 +1,28 @@
 package com.brickintellect.exhibit;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import com.googlecode.jsonrpc4j.JsonRpcParam;
-import com.brickintellect.exhibit.PlaytimeManager.PlaytimeState;
 import com.brickintellect.webserver.WebSocketJsonRpcClient;
+import com.brickintellect.webserver.WebSocketJsonRpcServer;
+import com.brickintellect.webserver.WebSocketSession;
+import com.brickintellect.webserver.WebSocketSessionManager;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import com.googlecode.jsonrpc4j.JsonRpcParam;
+
+import org.nanohttpd.protocols.http.IHTTPSession;
 
 public class Exhibit {
 
-    public Settings settings = new Settings();
+    private static Exhibit exhibit = new Exhibit();
 
-    public final List<HeadTurnerPlayController> heads = new ArrayList<HeadTurnerPlayController>();
-    public final List<CatchAndThrow> catchers = new ArrayList<CatchAndThrow>();
+    private Settings settings = new Settings();
+
+    private final List<HeadTurnerPlayController> heads = new ArrayList<HeadTurnerPlayController>();
+    private final List<CatchAndThrow> catchers = new ArrayList<CatchAndThrow>();
 
     public Exhibit() {
 
@@ -27,7 +35,10 @@ public class Exhibit {
 
         for (HeadTurner.Settings setting : settings.headTurner) {
             heads.add(new HeadTurnerPlayController(setting, (UUID guest, HeadTurnerState state) -> {
-                this.client.invoke("headsChanged", state);
+                WebSocketSession session = WebSocketSessionManager.getConnection(guest);
+                if (session != null) {
+                    ((Exhibit.WebSocketService) session).headsChanged(state);
+                }
             }));
         }
     }
@@ -59,15 +70,29 @@ public class Exhibit {
 
     }
 
-    public static class WebSocketService implements IWebSocketService {
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+
+    public static class WebSocketService extends WebSocketSession implements IWebSocketService {
 
         private final WebSocketJsonRpcClient client;
-        private final Exhibit exhibit;
 
-        public WebSocketService(final WebSocketJsonRpcClient client, final Exhibit exhibit) {
-            this.client = client;
-            this.exhibit = exhibit;
+        public WebSocketService(IHTTPSession session) {
+            super(session);
+            client = new WebSocketJsonRpcClient(this, 2, objectMapper);
+            addEndpoint(new WebSocketJsonRpcServer(this, 1, objectMapper, this, Exhibit.IWebSocketService.class));
+            addEndpoint(client);
         }
+
+        /*
+        public String connect() {
+            System.out.println("connect()");
+            return getClientIdentifier().toString();
+        }
+
+        public void disconnect() {
+            System.out.println("disconnect()");
+        }
+        */
 
         public int sendPing(int value) {
             try {
@@ -114,6 +139,17 @@ public class Exhibit {
             System.out.println("headsReserve");
             return (instance >= exhibit.heads.size()) ? null
                     : exhibit.heads.get(instance).headsReserve(client.getClientIdentifier());
+        }
+
+        public void headsChanged(HeadTurnerState state) {
+            try
+            {
+                client.invoke("headsChanged", state);
+            }
+            catch (Throwable exception)
+            {
+                System.out.println("headsChanged exception: " + exception.getMessage());
+            }
         }
 
         public int runCatchAndThrow(int index) {

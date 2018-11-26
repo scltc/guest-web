@@ -1,15 +1,9 @@
 package com.brickintellect.exhibit;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
-
-import com.googlecode.jsonrpc4j.JsonRpcParam;
 
 import com.brickintellect.exhibit.HeadTurner;
 import com.brickintellect.exhibit.PlaytimeManager.PlaytimeState;
-import com.brickintellect.webserver.WebSocketJsonRpcClient;
 
 public class HeadTurnerPlayController implements PlaytimeManager.IPlaytimeStatus {
 
@@ -25,14 +19,13 @@ public class HeadTurnerPlayController implements PlaytimeManager.IPlaytimeStatus
     public void playtimeStatus(UUID guest, PlaytimeState state, int timeRemaining) {
         HeadTurnerState request = new HeadTurnerState();
         if (state == PlaytimeManager.PlaytimeState.WAITING) {
-            request.direction = 0;
             request.status = -1;
         } else if (state == PlaytimeManager.PlaytimeState.CANCELED) {
-            request.direction = 0;
             request.status = 0;
         } else {
-            request.direction = request.status = +1;
+            request.status = +1;
         }
+        request.direction = turner.getDirection();
         request.timer = timeRemaining;
         try {
             stateChangeWatcher.headsStateChanged(guest, request);
@@ -41,7 +34,7 @@ public class HeadTurnerPlayController implements PlaytimeManager.IPlaytimeStatus
     }
 
     public HeadTurnerState headsAbandon(UUID guest) {
-        headsManager.abandon(guest);
+        headsManager.abandon(guest, false);
         HeadTurnerState result = new HeadTurnerState();
         result.status = 0;
         result.direction = 0;
@@ -51,9 +44,19 @@ public class HeadTurnerPlayController implements PlaytimeManager.IPlaytimeStatus
 
     public HeadTurnerState headsOperate(UUID guest, int direction) {
         HeadTurnerState result = new HeadTurnerState();
-        result.status = headsManager.getStatus(guest);
-        result.direction = (result.status >= 0) ? 0 : turner.setDirection(direction);
-        result.timer = 1000 * 10;
+
+        result.timer = headsManager.getTime(guest);
+        if (result.timer < 0) {
+            result.direction = turner.getDirection();
+            result.status = -1;
+        } else if (result.timer > 0) {
+            result.direction = turner.setDirection(direction);
+            result.status = +1;
+        } else {
+            result.direction = turner.getDirection();
+            result.status = 0;
+        }
+ 
         return result;
     }
 

@@ -94,15 +94,15 @@
       position: absolute;
       top: 0;
       left: 0;
-      animation: loading-spinner-animate 2s ease-in-out infinite
+      animation: loading-spinner-animate 2s linear infinite
     }
 
     @keyframes loading-spinner-animate {
-      0% {
+      from {
         transform: rotate(0deg)
       }
 
-      100% {
+      to {
         transform: rotate(360deg)
       }
     }
