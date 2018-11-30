@@ -208,6 +208,8 @@ public class PlaytimeManager implements PlaytimeTimer.IPlayTimerComplete {
             if (waitTime == 0) {
                 // No waiting! Let this guest know their turn has begun.
                 observer.playtimeStatus(guest, PlaytimeState.PLAYING, settings.timeToPlay);
+
+                timer.play(guest, settings.timeToPlay, this);
             } else {
                 // Other guests waiting. Let this one know when their turn will be.
                 observer.playtimeStatus(guest, PlaytimeState.WAITING, waitTime);

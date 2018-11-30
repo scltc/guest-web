@@ -92,10 +92,10 @@ export class FeatureTurningHeadsComponent implements OnDestroy, OnInit {
 
   public pageOpened(page: string) {
     if (page == 'waiting') {
-      this.waitTime = 10;
+      // this.waitTime = 10;
     }
     else if (page == 'playing') {
-      this.playTime = 20;
+      // this.playTime = 20;
       this.playSound = true;
     }
   }

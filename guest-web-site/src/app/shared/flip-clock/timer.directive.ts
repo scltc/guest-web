@@ -11,9 +11,12 @@ import { Directive, Input, Output, EventEmitter, OnChanges, OnDestroy } from '@a
 import { Subject, Observable, SubscriptionLike, timer } from 'rxjs';
 import { switchMap, take, takeWhile, tap, share, finalize } from 'rxjs/operators';
 
+import { LoggerService } from '../../core/logger.service';
+
 interface TimerDirectiveParameters {
   aborted: boolean;
   duration: number;
+  remaining: number;
   period: number;
 }
 
@@ -54,37 +57,40 @@ export class TimerDirective implements OnChanges, OnDestroy {
     ).subscribe();
   }
   */
-  constructor() {
-    console.log("TimerDirective");
+  constructor(private logger:LoggerService) {
+    console.log('TimerDirective');
     this.countSubscription = this.counterSubject.pipe(
       switchMap((options: TimerDirectiveParameters) =>
         timer(0, options.period).pipe(
           takeWhile(value => !options.aborted && value < options.duration),
           tap(value => {
-            console.log(value);
-            this.value.emit((options.duration - value) * options.period)
+            options.remaining = options.duration - value * options.period;
+            // console.log('TimerDirective: ' + value);
+            this.value.emit(options.remaining)
           }),
           finalize(() => {
+            console.log('TimerDirective finalize: ' + options.aborted + ', ' + options.duration + ', ' + options.period)
             if (options.aborted) {
               this.value.emit(0);
             }
-            else {
+            else if (options.remaining <= 1) {
               this.complete.emit();
             }
-          }),
-          share()
+          })
         )
-      )
+      ),
+      share()
     ).subscribe();
   }
 
   ngOnChanges() {
-    console.log('ngOnChanges()');
     if (this.counter <= 0 || this.interval <= 0) {
       this.parameters && (this.parameters.aborted = true);
+      this.logger.logMessage('TimerDirective.ngOnChanges()', this.parameters);
     }
     else {
-      this.parameters = { aborted: false, duration: this.counter, period: this.interval }
+      this.parameters = { aborted: false, duration: this.counter, remaining: this.counter, period: this.interval }
+      this.logger.logMessage('TimerDirective.ngOnChanges()', this.parameters);
       this.counterSubject.next(this.parameters);
     }
   }

@@ -46,6 +46,8 @@ public class PlaytimeTimer {
                 Thread.currentThread().interrupt();
             }
         });
+
+        waiter.start();
     }
 
     public long remaining() {
