@@ -16,7 +16,7 @@
 */
 
 import { MonoTypeOperatorFunction, Observable, SchedulerLike, iif, of, throwError } from 'rxjs';
-import { concatMap, delay, retryWhen } from 'rxjs/operators';
+import { concatMap, delay, mergeMap, retryWhen } from 'rxjs/operators';
 
 export function retryAfterDelay<T>(
     // The inteval (milliseconds) between reconnection attempts.

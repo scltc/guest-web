@@ -3,10 +3,16 @@
  */
 /*
 References:
+
   JSON-RPC 2.0 Specification
   https://www.jsonrpc.org/specification
+
+  WebSocketSubject.ts reference source
+  https://github.com/ReactiveX/rxjs/blob/master/src/internal/observable/dom/WebSocketSubject.ts
+  
   Auto-reconnecting and address-tracking WebSocket client
   https://jonaschapuis.com/2018/02/auto-reconnecting-and-address-tracking-websocket-client/
+
   Using WebSockets in Angular with RxJs WebSocketSubject
   https://medium.com/@alexdasoul/%D0%B8%D1%81%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5-websockets-%D0%B2-angular-c-rxjs-websocketsubject-5018ecc20ee5
   https://github.com/Angular-RU/angular-websocket-starter
@@ -19,8 +25,8 @@ References:
 */
 
 import { Injectable } from '@angular/core';
-import { Observable, Observer, Subject, Subscription, iif, of, throwError } from 'rxjs';
-import { concatMap, first, map, switchMap } from 'rxjs/operators';
+import { Observable, Observer, Subject, Subscription, of, throwError } from 'rxjs';
+import { concatMap, first, map } from 'rxjs/operators';
 
 import { retryAfterDelay } from './retryAfterDelay.operator';
 
@@ -76,21 +82,22 @@ export class JsonRpcService {
 
     public requestQueue: Subject<JsonRpcRequest>
         = new Subject<JsonRpcRequest>();
-    private requestSubscription: Subscription;
+    // private requestSubscription: Subscription;
+
     private responseQueue: Subject<JsonRpcResponse>
         = new Subject<JsonRpcResponse>();
     private webSocketSubscription: Subscription;
 
     constructor(private controller: ControllerSocketService, private logger: LoggerService) {
 
-        this.webSocketSubscription = controller.webSocketSubject.multiplex(
+        this.webSocketSubscription = controller.webSocketSubject/*.multiplex(
             () => new MultiEndpointMessage(this.serverEndpoint, '{"jsonrpc":"2.0","method":"connect"}'),
             () => new MultiEndpointMessage(this.serverEndpoint, '{"jsonrpc":"2.0","method":"disconnect"}'),
             (message) => {
                 // console.log('endpoint: ' + message.endpoint);
                 return message.endpoint === this.serverEndpoint || message.endpoint === this.clientEndpoint;
             }
-        ).pipe(
+        )*/.pipe(
             retryAfterDelay(5 * 1000, -1),
             map(message => JSON.parse(message.payload))
         ).subscribe(
@@ -114,15 +121,6 @@ export class JsonRpcService {
                 this.logger.logMessage('WebSocket complete.');
             }
         );
-/*
-        this.requestSubscription = this.requestQueue.subscribe(request => {
-            this.send(this.clientEndpoint, {
-                jsonrpc: '2.0',
-                id: request.id,
-                result: request.params
-            });
-        })
-        */
     }
 
     private send<TMesssage>(endpoint: number, message: TMesssage): void {
@@ -150,7 +148,7 @@ export class JsonRpcService {
             return result;
         });
     }
-
+/*
     public reply(request: JsonRpcRequest, response?: any)
     {
         this.send(this.clientEndpoint, {
@@ -159,4 +157,5 @@ export class JsonRpcService {
             result: request.params
         });
     }
+*/
 }

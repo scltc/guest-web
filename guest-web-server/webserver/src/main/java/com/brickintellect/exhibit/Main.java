@@ -2,6 +2,9 @@ package com.brickintellect.exhibit;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Scanner;
+
+import com.brickintellect.webserver.WebSocketSessionManager;
 
 public class Main {
 
@@ -39,8 +42,8 @@ public class Main {
 
             // The default NanoHTTPD socket read timeout is 5 seconds. While that
             // may be fine for a HTTP server, it doesn't work so well when serving
-            // bidirectional WebSockets. Our client "pings" every 5 seconds, three
-            // times that period should work better.
+            // persistent WebSocket connections.  We "ping" our clients every 5
+            // seconds, three times that should work better.
             server.start(15 * 1000/* NanoHTTPD.SOCKET_READ_TIMEOUT */, false);
 
             if (daemon) {
@@ -54,8 +57,15 @@ public class Main {
                 }
             } else {
                 System.out.println("Exhibit controller running.  Press Enter to stop.\n");
-                try {
-                    System.in.read();
+                // In order to test our client reconnection logic, we need the
+                // ability to uncleanly shutdown our WebSockets.  Press 'a'
+                // and then 'Enter' (instead of just 'Enter') to do that.
+                try (Scanner scanner = new Scanner(System.in)) {
+                    String input = scanner.nextLine();
+
+                    if ("a".equals(input.toLowerCase())) {
+                        WebSocketSessionManager.abort();
+                    }
                 } catch (Throwable ignored) {
                 }
             }

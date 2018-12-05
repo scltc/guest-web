@@ -4,12 +4,11 @@
 
 import { EventEmitter, Injectable, OnDestroy, Inject } from '@angular/core';
 
-import { Observable, Observer, Subject, Subscriber, Subscription, interval } from 'rxjs';
-import { distinctUntilChanged, filter, map, share, takeWhile, tap } from 'rxjs/operators';
-import { WebSocketSubject, WebSocketSubjectConfig, webSocket } from 'rxjs/websocket';
+import { WebSocketSubject, WebSocketSubjectConfig } from 'rxjs/websocket';
 
 import { LoggerService } from '../logger.service';
 
+/*
 export class CatchAndThrowSettings {
     public westMinIdle: number = 0;
     public westMaxIdle: number = 0;
@@ -34,19 +33,8 @@ export class ControllerSettings {
     public headTurner: HeadTurnerSettings[];
 }
 
-const PingingWebSocket = function(url: string, protocols?: string | string[]){
-    const self = new WebSocket(url,protocols);
-
-    const baseOnmessage = self.onmessage;
-
-    /* Add hooks here. */
-    return self;
-} as any;
-/*
-export class MyWebSocket extends WebSocket {
-    constructor(url:string, protocols?:string | string[]) {
-        super(url, protocols);
-    }
+public processSettings(settings: ControllerSettings) {
+    this.logger.logMessage('settings: ', settings);
 }
 */
 
@@ -59,17 +47,17 @@ export class MultiEndpointMessage {
 })
 export class ControllerSocketService implements OnDestroy {
 
+    /* This can give access to the raw WebSocket.
+    private socket : WebSocket;
+
+    private HookedWebSocket = function(url: string, protocols?: string | string[]) {
+        return (this.socket = new WebSocket(url,protocols));
+    } as any;
+    */
+
+    public connected = new EventEmitter<boolean>();
+
     public webSocketSubject: WebSocketSubject<MultiEndpointMessage>;
-
-    public processSettings(settings: ControllerSettings) {
-        this.logger.logMessage('settings: ', settings);
-    }
-
-    private connected$ = new EventEmitter<boolean>();
-
-    public get connectedEvents() {
-        return this.connected$;
-    }
 
     constructor(@Inject('string') private url: string, private logger: LoggerService) {
 
@@ -80,13 +68,13 @@ export class ControllerSocketService implements OnDestroy {
             closeObserver: {
                 next: (event: CloseEvent) => {
                     logger.logError('WebSocket disconnected.', event);
-                    this.connected$.next(false);
+                    this.connected.next(false);
                 }
             },
             openObserver: {
                 next: (event: Event) => {
                     logger.logMessage('WebSocket connected!');
-                    this.connected$.next(true);
+                    this.connected.next(true);
                 }
             },
             deserializer: (event: MessageEvent) => {
@@ -99,7 +87,8 @@ export class ControllerSocketService implements OnDestroy {
                 console.log('sending: ' + serialized);
                 return serialized;
             },
-            WebSocketCtor: PingingWebSocket
+            // Uncomment this and the code above to gain access to the raw WebSocket.
+            // WebSocketCtor: this.HookedWebSocket
         };
 
         this.webSocketSubject = new WebSocketSubject<MultiEndpointMessage>(configuration);

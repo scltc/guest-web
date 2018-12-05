@@ -88,17 +88,27 @@ public class WebSocketSessionManager {
     /**
      * Shutdown the WebSocketSessionManager and close all connected WebSockets.
      */
-    public static void shutdown() {
+    private static void shutdown(boolean abort) {
         if (!scheduler.isShutdown()) {
             scheduler.shutdown();
 
-            for (WebSocketSession session : getConnections()) {
-                try {
-                    session.close(CloseCode.GoingAway, "Server shutdown.", false);
-                } catch (Exception ignored) {
+            if (!abort) {
+                for (WebSocketSession session : getConnections()) {
+                    try {
+                        session.close(CloseCode.GoingAway, "Server shutdown.", false);
+                    } catch (Exception ignored) {
+                    }
                 }
             }
         }
+    }
+
+    public static void shutdown() {
+        shutdown(false);
+    }
+
+    public static void abort() {
+        shutdown(true);
     }
 
     static {

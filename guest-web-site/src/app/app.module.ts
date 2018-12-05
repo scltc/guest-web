@@ -32,21 +32,17 @@ import { AppRoutingModule } from './routes/routing.module';
 import { AppInitializeService } from './app-initialize.service';
 
 // Application controller communication services
-import { ControllerModule } from './core/controller/controller.module';
+import { ControllerModule } from 'core';
 
 @NgModule({
     declarations: [
         AppComponent,
         AppConnectionLostComponent,
-        // ControllerPortComponent,
-        // TimePeriodComponent
     ],
     entryComponents: [
         AppConnectionLostComponent,
     ],
     imports: [
-        // AppInitializeModule,
-        // AppInitializeService,
         BrowserAnimationsModule,
         BrowserModule,
         FlexLayoutModule,
@@ -58,11 +54,10 @@ import { ControllerModule } from './core/controller/controller.module';
         MatToolbarModule,
 
         // If we are running on 'localhost', we are debugging. Use the web socket server from there too.
-        ControllerModule.forRoot(/* (window.location.hostname.toLowerCase() === 'localhost') ? 'ws://localhost' : */ 'wss://home.scltc.club'), //'ws://localhost'),
-        // ControllerModule.forRoot(/* (window.location.hostname.toLowerCase() === 'localhost') ? 'ws://localhost' : */ 'wss://home.scltc.club'), //'ws://localhost'),
-        // ControllerModule.forRoot(/* (window.location.hostname.toLowerCase() === 'localhost') ? 'ws://localhost' : */ 'ws://192.168.2.185'), //'ws://localhost'),
-        //  ControllerModule.forRoot({ url: 'ws://192.168.2.201', reconnectAttempts: -1 }),
-        // This must be last or some of the imports above may fail!
+        ControllerModule.forRoot('wss://home.scltc.club'),
+        // ControllerModule.forRoot('ws://localhost'),
+        // ControllerModule.forRoot({ url: 'ws://192.168.2.201', reconnectAttempts: -1 }),
+        // This *MUST* be last or some of the imports above may fail!
         AppRoutingModule,
     ],
     providers: [

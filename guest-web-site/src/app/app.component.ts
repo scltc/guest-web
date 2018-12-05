@@ -5,7 +5,7 @@ import { Route, Router, RoutesRecognized } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { distinctUntilChanged, filter, map } from 'rxjs/operators'
 
-import { ControllerStatusService } from 'core';
+import { ControllerSocketService } from 'core';
 import { AppConnectionLostComponent } from './app-connection-lost.component';
 import { AppInitializeService } from './app-initialize.service';
 import { AppRoutingModule } from './routes/routing.module';
@@ -16,14 +16,12 @@ import { AppRoutingModule } from './routes/routing.module';
     styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnDestroy, OnInit {
-    logo = './assets/SCLTC-Logo-50x50.png';
-    title = "app";
     year = new Date().getFullYear();
     routes = AppRoutingModule.Routes;
     showBackground = false;
     footerContent = "";
 
-    constructor(private controllerStatus: ControllerStatusService, private router: Router, private bottomSheet: MatBottomSheet) {
+    constructor(private controller: ControllerSocketService, private router: Router, private bottomSheet: MatBottomSheet) {
         console.log("AppComponent.constructor()");
         router.navigateByUrl(AppInitializeService.initialRoute);
     }
@@ -62,7 +60,7 @@ export class AppComponent implements OnDestroy, OnInit {
     ngOnInit() {
 
         // Change route (if required) after connection established or lost.
-        this.controllerConnectedSubscription = this.controllerStatus.connected$.pipe(
+        this.controllerConnectedSubscription = this.controller.connected.pipe(
             distinctUntilChanged()
         ).subscribe(connected => {
             // The controller connection status has changed.

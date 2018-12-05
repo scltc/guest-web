@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Subject, Subscription, timer } from 'rxjs';
 import { auditTime, takeWhile } from 'rxjs/operators';
 
-import { ControllerStatusService } from "core";
+import { ControllerSocketService, JsonRpcService } from "core";
 
 @Injectable({
     providedIn: 'root'
@@ -17,15 +17,15 @@ export class AppInitializeService {
     private timeoutWaiter: Subscription;
     private connectWaiter: Subscription;
 
-    constructor(private status: ControllerStatusService) {
+    constructor(private controller: ControllerSocketService, private rpc: JsonRpcService) {
     }
 
     initialize(): Subject<boolean> {
         console.log('initialize() {');
 
-        // Show our "initializing" page for two seconds, even when connected
+        // Show our "initializing" page for two seconds, even when connected,
         // because it looks cool!
-        this.connectWaiter = this.status.connected$.pipe(
+        this.connectWaiter = this.controller.connected.pipe(
             auditTime(1000 * 2),
             takeWhile(connected => connected)
         ).subscribe(connected => {
@@ -37,9 +37,9 @@ export class AppInitializeService {
         })
 
         // Wait up to ten seconds for a connection.  The EV3 takes some time
-        // to initialize the first time after power-up and this is likely
-        // not long enough that one time but longer is annoying when really
-        // not connected.
+        // to initialize the first time after a power-up and, while this is
+        // likely not long enough that one time, any longer is quite annoying
+        // when we really cannot connect.
         this.timeoutWaiter = timer(1000 * 10).subscribe(n => {
             console.log('initialize() : interval elapsed.');
 
