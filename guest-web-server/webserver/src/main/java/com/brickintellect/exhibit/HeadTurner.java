@@ -14,8 +14,8 @@ public class HeadTurner {
         public String controller = null;
 
         public String port = "D";
-        public int leftDutyCycle = -33;
-        public int rightDutyCycle = +33;
+        public int leftDutyCycle = +33;
+        public int rightDutyCycle = -33;
         public int motorRunTime = 160;
     }
 

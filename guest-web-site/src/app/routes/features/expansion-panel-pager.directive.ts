@@ -52,6 +52,7 @@ export class ExpansionPanelPagerDirective implements AfterContentInit, AfterView
             this.pageList.forEach((page, index) => {
                 this.renderer.setStyle(this.elements[index].nativeElement, 'display', 'none');
                 if (page.name == this.currentPage) {
+                    page.pageClosed.emit(this.currentPage);
                     this.pageClosed.emit(this.currentPage);
                 }
             });
@@ -60,6 +61,7 @@ export class ExpansionPanelPagerDirective implements AfterContentInit, AfterView
 
             this.pageList.forEach((page, index) => {
                 if (page.name == this.currentPage) {
+                    page.pageOpened.emit(this.currentPage);
                     this.pageOpened.emit(this.currentPage);
                     this.renderer.setStyle(this.elements[index].nativeElement, 'display', 'block');
                 }

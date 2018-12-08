@@ -11,7 +11,7 @@ public class PlaytimeManager implements PlaytimeTimer.IPlayTimerComplete {
 
     public static class Settings {
 
-        int timeToPlay = 5 * 60 * 1000;
+        int timeToPlay = 2 * 60 * 1000;
         int timeToPause = 0;
     }
 

@@ -43,30 +43,29 @@ public class Exhibit {
         }
     }
 
-    public interface IHeadTurnerWebSocketService {
-        public HeadTurnerState headsAbandon(@JsonRpcParam(value = "instance") int instance);
+    public interface ICatchAndThrowService {
+        int runCatchAndThrow(@JsonRpcParam("index") int index);
 
-        public HeadTurnerState headsOperate(@JsonRpcParam(value = "instance") int instance,
-                @JsonRpcParam(value = "direction") int direction);
-
-        public HeadTurnerState headsReserve(@JsonRpcParam(value = "instance") int instance);
+        public CatchAndThrowState catcherAbandon(@JsonRpcParam("instance") int instance);
+        public CatchAndThrowState catcherOperate(@JsonRpcParam("instance") int instance,
+                @JsonRpcParam("direction") int direction);
+        public CatchAndThrowState catcherReserve(@JsonRpcParam("instance") int instance);
     }
 
-    public interface IWebSocketService {
+    public interface IHeadTurnerWebSocketService {
+        public HeadTurnerState headsAbandon(@JsonRpcParam("instance") int instance);
+        public HeadTurnerState headsOperate(@JsonRpcParam("instance") int instance,
+                @JsonRpcParam("direction") int direction);
+        public HeadTurnerState headsReserve(@JsonRpcParam("instance") int instance);
+    }
+
+    public interface IWebSocketService extends ICatchAndThrowService, IHeadTurnerWebSocketService {
         int ping(@JsonRpcParam(value = "value") int value) throws Exception;
 
         Settings getSettings();
 
-        Settings setSettings(@JsonRpcParam(value = "settings") Settings settings);
+        Settings setSettings(@JsonRpcParam("settings") Settings settings);
 
-        int runCatchAndThrow(@JsonRpcParam(value = "index") int index);
-
-        public HeadTurnerState headsAbandon(@JsonRpcParam(value = "instance") int instance);
-
-        public HeadTurnerState headsOperate(@JsonRpcParam(value = "instance") int instance,
-                @JsonRpcParam(value = "direction") int direction);
-
-        public HeadTurnerState headsReserve(@JsonRpcParam(value = "instance") int instance);
 
     }
 
@@ -84,15 +83,11 @@ public class Exhibit {
         }
 
         /*
-        public String connect() {
-            System.out.println("connect()");
-            return getClientIdentifier().toString();
-        }
-
-        public void disconnect() {
-            System.out.println("disconnect()");
-        }
-        */
+         * public String connect() { System.out.println("connect()"); return
+         * getClientIdentifier().toString(); }
+         * 
+         * public void disconnect() { System.out.println("disconnect()"); }
+         */
 
         public int sendPing(int value) {
             try {
@@ -121,6 +116,18 @@ public class Exhibit {
             return exhibit.settings = settings;
         }
 
+        public CatchAndThrowState catcherAbandon(int instance) {
+            return new CatchAndThrowState();
+        }
+
+        public CatchAndThrowState catcherOperate(int instance, int direction) {
+            return new CatchAndThrowState();
+        }
+
+        public CatchAndThrowState catcherReserve(int instance) {
+            return new CatchAndThrowState();
+        }
+
         // IHeadTurnerWebSocketService implementation.
 
         public HeadTurnerState headsAbandon(int instance) {
@@ -142,12 +149,9 @@ public class Exhibit {
         }
 
         public void headsChanged(HeadTurnerState state) {
-            try
-            {
+            try {
                 client.invoke("headsChanged", state);
-            }
-            catch (Throwable exception)
-            {
+            } catch (Throwable exception) {
                 System.out.println("headsChanged exception: " + exception.getMessage());
             }
         }

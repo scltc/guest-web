@@ -1,4 +1,4 @@
-<div class="feature-wrapper" app-expansion-panel-pager #cowPager="appExpansionPanelPager" (page-closed)="pageClosed($event)"
+<div class="feature-wrapper" app-expansion-panel-pager #headsPager="appExpansionPanelPager" (page-closed)="pageClosed($event)"
     (page-opened)="pageOpened($event)">
 
     <div app-expansion-panel-page="introduction">
@@ -21,20 +21,20 @@
         <p class="feature-heading-centered">
             Be ready! Your turn starts in no more than:
         </p>
-        <flip-clock [countdown-timer]="waitTime" #waitTimer="countdownTimer" [timer]="waitTimer.value" (complete)="show('Your turn has begun!'); cowPager.display('playing');"></flip-clock>
+        <flip-clock [countdown-timer]="waitTime" #waitTimer="countdownTimer" [timer]="waitTimer.value" (complete)="headsPager.display('playing');"></flip-clock>
         <div class="actions action-one-centered">
             <app-button-no-thanks (click)="abandon()"></app-button-no-thanks>
         </div>
     </div>
 
-    <div app-expansion-panel-page="playing">
+    <div app-expansion-panel-page="playing" (page-closed)="show('Thanks for playing!')" (page-opened)="show('Your turn has begun!')">
         <audio autoplay *ngIf="playSound">
             <source type="audio/mpeg" src="../../../assets/Cow_Moo-Mike_Koenig-42670858.mp3" />
         </audio>
         <p class="feature-heading-centered">
             Our cows are now under your control! Your turn ends in:
         </p>
-        <flip-clock [countdown-timer]="playTime" #playTimer="countdownTimer" [timer]="playTimer.value" (complete)="show('Thanks for playing!'); cowPager.close();"></flip-clock>
+        <flip-clock [countdown-timer]="playTime" #playTimer="countdownTimer" [timer]="playTimer.value" (complete)="headsPager.close();"></flip-clock>
         <div class="actions action-one-centered">
             <app-button-direction [direction]="direction" (change)="change($event)"></app-button-direction>
         </div>
