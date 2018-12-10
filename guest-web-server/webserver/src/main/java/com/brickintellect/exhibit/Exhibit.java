@@ -15,6 +15,9 @@ import com.googlecode.jsonrpc4j.JsonRpcParam;
 
 import org.nanohttpd.protocols.http.IHTTPSession;
 
+import com.brickintellect.exhibit.CatchAndThrowPlayController.CatchAndThrowPlayState;
+import com.brickintellect.exhibit.HeadTurnerPlayController.HeadTurnerPlayState;
+
 public class Exhibit {
 
     private static Exhibit exhibit = new Exhibit();
@@ -22,7 +25,7 @@ public class Exhibit {
     private Settings settings = new Settings();
 
     private final List<HeadTurnerPlayController> heads = new ArrayList<HeadTurnerPlayController>();
-    private final List<CatchAndThrow> catchers = new ArrayList<CatchAndThrow>();
+    private final List<CatchAndThrowPlayController> catchers = new ArrayList<CatchAndThrowPlayController>();
 
     public Exhibit() {
 
@@ -30,11 +33,16 @@ public class Exhibit {
         settings.headTurner.add(new HeadTurner.Settings());
 
         for (CatchAndThrow.Settings setting : settings.catchAndThrow) {
-            catchers.add(new CatchAndThrow(setting));
+            catchers.add(new CatchAndThrowPlayController(setting, (UUID guest, CatchAndThrowPlayState state) -> {
+                WebSocketSession session = WebSocketSessionManager.getConnection(guest);
+                if (session != null) {
+                    ((Exhibit.WebSocketService) session).catcherChanged(state);
+                }
+            }));
         }
 
         for (HeadTurner.Settings setting : settings.headTurner) {
-            heads.add(new HeadTurnerPlayController(setting, (UUID guest, HeadTurnerState state) -> {
+            heads.add(new HeadTurnerPlayController(setting, (UUID guest, HeadTurnerPlayState state) -> {
                 WebSocketSession session = WebSocketSessionManager.getConnection(guest);
                 if (session != null) {
                     ((Exhibit.WebSocketService) session).headsChanged(state);
@@ -44,19 +52,17 @@ public class Exhibit {
     }
 
     public interface ICatchAndThrowService {
-        int runCatchAndThrow(@JsonRpcParam("index") int index);
-
-        public CatchAndThrowState catcherAbandon(@JsonRpcParam("instance") int instance);
-        public CatchAndThrowState catcherOperate(@JsonRpcParam("instance") int instance,
+        public CatchAndThrowPlayState catcherAbandon(@JsonRpcParam("instance") int instance);
+        public CatchAndThrowPlayState catcherOperate(@JsonRpcParam("instance") int instance,
                 @JsonRpcParam("direction") int direction);
-        public CatchAndThrowState catcherReserve(@JsonRpcParam("instance") int instance);
+        public CatchAndThrowPlayState catcherReserve(@JsonRpcParam("instance") int instance);
     }
 
     public interface IHeadTurnerWebSocketService {
-        public HeadTurnerState headsAbandon(@JsonRpcParam("instance") int instance);
-        public HeadTurnerState headsOperate(@JsonRpcParam("instance") int instance,
+        public HeadTurnerPlayState headsAbandon(@JsonRpcParam("instance") int instance);
+        public HeadTurnerPlayState headsOperate(@JsonRpcParam("instance") int instance,
                 @JsonRpcParam("direction") int direction);
-        public HeadTurnerState headsReserve(@JsonRpcParam("instance") int instance);
+        public HeadTurnerPlayState headsReserve(@JsonRpcParam("instance") int instance);
     }
 
     public interface IWebSocketService extends ICatchAndThrowService, IHeadTurnerWebSocketService {
@@ -116,48 +122,54 @@ public class Exhibit {
             return exhibit.settings = settings;
         }
 
-        public CatchAndThrowState catcherAbandon(int instance) {
-            return new CatchAndThrowState();
+        // ICatchAndThrowService implementation.
+
+        public CatchAndThrowPlayState catcherAbandon(int instance) {
+            return new CatchAndThrowPlayState();
         }
 
-        public CatchAndThrowState catcherOperate(int instance, int direction) {
-            return new CatchAndThrowState();
+        public CatchAndThrowPlayState catcherOperate(int instance, int direction) {
+            return new CatchAndThrowPlayState();
         }
 
-        public CatchAndThrowState catcherReserve(int instance) {
-            return new CatchAndThrowState();
+        public CatchAndThrowPlayState catcherReserve(int instance) {
+            return new CatchAndThrowPlayState();
         }
 
+        public void catcherChanged(CatchAndThrowPlayState state) {
+            try {
+                client.invoke("catcherChanged", state);
+            } catch (Throwable exception) {
+                System.out.println("catcherChanged exception: " + exception.getMessage());
+            }
+        }
+        
         // IHeadTurnerWebSocketService implementation.
 
-        public HeadTurnerState headsAbandon(int instance) {
+        public HeadTurnerPlayState headsAbandon(int instance) {
             System.out.println("headsAbandon");
             return (instance >= exhibit.heads.size()) ? null
                     : exhibit.heads.get(instance).headsAbandon(client.getClientIdentifier());
         }
 
-        public HeadTurnerState headsOperate(int instance, int direction) {
+        public HeadTurnerPlayState headsOperate(int instance, int direction) {
             System.out.println("headsOperate");
             return (instance >= exhibit.heads.size()) ? null
                     : exhibit.heads.get(instance).headsOperate(client.getClientIdentifier(), direction);
         }
 
-        public HeadTurnerState headsReserve(int instance) {
+        public HeadTurnerPlayState headsReserve(int instance) {
             System.out.println("headsReserve");
             return (instance >= exhibit.heads.size()) ? null
                     : exhibit.heads.get(instance).headsReserve(client.getClientIdentifier());
         }
 
-        public void headsChanged(HeadTurnerState state) {
+        public void headsChanged(HeadTurnerPlayState state) {
             try {
                 client.invoke("headsChanged", state);
             } catch (Throwable exception) {
                 System.out.println("headsChanged exception: " + exception.getMessage());
             }
-        }
-
-        public int runCatchAndThrow(int index) {
-            return (index >= exhibit.catchers.size()) ? 0 : exhibit.catchers.get(index).go();
         }
     }
 }

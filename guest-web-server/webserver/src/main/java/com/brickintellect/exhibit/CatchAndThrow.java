@@ -24,13 +24,21 @@ public class CatchAndThrow implements Runnable {
 
     private Settings settings;
 
-    LatchingRelay westRelay;
-    LatchingRelay mainRelay;
-    LatchingRelay eastRelay;
+    private LatchingRelay westRelay;
+    private LatchingRelay mainRelay;
+    private LatchingRelay eastRelay;
 
-    public int direction = -1; // -1=east, +1=west
+    private int direction = -1; // -1=east, +1=west
 
-    public boolean enabled = false;
+    public int getDirection() {
+        return direction;
+    }
+
+    private boolean running = false;
+
+    public boolean isRunning() {
+        return running;
+    }
 
     private Random random = new Random();
 
@@ -51,7 +59,11 @@ public class CatchAndThrow implements Runnable {
 
                 System.out.println("Running.");
 
+                running = true;
+
                 Thread.sleep(settings.mainRunTime);
+
+                running = false;
 
                 System.out.println("Before wait.");
 
@@ -59,11 +71,11 @@ public class CatchAndThrow implements Runnable {
                     synchronized (runner) {
                         runner.wait(getIdleTimeout());
                     }
-                } while (!enabled);
+                } while (!settings.enabled);
 
                 System.out.println("After wait.");
 
-                if (enabled) {
+                if (settings.enabled) {
                     if (direction < 0) {
                         // Set the mainline direction to west.
                         mainRelay.set(LatchingRelay.RESET);
@@ -95,7 +107,6 @@ public class CatchAndThrow implements Runnable {
     public CatchAndThrow(Settings settings) {
 
         this.settings = settings;
-        this.enabled = settings.enabled;
 
         westRelay = new LatchingRelay(settings.westPort);
         mainRelay = new LatchingRelay(settings.mainPort);

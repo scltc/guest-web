@@ -19,8 +19,8 @@ import org.nanohttpd.router.RouterNanoHTTPD.StaticPageHandler;
 import org.nanohttpd.router.RouterNanoHTTPD.UriResource;
 import org.nanohttpd.router.RouterNanoHTTPD.UriRouter;
 
+import com.brickintellect.webserver.Redirector;
 import com.brickintellect.webserver.SSLServerSocketFactoryCreator;
-
 import com.brickintellect.webserver.WebSocketSessionManager;
 
 public class WebServer extends NanoWSD implements IHandler<IHTTPSession, Response> {
@@ -74,6 +74,8 @@ public class WebServer extends NanoWSD implements IHandler<IHTTPSession, Respons
         }
     }
 
+    private Redirector redirector = null;
+
     public WebServer(String host, int port, File keyStore, File root) {
         super(host, port);
 
@@ -83,7 +85,9 @@ public class WebServer extends NanoWSD implements IHandler<IHTTPSession, Respons
         try {
             SSLServerSocketFactory socketFactory = SSLServerSocketFactoryCreator.create(keyStore);
             if (socketFactory != null) {
-                this.makeSecure(socketFactory, null);
+                makeSecure(socketFactory, null);
+
+                redirector = new Redirector(80, "https://home.scltc.club/index.html");
             }
 
         } catch (IOException ignored) {
@@ -101,6 +105,8 @@ public class WebServer extends NanoWSD implements IHandler<IHTTPSession, Respons
 
     @Override
     public void stop() {
+        // Shutdown the port 80 redirector.
+        redirector.shutdown();
         // Shutdown web socket manager and close all connected websockets.
         WebSocketSessionManager.shutdown();
         // Shutdown the web server.

@@ -7,8 +7,14 @@ import com.brickintellect.exhibit.PlaytimeManager.PlaytimeState;
 
 public class HeadTurnerPlayController implements PlaytimeManager.IPlaytimeStatus {
 
+    public static class HeadTurnerPlayState {
+        public int status; // -1=Waiting, 0=Canceled, +1=Playing
+        public int direction; // -1=left, +1=right;
+        public long timer;
+    }
+
     public interface IStateChangeWatcher {
-        void headsStateChanged(UUID guest, HeadTurnerState state);
+        void headsStateChanged(UUID guest, HeadTurnerPlayState state);
     }
 
     private HeadTurner turner;
@@ -17,7 +23,7 @@ public class HeadTurnerPlayController implements PlaytimeManager.IPlaytimeStatus
 
     @Override
     public void playtimeStatus(UUID guest, PlaytimeState state, int timeRemaining) {
-        HeadTurnerState request = new HeadTurnerState();
+        HeadTurnerPlayState request = new HeadTurnerPlayState();
         if (state == PlaytimeManager.PlaytimeState.WAITING) {
             request.status = -1;
         } else if (state == PlaytimeManager.PlaytimeState.CANCELED) {
@@ -33,17 +39,17 @@ public class HeadTurnerPlayController implements PlaytimeManager.IPlaytimeStatus
         }
     }
 
-    public HeadTurnerState headsAbandon(UUID guest) {
+    public HeadTurnerPlayState headsAbandon(UUID guest) {
         headsManager.abandon(guest, false);
-        HeadTurnerState result = new HeadTurnerState();
+        HeadTurnerPlayState result = new HeadTurnerPlayState();
         result.status = 0;
         result.direction = 0;
         result.timer = 0;
         return result;
     }
 
-    public HeadTurnerState headsOperate(UUID guest, int direction) {
-        HeadTurnerState result = new HeadTurnerState();
+    public HeadTurnerPlayState headsOperate(UUID guest, int direction) {
+        HeadTurnerPlayState result = new HeadTurnerPlayState();
 
         result.timer = headsManager.getTime(guest);
         if (result.timer < 0) {
@@ -60,12 +66,12 @@ public class HeadTurnerPlayController implements PlaytimeManager.IPlaytimeStatus
         return result;
     }
 
-    public HeadTurnerState headsReserve(UUID guest) {
+    public HeadTurnerPlayState headsReserve(UUID guest) {
         System.out.println("headsReserve");
 
         headsManager.reserve(guest, this);
 
-        HeadTurnerState result = new HeadTurnerState();
+        HeadTurnerPlayState result = new HeadTurnerPlayState();
         result.status = -1;
         result.direction = turner.getDirection();
         result.timer = 1000 * 20;
