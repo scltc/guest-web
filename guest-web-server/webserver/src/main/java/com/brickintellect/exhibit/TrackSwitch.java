@@ -1,6 +1,7 @@
 package com.brickintellect.exhibit;
 
 import org.ev3dev.exception.InvalidPortException;
+import org.ev3dev.hardware.ports.LegoPort;
 import org.ev3dev.hardware.motors.DCMotor;
 
 import com.brickintellect.ev3dev.LegoPortFactory;
@@ -38,10 +39,10 @@ public class TrackSwitch {
   private DirectionParameters main;
   private DirectionParameters side;
 
-  protected TrackSwitch(char port, boolean invert, DirectionParameters main, DirectionParameters side)
+  private TrackSwitch(LegoPort port, boolean invert, DirectionParameters main, DirectionParameters side)
       throws InvalidPortException {
 
-    motor = new DCMotor(LegoPortFactory.createDCMotor(port));
+    motor = new DCMotor(port);
 
     motor.setStopAction("brake");
     motor.stop();
@@ -55,6 +56,16 @@ public class TrackSwitch {
     }
   }
 
+  protected TrackSwitch(char port, boolean invert, DirectionParameters main, DirectionParameters side)
+      throws InvalidPortException {
+    this(LegoPortFactory.createDCMotor(port), invert, main, side);
+  }
+
+  protected TrackSwitch(String port, boolean invert, DirectionParameters main, DirectionParameters side)
+      throws InvalidPortException {
+    this(LegoPortFactory.createDCMotor(port), invert, main, side);
+  }
+
   public void set(int direction) {
     if (direction != SAME) {
       DirectionParameters parameters = (direction == MAIN) ? main : side;
@@ -63,7 +74,7 @@ public class TrackSwitch {
       motor.runTimed();
     }
   }
-  
+
   public void test(int repetitions) {
     try {
       for (int i = 0; i < repetitions; ++i) {
@@ -100,6 +111,14 @@ public class TrackSwitch {
     public Actuator(char port) {
       this(port, false);
     }
+
+    public Actuator(String port, boolean invert) {
+      super(port, invert, mainParameters, sideParameters);
+    }
+
+    public Actuator(String port) {
+      this(port, false);
+    }
   }
 
   /**
@@ -117,5 +136,12 @@ public class TrackSwitch {
     public House(char port) {
       this(port, false);
     }
-  }
+
+    public House(String port, boolean invert) {
+      super(port, invert, mainParameters, sideParameters);
+    }
+
+    public House(String port) {
+      this(port, false);
+    }  }
 }
