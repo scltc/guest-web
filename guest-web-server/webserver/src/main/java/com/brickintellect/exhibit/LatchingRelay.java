@@ -10,6 +10,9 @@ public class LatchingRelay {
     public static final boolean RESET = false;
     public static final boolean LATCH = !RESET;
 
+    public static final boolean OPEN = RESET;
+    public static final boolean SHUT = LATCH;
+
     // It seems as though running the motor repeatedly over (perhaps) only
     // part of its rotation would not be good. We run it a little longer
     // in one direction than the other, to ensure it rotates completely.
