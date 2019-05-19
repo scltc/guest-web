@@ -9,7 +9,6 @@
             "command": "gradle",
             "args": [
                 "--console=rich",
-                //              "--info",
                 "clean",
                 "serverDeploy",
                 "siteDeploy"
@@ -26,7 +25,7 @@
                 "reveal": "always",
                 "panel": "dedicated"
             }
-        },
+        } /*,
         {
             "identifier": "ng serve",
             "type": "npm",
@@ -54,6 +53,6 @@
                     }
                 }
             }
-        },
+        } */
     ]
 }
