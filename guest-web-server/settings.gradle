@@ -1,9 +1,8 @@
 rootProject.name = 'guest-web-server'
 
-/*
 include ':ev3dev-lang-java'
 project(':ev3dev-lang-java').projectDir = "$rootDir/../ev3dev-lang-java" as File
-*/
+
 include ':nanohttpd'
 project(':nanohttpd').projectDir = "$rootDir/../nanohttpd-2.3.2/core" as File
 include ':nanohttpd-webserver'
