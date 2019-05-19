@@ -2,9 +2,9 @@ if [ "$1" == "" ]; then
   echo Syntax: $0 store-password
 else
   sudo systemctl stop webserver
-  openssl pkcs12 -export -in certificates/fullchain1.pem -inkey certificates/privkey1.pem -out certificates/exhibit.scltc.club.p12 -passout pass:$1 -name exhibit.scltc.club
-  rm -f certificates/exhibit.scltc.club.jks certificates/exhibit.scltc.club.password
-  /opt/ejre1.8.0_171/bin/keytool -importkeystore -deststorepass $1 -destkeystore certificates/exhibit.scltc.club.jks -deststoretype pkcs12 -srckeystore certificates/exhibit.scltc.club.p12 -srcstoretype PKCS12 -srcstorepass $1 -alias exhibit.scltc.club
-  echo $1>certificates/exhibit.scltc.club.password
+  openssl pkcs12 -export -in $(pwd)/certificates/fullchain.pem -inkey $(pwd)/certificates/privkey.pem -out $(pwd)/certificates/exhibit.scltc.club.p12 -passout pass:$1 -name exhibit.scltc.club
+  rm -f $(pwd)/certificates/exhibit.scltc.club.jks $(pwd)/certificates/exhibit.scltc.club.password
+  /usr/bin/keytool -importkeystore -deststorepass $1 -destkeystore $(pwd)/certificates/exhibit.scltc.club.jks -deststoretype pkcs12 -srckeystore $(pwd)/certificates/exhibit.scltc.club.p12 -srcstoretype PKCS12 -srcstorepass $1 -alias exhibit.scltc.club
+  echo $1>$(pwd)/certificates/exhibit.scltc.club.password
   sudo systemctl start webserver
 fi
