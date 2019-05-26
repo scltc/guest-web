@@ -1,13 +1,13 @@
 [Unit]
 Description=Brick Intellect Web Server Service
 [Service]
-User=robot
+# User=root
 # The configuration file application.properties should be here:
 # change this to your workspace
 WorkingDirectory=/home/robot/guest-web
 # path to executable. 
 # executable is a bash script which calls jar file
-ExecStart=/home/robot/guest-web/webserver-start --daemon
+ExecStart=/usr/bin/java -agentlib:jdwp=transport=dt_socket,server=y,address=8000,suspend=n -jar /home/robot/guest-web/exhibit-web-server-1.0.0-SNAPSHOT.jar --key-store /home/robot/certificates/exhibit.scltc.club.jks --port 443 --root /home/robot/guest-web/site --daemon
 SuccessExitStatus=143
 TimeoutStopSec=10
 Restart=on-failure
