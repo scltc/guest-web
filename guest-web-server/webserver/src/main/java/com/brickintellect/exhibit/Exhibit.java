@@ -66,7 +66,7 @@ public class Exhibit {
     }
 
     public interface IWebSocketService extends ICatchAndThrowService, IHeadTurnerWebSocketService {
-        int ping(@JsonRpcParam(value = "value") int value) throws Exception;
+        int ping(@JsonRpcParam("value") int value) throws Exception;
 
         Settings getSettings();
 
