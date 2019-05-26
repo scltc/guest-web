@@ -2,6 +2,16 @@ ssh.settings {
     fileTransfer = 'scp'
     knownHosts = allowAnyHosts
 }
+
+remotes {
+    ext.path = './guest-web'
+    remote01 {
+        host = '192.168.2.201'
+        user = 'robot'
+        password = 'maker'
+    }
+}
+
 /*
 task testConnection << {
     ssh.run {

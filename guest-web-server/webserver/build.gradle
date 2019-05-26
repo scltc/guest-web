@@ -33,10 +33,6 @@ tasks.withType(JavaCompile) {
     options.deprecation = true
 }
 
-task wrapper(type: Wrapper) {
-	gradleVersion = "4.4.1"
-}
-
 // Create a single *.jar with all dependencies
 task fatJar(type: Jar) {
 	manifest {
@@ -165,7 +161,12 @@ task ('proguard', dependsOn: 'fatJar', type: proguard.gradle.ProGuardTask) {
   keepattributes 'Signature'
   keepparameternames
 */
-keep 'class com.brickintellect.exhibit.HeadTurnerState { \
+
+keep 'class com.brickintellect.exhibit.CatchAndThrowPlayController$CatchAndThrowPlayState { \
+  *; \
+}'
+
+keep 'class com.brickintellect.exhibit.HeadTurnerPlayController$HeadTurnerPlayState { \
   *; \
 }'
 
@@ -225,36 +226,36 @@ keep 'class com.brickintellect.exhibit.Exhibit$** { \
   */
 }
 
-def remotePath = './guest-web'
-
 task serverDeploy(dependsOn: 'proguard') {
   doLast {
     ssh.run {
-      session(remotes.webServer) {
-      println("${remotePath}")
-      execute "rm -rf ${remotePath}"
-      execute "mkdir -p ${remotePath}"
-//    execute "mkdir -p ${remotePath}/site/images"
+      session(remotes) {
+      println("${remotes.path}")
+      execute "rm -rf ${remotes.path}"
+      execute "mkdir -p ${remotes.path}"
+//    execute "mkdir -p ${remotes.path}/site/images"
       new File("${buildDir}/libs").listFiles().each {
 //      if (!"${it.name}".contains('-all-')) {
-          put(from: it, into: "${remotePath}")
+          println("${remotes.path}/${it.name}")
+          put(from: it, into: "${remotes.path}")
 //      }
       }
-//    execute "mkdir -p ${remotePath}/scripts"
+//    execute "mkdir -p ${remotes.path}/scripts"
       new File("${buildDir}/../scripts").listFiles().each {
-        put(from: it, into: "${remotePath}")
+        println("${remotes.path}/${it.name}")
+        put(from: it, into: "${remotes.path}")
         // If building on Windows, the scripts may have \r\n line separators that Linux won't like.  Fix them.
-        execute "tr -d '\\r' < ${remotePath}/${it.name} > ${remotePath}/${it.name}.tmp && mv --force ${remotePath}/${it.name}.tmp ${remotePath}/${it.name}"
-        execute "chmod +x ${remotePath}/${it.name}"
+        execute "tr -d '\\r' < ${remotes.path}/${it.name} > ${remotes.path}/${it.name}.tmp && mv --force ${remotes.path}/${it.name}.tmp ${remotes.path}/${it.name}"
+        execute "chmod +x ${remotes.path}/${it.name}"
       }
 /*
-      execute "mkdir -p ${remotePath}/site"
+      execute "mkdir -p ${remotes.path}/site"
       new File("${buildDir}/../site").listFiles().each {
-        println("${remotePath}/site/${it.name}")
-        put(from: it, into: "${remotePath}/site/${it.name}")
+        println("${remotes.path}/site/${it.name}")
+        put(from: it, into: "${remotes.path}/site/${it.name}")
       }
 */
-      execute "sudo ${remotePath}/webserver-register"
+      execute "sudo ${remotes.path}/webserver-register"
 //    put from: 'build/libs/' + project.name + '-all-' + version + '.jar', into: '.'
 //    execute 'sudo service tomcat restart'
       }

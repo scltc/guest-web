@@ -1,10 +1,3 @@
-task wrapper(type: Wrapper) {
-	gradleVersion = "4.4.1"
-}
-
-apply from: '../guest-web-server/gradle/config.gradle'
-
-def remotePath = "./guest-web"
 def outputPath = "${projectDir}/../docs"
 
 def ngCommand = (System.getProperty("os.name").toUpperCase().contains("WINDOWS"))
@@ -18,28 +11,28 @@ task siteBuild(type:Exec) {
 task siteDeploy(dependsOn: 'siteBuild') {
   doLast {
     ssh.run {
-      session(remotes.webServer) {
-      println("${remotePath}")
-      execute "rm -rf ${remotePath}/site"
-//    execute "mkdir -p ${remotePath}"
-      execute "mkdir -p ${remotePath}/site"
-//    execute "mkdir -p ${remotePath}/site/images"
-//    new File("${buildDir}/libs").listFiles().each { put(from: it, into: "${remotePath}") }
-//    execute "mkdir -p ${remotePath}/scripts"
+      session(remotes) {
+      println("${remotes.path}")
+      execute "rm -rf ${remotes.path}/site"
+//    execute "mkdir -p ${remotes.path}"
+      execute "mkdir -p ${remotes.path}/site"
+//    execute "mkdir -p ${remotes.path}/site/images"
+//    new File("${buildDir}/libs").listFiles().each { put(from: it, into: "${remotes.path}") }
+//    execute "mkdir -p ${remotes.path}/scripts"
 /*
       new File("${buildDir}/../scripts").listFiles().each {
-        put(from: it, into: "${remotePath}")
+        put(from: it, into: "${remotes.path}")
         // If building on Windows, the scripts may have \r\n line separators that Linux won't like.  Fix them.
-        execute "tr -d '\\r' < ${remotePath}/${it.name} > ${remotePath}/${it.name}.tmp && mv --force ${remotePath}/${it.name}.tmp ${remotePath}/${it.name}"
+        execute "tr -d '\\r' < ${remotes.path}/${it.name} > ${remotes.path}/${it.name}.tmp && mv --force ${remotes.path}/${it.name}.tmp ${remotes.path}/${it.name}"
       }
 */
       new File("${outputPath}").listFiles().each {
-        println("${remotePath}/site/${it.name}")
-        put(from: it, into: "${remotePath}/site/${it.name}")
+        println("${remotes.path}/site/${it.name}")
+        put(from: it, into: "${remotes.path}/site/${it.name}")
       }
 	  /*
-      execute "chmod +x ${remotePath}/*"
-      execute "sudo ${remotePath}/webserver-register"
+      execute "chmod +x ${remotes.path}/*"
+      execute "sudo ${remotes.path}/webserver-register"
 //    put from: 'build/libs/' + project.name + '-all-' + version + '.jar', into: '.'
 //    execute 'sudo service tomcat restart'
 */
