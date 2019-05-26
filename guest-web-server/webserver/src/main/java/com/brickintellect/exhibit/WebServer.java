@@ -106,7 +106,9 @@ public class WebServer extends NanoWSD implements IHandler<IHTTPSession, Respons
     @Override
     public void stop() {
         // Shutdown the port 80 redirector.
-        redirector.shutdown();
+        if (redirector != null) {
+            redirector.shutdown();
+        }
         // Shutdown web socket manager and close all connected websockets.
         WebSocketSessionManager.shutdown();
         // Shutdown the web server.
