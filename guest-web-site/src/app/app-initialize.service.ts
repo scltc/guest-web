@@ -23,10 +23,10 @@ export class AppInitializeService {
     initialize(): Subject<boolean> {
         console.log('initialize() {');
 
-        // Show our "initializing" page for two seconds, even when connected,
+        // Show our "initializing" page for an extra second after connection
         // because it looks cool!
         this.connectWaiter = this.controller.connected.pipe(
-            auditTime(1000 * 2),
+            auditTime(1000 * 1),
             takeWhile(connected => connected)
         ).subscribe(connected => {
             console.log('initialize() : status=' + connected);

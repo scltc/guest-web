@@ -8,7 +8,6 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-  <link rel="stylesheet" href="./assets/icons/material-icons.css">
   <link rel="icon" type="image/ico" href="./assets/favicon.ico">
 
   <title>SCLTC Exhibit</title>
@@ -137,6 +136,13 @@
 
 </head>
 
+<!--
+  The "<body onload=""/>" attribute below is a workaround.  While it prevents
+  the spinner from showing as soon (not good), it (more importantly) prevents
+  an annoying shift in the logo/spinner position that occurs when the page is
+  loading without it.
+-->
+
 <body onload="document.getElementsByClassName('loading-wrapper')[0].style.visibility = 'visible';">
   <app-root>
     <div class="loading-wrapper" style="visibility: hidden">
@@ -145,9 +151,8 @@
     </div>
   </app-root>
 
-  <script>
+  <link rel="stylesheet" href="./assets/icons/material-icons.css">
 
-  </script>
 </body>
 
 </html>
