@@ -9,8 +9,8 @@ public class HeadTurnerPlayController implements PlaytimeManager.IPlaytimeStatus
 
     public static class HeadTurnerPlayState {
         public int status; // -1=Waiting, 0=Canceled, +1=Playing
+        public long timer; // Time remaining in waiting/playing state.
         public int direction; // -1=left, +1=right;
-        public long timer;
     }
 
     public interface IStateChangeWatcher {
@@ -23,6 +23,7 @@ public class HeadTurnerPlayController implements PlaytimeManager.IPlaytimeStatus
 
     @Override
     public void playtimeStatus(UUID guest, PlaytimeState state, int timeRemaining) {
+
         HeadTurnerPlayState request = new HeadTurnerPlayState();
         if (state == PlaytimeManager.PlaytimeState.WAITING) {
             request.status = -1;
@@ -39,8 +40,10 @@ public class HeadTurnerPlayController implements PlaytimeManager.IPlaytimeStatus
         }
     }
 
-    public HeadTurnerPlayState headsAbandon(UUID guest) {
+    public HeadTurnerPlayState abandon(UUID guest) {
+
         headsManager.abandon(guest, false);
+
         HeadTurnerPlayState result = new HeadTurnerPlayState();
         result.status = 0;
         result.direction = 0;
@@ -48,9 +51,9 @@ public class HeadTurnerPlayController implements PlaytimeManager.IPlaytimeStatus
         return result;
     }
 
-    public HeadTurnerPlayState headsOperate(UUID guest, int direction) {
-        HeadTurnerPlayState result = new HeadTurnerPlayState();
+    public HeadTurnerPlayState operate(UUID guest, int direction) {
 
+        HeadTurnerPlayState result = new HeadTurnerPlayState();
         result.timer = headsManager.getTime(guest);
         if (result.timer < 0) {
             result.direction = turner.getDirection();
@@ -62,12 +65,10 @@ public class HeadTurnerPlayController implements PlaytimeManager.IPlaytimeStatus
             result.direction = turner.getDirection();
             result.status = 0;
         }
- 
         return result;
     }
 
-    public HeadTurnerPlayState headsReserve(UUID guest) {
-        System.out.println("headsReserve");
+    public HeadTurnerPlayState reserve(UUID guest) {
 
         headsManager.reserve(guest, this);
 
@@ -75,7 +76,6 @@ public class HeadTurnerPlayController implements PlaytimeManager.IPlaytimeStatus
         result.status = -1;
         result.direction = turner.getDirection();
         result.timer = 1000 * 20;
-
         return result;
     }
 

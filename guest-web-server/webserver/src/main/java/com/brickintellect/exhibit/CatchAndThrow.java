@@ -28,7 +28,7 @@ public class CatchAndThrow implements Runnable {
     private LatchingRelay mainRelay;
     private LatchingRelay eastRelay;
 
-    private int direction = -1; // -1=east, +1=west
+    private int direction = -1; // -1=west, +1=east
 
     public int getDirection() {
         return direction;

@@ -8,9 +8,9 @@ public class CatchAndThrowPlayController implements PlaytimeManager.IPlaytimeSta
 
     public static class CatchAndThrowPlayState {
         public int status; // -1=Waiting, 0=Canceled, +1=Playing
-        public int direction; // -1=left, +1=right;
-        public long timer;
-        public boolean running;
+        public long timer; // Time remaining in waiting/playing state.
+        public int direction; // -1=west, +1=east
+        public boolean running; // false=stopped, true= running
     }
 
     public interface IStateChangeWatcher {
@@ -43,7 +43,7 @@ public class CatchAndThrowPlayController implements PlaytimeManager.IPlaytimeSta
         }
     }
 
-    public CatchAndThrowPlayState headsAbandon(UUID guest) {
+    public CatchAndThrowPlayState abandon(UUID guest) {
         playTimeManager.abandon(guest, false);
         CatchAndThrowPlayState result = new CatchAndThrowPlayState();
         result.status = 0;
@@ -52,10 +52,9 @@ public class CatchAndThrowPlayController implements PlaytimeManager.IPlaytimeSta
         return result;
     }
 
-    public CatchAndThrowPlayState headsOperate(UUID guest) {
+    public CatchAndThrowPlayState operate(UUID guest) {
         CatchAndThrowPlayState result = new CatchAndThrowPlayState();
 
-        result.direction = catcher.getDirection();
         result.timer = playTimeManager.getTime(guest);
     
         if (result.timer < 0) {
@@ -69,11 +68,12 @@ public class CatchAndThrowPlayController implements PlaytimeManager.IPlaytimeSta
             result.status = 0;
         }
  
+        result.direction = catcher.getDirection();
+
         return result;
     }
 
-    public CatchAndThrowPlayState headsReserve(UUID guest) {
-        System.out.println("headsReserve");
+    public CatchAndThrowPlayState reserve(UUID guest) {
 
         playTimeManager.reserve(guest, this);
 

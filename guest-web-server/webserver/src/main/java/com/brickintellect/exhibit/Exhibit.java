@@ -53,15 +53,19 @@ public class Exhibit {
 
     public interface ICatchAndThrowService {
         public CatchAndThrowPlayState catcherAbandon(@JsonRpcParam("instance") int instance);
+
         public CatchAndThrowPlayState catcherOperate(@JsonRpcParam("instance") int instance,
                 @JsonRpcParam("direction") int direction);
+
         public CatchAndThrowPlayState catcherReserve(@JsonRpcParam("instance") int instance);
     }
 
     public interface IHeadTurnerWebSocketService {
         public HeadTurnerPlayState headsAbandon(@JsonRpcParam("instance") int instance);
+
         public HeadTurnerPlayState headsOperate(@JsonRpcParam("instance") int instance,
                 @JsonRpcParam("direction") int direction);
+
         public HeadTurnerPlayState headsReserve(@JsonRpcParam("instance") int instance);
     }
 
@@ -71,7 +75,6 @@ public class Exhibit {
         Settings getSettings();
 
         Settings setSettings(@JsonRpcParam("settings") Settings settings);
-
 
     }
 
@@ -125,43 +128,69 @@ public class Exhibit {
         // ICatchAndThrowService implementation.
 
         public CatchAndThrowPlayState catcherAbandon(int instance) {
-            return new CatchAndThrowPlayState();
+            System.out.println("catcherAbandon");
+            try {
+                return exhibit.catchers.get(instance).abandon(client.getClientIdentifier());
+            } catch (IndexOutOfBoundsException ignored) {
+                return null;
+            }
         }
 
         public CatchAndThrowPlayState catcherOperate(int instance, int direction) {
-            return new CatchAndThrowPlayState();
+            System.out.println("catcherOperate");
+            try {
+                return exhibit.catchers.get(instance).operate(client.getClientIdentifier());
+            } catch (IndexOutOfBoundsException ignored) {
+                return null;
+            }
         }
 
         public CatchAndThrowPlayState catcherReserve(int instance) {
-            return new CatchAndThrowPlayState();
+            System.out.println("catcherReserve");
+            try {
+                return exhibit.catchers.get(instance).reserve(client.getClientIdentifier());
+            } catch (IndexOutOfBoundsException ignored) {
+                return null;
+            }
         }
 
         public void catcherChanged(CatchAndThrowPlayState state) {
+            System.out.println("catcherChanged");
             try {
                 client.invoke("catcherChanged", state);
             } catch (Throwable exception) {
                 System.out.println("catcherChanged exception: " + exception.getMessage());
             }
         }
-        
+
         // IHeadTurnerWebSocketService implementation.
 
         public HeadTurnerPlayState headsAbandon(int instance) {
             System.out.println("headsAbandon");
-            return (instance >= exhibit.heads.size()) ? null
-                    : exhibit.heads.get(instance).headsAbandon(client.getClientIdentifier());
+            try {
+                return exhibit.heads.get(instance).abandon(client.getClientIdentifier());
+            } catch (IndexOutOfBoundsException ignored) {
+                return null;
+            }
+
         }
 
         public HeadTurnerPlayState headsOperate(int instance, int direction) {
             System.out.println("headsOperate");
-            return (instance >= exhibit.heads.size()) ? null
-                    : exhibit.heads.get(instance).headsOperate(client.getClientIdentifier(), direction);
+            try {
+                return exhibit.heads.get(instance).operate(client.getClientIdentifier(), direction);
+            } catch (IndexOutOfBoundsException ignored) {
+                return null;
+            }
         }
 
         public HeadTurnerPlayState headsReserve(int instance) {
             System.out.println("headsReserve");
-            return (instance >= exhibit.heads.size()) ? null
-                    : exhibit.heads.get(instance).headsReserve(client.getClientIdentifier());
+            try {
+                return exhibit.heads.get(instance).reserve(client.getClientIdentifier());
+            } catch (IndexOutOfBoundsException ignored) {
+                return null;
+            }
         }
 
         public void headsChanged(HeadTurnerPlayState state) {
