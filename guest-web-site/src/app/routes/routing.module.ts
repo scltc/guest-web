@@ -7,9 +7,11 @@ import {
     FormsModule,
     ReactiveFormsModule
   } from '@angular/forms';
+  /*
   import {
     HttpModule
   } from '@angular/http';
+  */
   import {
     MatButtonModule,
     MatCardModule,
@@ -162,7 +164,7 @@ export const appRoutes: Routes = [
         ReactiveFormsModule,
         // FlexLayoutModule,
         //    FontAwesomeModule,
-        HttpModule,
+//      HttpModule,
         MatButtonModule,
         MatCardModule,
         MatCheckboxModule,
