@@ -1,6 +1,6 @@
 import { AfterContentInit, AfterViewInit, ContentChildren, Directive, ElementRef, EventEmitter, HostBinding, Input, OnDestroy, Output, ViewChildren, QueryList, Renderer2 } from '@angular/core';
 
-import { MatExpansionPanel } from '@angular/material';
+import { MatExpansionPanel } from '@angular/material/expansion';
 
 import { Subscription } from 'rxjs';
 

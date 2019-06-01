@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { MatButtonModule, MatIconModule } from '@angular/material'
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 import { ButtonLetsDoThisComponent } from './button-lets-do-this.component';
 import { ButtonNoThanksComponent } from './button-no-thanks.component';

@@ -3,7 +3,7 @@ import {
   Input,
 } from '@angular/core';
 
-import { MatFormFieldControl } from '@angular/material';
+import { MatFormFieldControl } from '@angular/material/form-field';
 
 export class TimePeriod {
   constructor(public value : string) {

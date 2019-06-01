@@ -1,5 +1,5 @@
 import { Component, HostBinding, HostListener, OnDestroy, OnInit } from '@angular/core';
-import { MatBottomSheet } from '@angular/material';
+import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { Route, Router, RoutesRecognized } from '@angular/router';
 
 import { Subscription } from 'rxjs';

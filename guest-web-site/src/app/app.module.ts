@@ -8,14 +8,12 @@ import {
 import {
     FlexLayoutModule
 } from '@angular/flex-layout';
-import {
-    MatBottomSheetModule,
-    MatButtonModule,
-    MatListModule,
-    MatSidenavModule,
-    MatTabsModule,
-    MatToolbarModule
-} from '@angular/material';
+import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
+import { MatButtonModule } from '@angular/material/button';
+import { MatListModule } from '@angular/material/list';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import {
     BrowserAnimationsModule
 } from '@angular/platform-browser/animations';
