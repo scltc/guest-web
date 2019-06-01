@@ -22,7 +22,7 @@ export class FeatureCatchAndThrowStatus {
 })
 export class FeatureCatchAndThrowComponent implements OnInit {
 
-  @ViewChild(ExpansionPanelPagerDirective)
+  @ViewChild(ExpansionPanelPagerDirective, { static: true })
   pager: ExpansionPanelPagerDirective;
 
   public instance: number = 0;

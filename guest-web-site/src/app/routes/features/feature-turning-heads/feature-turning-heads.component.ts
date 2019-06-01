@@ -21,7 +21,7 @@ export class FeatureTurningHeadsStatus {
 })
 export class FeatureTurningHeadsComponent implements OnDestroy, OnInit {
 
-  @ViewChild(ExpansionPanelPagerDirective)
+  @ViewChild(ExpansionPanelPagerDirective, { static: true })
   pager: ExpansionPanelPagerDirective;
 
   public instance: number = 0;
