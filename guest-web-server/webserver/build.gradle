@@ -1,32 +1,30 @@
 description = 'Exhibit Web Server'
 
 buildscript {
-    repositories {
-      flatDir { dirs "C:/Program Files/proguard6.0.3/lib", "C:/Program Files (x86)/Java/proguard6.0.3/lib" }
-    }
-    dependencies {
-        classpath ':proguard'
-    }
+  repositories {
+    mavenLocal()
+    mavenCentral()
+  }
+
+  dependencies { classpath 'net.sf.proguard:proguard-gradle:6.1.1' }
 }
 
 dependencies {
-//	compile group: 'org.nanohttpd', name: 'nanohttpd', version: '2.3.1'
-//	compile group: 'org.nanohttpd', name: 'nanohttpd-webserver', version: '2.3.1'
 
   compile project(':ev3dev-lang-java')
+
+//	compile group: 'org.nanohttpd', name: 'nanohttpd', version: '2.3.1'
+//	compile group: 'org.nanohttpd', name: 'nanohttpd-webserver', version: '2.3.1'
 
 	compile project(':nanohttpd')
   compile project(':nanohttpd-nanolets')
 	compile project(':nanohttpd-webserver')
   compile project(':nanohttpd-websocket')
 
-  compile 'com.github.briandilley.jsonrpc4j:jsonrpc4j:1.5.3'
-  // compile 'com.github.mob41:ev3dev-lang-java:master-SNAPSHOT'
-  // compile 'javax.portlet:portlet-api:3.0.1'
-  // compile 'javax.servlet:javax.servlet-api:4.0.1'
-
-  // classpath ':proguard:'
-  
+  // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
+  compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.9'
+  // https://mvnrepository.com/artifact/com.github.briandilley.jsonrpc4j/jsonrpc4j
+  compile group: 'com.github.briandilley.jsonrpc4j', name: 'jsonrpc4j', version: '1.5.3'
 }
 
 tasks.withType(JavaCompile) {
