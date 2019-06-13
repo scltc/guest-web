@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { Subject, Subscription, timer } from 'rxjs';
-import { auditTime, takeWhile } from 'rxjs/operators';
+import { auditTime, takeWhile, tap } from 'rxjs/operators';
 
 import { ControllerSocketService, JsonRpcService } from "core";
 
@@ -26,15 +26,21 @@ export class AppInitializeService {
         // Show our "initializing" page for an extra second after connection
         // because it looks cool!
         this.connectWaiter = this.controller.connected.pipe(
-            auditTime(1000 * 1),
-            takeWhile(connected => connected)
+            //auditTime(1000 * 2),
+            tap(connected => console.log('tap 1 connected=' + connected)),
+            takeWhile(connected => connected),
+            tap(connected => console.log('tap 2 connected=' + connected))
         ).subscribe(connected => {
-            console.log('initialize() : status=' + connected);
+
+        // Using Angular 8, we don't need to delay the initializing page
+        // display to prevent its annoying jump so we can remove it sooner.
+//      this.connectWaiter = this.controller.connected.subscribe(connected => {
+            console.log('initialize() : connected=' + connected);
 
             AppInitializeService.initialRoute = '/home';
 
             this.initializeDone.complete();
-        })
+        });
 
         // Wait up to ten seconds for a connection.  The EV3 takes some time
         // to initialize the first time after a power-up and, while this is

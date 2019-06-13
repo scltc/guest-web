@@ -31,7 +31,7 @@ public class WebServer extends NanoWSD implements IHandler<IHTTPSession, Respons
 
         @Override
         public String getText() {
-            return "<html><body>Redirected: <a href=\"" + uri + "\">" + uri + "</a></body></html>";
+            return "<html><head><meta http-equiv='refresh' content='0; URL=./index.html'></head></html>";
         }
 
         @Override
@@ -41,15 +41,16 @@ public class WebServer extends NanoWSD implements IHandler<IHTTPSession, Respons
 
         @Override
         public IStatus getStatus() {
-            return Status.REDIRECT;
+            return Status.OK;
         }
 
         @Override
         public Response get(UriResource uriResource, Map<String, String> urlParams, IHTTPSession session) {
 
             Response response = Response.newFixedLengthResponse(getStatus(), getMimeType(), getText());
-            response.addHeader("Accept-Ranges", "bytes");
-            response.addHeader("Location", uri);
+            response.addHeader("Cache-Control", "max-age=86400, public");
+            // response.addHeader("Accept-Ranges", "bytes");
+            // response.addHeader("Location", uri);
             return response;
         }
     }
@@ -62,8 +63,15 @@ public class WebServer extends NanoWSD implements IHandler<IHTTPSession, Respons
         public Response get(UriResource uriResource, Map<String, String> urlParams, IHTTPSession session) {
 
             Response response = super.get(uriResource, urlParams, session);
-            return (response.getStatus() == Status.NOT_FOUND) ? redirector.get(uriResource, urlParams, session)
-                    : response;
+            if (response.getStatus() == Status.NOT_FOUND) {
+                response = redirector.get(uriResource, urlParams, session);
+            }
+            else {
+                // 1 second * 60 * 60 * 24 = 86,400 = 24 hours.
+                response.addHeader("Cache-Control", "max-age=86400, public");
+
+            }
+            return response;
         }
     }
 
@@ -92,6 +100,9 @@ public class WebServer extends NanoWSD implements IHandler<IHTTPSession, Respons
 
         } catch (IOException ignored) {
         }
+
+        // Add the icon MIME type so "favicon.ico" will cache correctly.
+        mimeTypes().put("ico", "image/x-icon");
 
         HttpHandler router = new HttpHandler();
 
