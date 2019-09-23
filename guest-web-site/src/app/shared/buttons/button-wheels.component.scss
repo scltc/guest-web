@@ -1,0 +1,30 @@
+button {
+  font-size: 4em;
+  font-weight: bold;
+  // height: 1.5em;
+  //    text-align: center;
+  //    vertical-align: middle;
+  //    min-height: 35px;
+}
+
+app-spinner-wheel {
+  position: relative;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  text-align: center;
+  // background: #eee;
+  min-height: 100%;
+  max-height: 100%;
+}
+app-spinner-wheel:before {
+  content: "";
+  height: 100%;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+mat-icon {
+  color: green;
+}

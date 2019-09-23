@@ -25,15 +25,18 @@
   color: green;
 }
 
-.direction-button-control {
-  bottom: -.10em;
-  font-size: 4em;
-  line-height: .75em;
-  position: relative;
-}
+// .direction-button-control {
+  // bottom: -.10em;
+
+  // line-height: .75em;
+  // position: relative;
+// }
 
 .direction-button-control mat-icon {
   font-weight: bold;
+  font-size: 4em;
+  vertical-align: middle;
+  text-align: center;
 }
 
 .direction-button-control .action-icon {

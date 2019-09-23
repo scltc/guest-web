@@ -1,0 +1,9 @@
+<button mat-stroked-button (click)="direction = direction * -1" style="vertical-align: middle; text-align: center;">
+    <app-spinner-wheel></app-spinner-wheel>
+    <app-spinner-tracks></app-spinner-tracks>
+    <mat-icon [class.animate]="running" [class.animate-forward]="running && direction &gt; 0"
+        [class.animate-reverse]="running && direction &lt; 0" [inline]="true" class="action-icon animate-spin"
+        [style.transform]="transform">{{icon}}
+    </mat-icon>
+    <app-spinner-wheel></app-spinner-wheel>
+</button>
