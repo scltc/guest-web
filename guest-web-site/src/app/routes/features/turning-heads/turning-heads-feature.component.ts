@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ContentChild, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { Subscription } from 'rxjs';
@@ -6,21 +6,20 @@ import { filter } from 'rxjs/operators';
 
 import { JsonRpcService, LoggerService } from 'core';
 
-import { ExpansionPanelPagerDirective } from '../expansion-panel-pager.directive';
+import { ExpansionPanelPagerDirective } from '../../../shared'; // '../../../shared/expansion-panel/expansion-panel-pager.directive';
 
-export class FeatureCatchAndThrowStatus {
+export class FeatureTurningHeadsStatus {
   status: number;     // -1=Waiting, 0=Canceled, +1=Playing
   timer: number;
-  direction: number;  // -1=left, +1=right
-  running: boolean;
+  direction: number;  // -1=left, +1=right;
 }
 
 @Component({
-  selector: 'app-feature-catch-and-throw',
-  templateUrl: './feature-catch-and-throw.component.html',
+  selector: 'app-turning-heads-feature',
+  templateUrl: './turning-heads-feature.component.html',
   styleUrls: ['../features.scss']
 })
-export class FeatureCatchAndThrowComponent implements OnInit {
+export class TurningHeadsFeatureComponent implements OnDestroy, OnInit {
 
   @ViewChild(ExpansionPanelPagerDirective, { static: true })
   pager: ExpansionPanelPagerDirective;
@@ -30,34 +29,33 @@ export class FeatureCatchAndThrowComponent implements OnInit {
   public waitTime: number = 0;
   public playTime: number = 0;
   public playSound: boolean = false;
-  private currentDirection: number = 0;
-
-  private count: number = 0;
-
+  public currentDirection: number = 0;
+  
   constructor(private rpc: JsonRpcService, private snackBar: MatSnackBar, private logger: LoggerService) {
   }
 
   public abandon() {
-    this.rpc.call<FeatureCatchAndThrowStatus>('catcherAbandon', { instance: this.instance })
-      .subscribe((status) => this.logger.logMessage('catcherAbandon result: ', status)); //this.update(status));
+    this.rpc.call<FeatureTurningHeadsStatus>('headsAbandon', { instance: this.instance })
+      .subscribe((status) => this.logger.logMessage('headsAbandon result: ', status)); //this.update(status));
   }
 
   public change(value: number) {
-    console.log('catcher set current: ' + this.currentDirection + ', requested: ' + value);
+    console.log('heads set current: ' + this.currentDirection + ', requested: ' + value);
     if (value !== this.currentDirection) {
-      console.log('catcher set changed!')
-      this.rpc.call<FeatureCatchAndThrowStatus>('catcherOperate', { instance: this.instance, direction: value })
+      console.log('heads set changed!')
+      this.rpc.call<FeatureTurningHeadsStatus>('headsOperate', { instance: this.instance, direction: value })
         .subscribe((status) => /* this.logger.logMessage('headsDirection result: ', status)); // */ this.update(status));
     }
   }
 
   public get direction(): number {
+    console.log('heads get: ' + this.currentDirection);
     return this.currentDirection;
   }
 
   public pageClosed(page: string) {
     this.playSound = false;
-    if (page == "waiting") {
+    if (page == 'waiting') {
       this.waitTime = 0;
     }
     else if (page == 'playing') {
@@ -74,21 +72,16 @@ export class FeatureCatchAndThrowComponent implements OnInit {
   }
 
   public reserve() {
-    this.rpc.call<FeatureCatchAndThrowStatus>('catcherReserve', { instance: this.instance })
-      .subscribe((status) => this.logger.logMessage('catcherReserve result: ', status));
-  }
-
-  public get running(): boolean {
-    // console.log('running: ' + (this.currentDirection != +1) + ', currentDirection: ' + this.currentDirection);
-    return this.count > 1;
+    this.rpc.call<FeatureTurningHeadsStatus>('headsReserve', { instance: this.instance })
+      .subscribe((status) => this.logger.logMessage('headsReserve result: ', status));
   }
 
   public show(message: string) {
     this.snackBar.open(message, null, { duration: 3000, panelClass: 'center-snackbar', verticalPosition: 'bottom' });
   }
 
-  private update(status: FeatureCatchAndThrowStatus) {
-    this.logger.logMessage('FeatureCatchAndThrow.update(' + status.status + ', ' + status.direction + ', ' + status.timer + ')');
+  private update(status: FeatureTurningHeadsStatus) {
+    this.logger.logMessage('FeatureTurningHeads.update(' + status.status + ', ' + status.direction + ', ' + status.timer + ')');
     if (status.status < 0) {
       // Waiting.
       this.playTime = 0;
@@ -111,17 +104,17 @@ export class FeatureCatchAndThrowComponent implements OnInit {
   private requestSubscription: Subscription;
 
   ngOnDestroy() {
-    console.log('FeatureCatchAndThrow.ngOnDestroy()');
+    console.log('FeatureTurningHeads.ngOnDestroy()');
     this.requestSubscription.unsubscribe();
   }
 
   ngOnInit() {
     this.currentDirection = 0;
     this.requestSubscription = this.rpc.requestQueue.pipe(filter(request =>
-      request.method == 'catcherChanged'
+      request.method == 'headsChanged'
     )).subscribe(request => {
-      this.logger.logMessage('catcherChanged', request);
-      this.update(request.params as FeatureCatchAndThrowStatus);
+      this.logger.logMessage('headsChanged', request);
+      this.update(request.params as FeatureTurningHeadsStatus);
     });
   }
 }

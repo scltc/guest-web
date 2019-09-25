@@ -31,6 +31,12 @@ import { Routes, RouterModule } from '@angular/router';
 import { AppInitializeService } from '../app-initialize.service';
 import { AppModule } from '../app.module'
 
+import {
+    ExpansionPanelConcealerDirective,
+    ExpansionPanelPageDirective,
+    ExpansionPanelPagerDirective
+} from "../shared";
+
 import { ButtonsModule } from 'shared/buttons/buttons.module';
 import { ControllerPortComponent } from 'shared/controller-port';
 import {
@@ -43,17 +49,17 @@ import { TimePeriodComponent } from 'shared/time-period';
 import { AwayComponent } from './away/away.component';
 import { HomeComponent } from './home/home.component';
 import {
-    ExpansionPanelConcealerDirective,
-    ExpansionPanelPageDirective,
-    ExpansionPanelPagerDirective,
-    FeatureCatchAndThrowComponent,
-    FeaturePickATrainComponent,
-    FeatureTurningHeadsComponent,
+    CatchAndThrowFeatureComponent,
+    CatchAndThrowSettingsComponent,
+    PickATrainFeatureComponent,
+    PickATrainSettingsComponent,
+    TurningHeadsFeatureComponent,
+    TurningHeadsSettingsComponent,
     FeaturesComponent,
     TurnQueueComponent
 } from './features';
 import { ScheduleComponent } from './schedule/schedule.component';
-import { SettingsComponent } from './settings/settings.component';
+import { SettingsComponent } from './features/settings.component';
 import { TroubleshootingComponent } from './troubleshooting/troubleshooting.component';
 
 // Must use only exported functions (no lambdas) in the routing table!
@@ -191,11 +197,14 @@ export const appRoutes: Routes = [
         ExpansionPanelPagerDirective,
         ExpansionPanelPageDirective,
         FeaturesComponent,
-        FeatureCatchAndThrowComponent,
-        FeaturePickATrainComponent,
-        FeatureTurningHeadsComponent,
-        ScheduleComponent,
         SettingsComponent,
+        CatchAndThrowFeatureComponent,
+        CatchAndThrowSettingsComponent,
+        PickATrainFeatureComponent,
+        PickATrainSettingsComponent,
+        TurningHeadsFeatureComponent,
+        TurningHeadsSettingsComponent,
+        ScheduleComponent,
         TroubleshootingComponent,
         ControllerPortComponent,
         FlipClockComponent,
