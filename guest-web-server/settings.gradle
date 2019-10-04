@@ -4,13 +4,13 @@ include ':ev3dev-lang-java'
 project(':ev3dev-lang-java').projectDir = "$rootDir/../ev3dev-lang-java" as File
 
 include ':nanohttpd'
-project(':nanohttpd').projectDir = "$rootDir/../nanohttpd-2.3.2/core" as File
+project(':nanohttpd').projectDir = "$rootDir/../nanohttpd/core" as File
 include ':nanohttpd-webserver'
-project(':nanohttpd-webserver').projectDir = "$rootDir/../nanohttpd-2.3.2/webserver" as File
+project(':nanohttpd-webserver').projectDir = "$rootDir/../nanohttpd/webserver" as File
 include ':nanohttpd-websocket'
-project(':nanohttpd-websocket').projectDir = "$rootDir/../nanohttpd-2.3.2/websocket" as File
+project(':nanohttpd-websocket').projectDir = "$rootDir/../nanohttpd/websocket" as File
 include ':nanohttpd-nanolets'
-project(':nanohttpd-nanolets').projectDir = "$rootDir/../nanohttpd-2.3.2/nanolets" as File
+project(':nanohttpd-nanolets').projectDir = "$rootDir/../nanohttpd/nanolets" as File
 
 // include ':nanohttpd-samples'
 // project(':nanohttpd-samples').projectDir = "$rootDir/../nanohttpd-2.3.2/samples" as File

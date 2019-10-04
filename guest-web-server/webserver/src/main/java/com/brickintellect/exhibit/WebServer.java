@@ -17,8 +17,8 @@ import org.nanohttpd.protocols.websockets.WebSocket;
 import org.nanohttpd.router.RouterNanoHTTPD.DefaultHandler;
 import org.nanohttpd.router.RouterNanoHTTPD.StaticPageHandler;
 import org.nanohttpd.router.RouterNanoHTTPD.UriResource;
-import org.nanohttpd.router.RouterNanoHTTPD.UriRouter;
 
+import com.brickintellect.webserver.HttpRouter;
 import com.brickintellect.webserver.Redirector;
 import com.brickintellect.webserver.SSLServerSocketFactoryCreator;
 import com.brickintellect.webserver.WebSocketSessionManager;
@@ -27,7 +27,7 @@ public class WebServer extends NanoWSD implements IHandler<IHTTPSession, Respons
 
     public static class IndexRedirectHandler extends DefaultHandler {
 
-        static final String uri = "/index.html";
+        // static final String uri = "/index.html";
 
         @Override
         public String getText() {
@@ -75,14 +75,7 @@ public class WebServer extends NanoWSD implements IHandler<IHTTPSession, Respons
         }
     }
 
-    private static class HttpHandler extends UriRouter implements IHandler<IHTTPSession, Response> {
-
-        public Response handle(IHTTPSession session) {
-            return super.process(session);
-        }
-    }
-
-    private Redirector redirector = null;
+        private Redirector redirector = null;
 
     public WebServer(String host, int port, File keyStore, File root) {
         super(host, port);
@@ -104,7 +97,7 @@ public class WebServer extends NanoWSD implements IHandler<IHTTPSession, Respons
         // Add the icon MIME type so "favicon.ico" will cache correctly.
         mimeTypes().put("ico", "image/x-icon");
 
-        HttpHandler router = new HttpHandler();
+        HttpRouter router = new HttpRouter();
 
         // Default page root to current directory if root not configured.
         router.addRoute("/(.)+", 999000, StaticPageHandlerWithIndexRedirect.class,
