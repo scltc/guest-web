@@ -1,3 +1,6 @@
 [submodule "ev3dev-lang"]
 	path = ev3dev-lang-java
 	url = ev3dev-lang-java.git
+[submodule "nanohttpd"]
+	path = nanohttpd
+	url = https://github.com/NanoHttpd/nanohttpd.git
