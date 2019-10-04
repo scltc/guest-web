@@ -85,3 +85,13 @@
     margin-top: 0;
     text-align: center;
 }
+
+.setting-form > * {
+    display: block;
+    min-width: 250px;
+    width: 50%;
+}
+
+.setting-form > hr {
+    width: 100%;
+}

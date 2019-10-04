@@ -1,20 +1,50 @@
-<form [formGroup]="settingForm" (ngSubmit)="onSubmit()" autocomplete="off">
+<form class="setting-form feature-wrapper" [formGroup]="settingForm" (ngSubmit)="onSubmit()" autocomplete="off">
 
     <mat-checkbox type="checkbox" formControlName="enabled">Enabled</mat-checkbox>
 
     <mat-form-field class="app-form-field">
-        <mat-label>Minimum stop time</mat-label>
-        <input matInput formControlName="minStopTime" placeholder="booga booga">
+        <mat-label>Controller</mat-label>
+        <input matInput formControlName="controller" placeholder="" />
     </mat-form-field>
 
     <mat-form-field class="app-form-field">
-        <mat-label>Maximum stop time</mat-label>
-        <input matInput formControlName="maxStopTime" placeholder="">
+        <mat-label>Port</mat-label>
+        <input matInput formControlName="westPort" placeholder="" />
+    </mat-form-field>
+
+    <mat-form-field class="app-form-field">
+        <mat-label>Minimum idle time</mat-label>
+        <input matInput formControlName="westMinIdle" placeholder="" />
+    </mat-form-field>
+
+    <mat-form-field class="app-form-field">
+        <mat-label>Maximum idle time</mat-label>
+        <input matInput formControlName="westMaxIdle" placeholder="" />
+    </mat-form-field>
+
+    <mat-form-field class="app-form-field">
+        <mat-label>Port</mat-label>
+        <input matInput formControlName="mainPort" placeholder="" />
     </mat-form-field>
 
     <mat-form-field class="app-form-field">
         <mat-label>Running time</mat-label>
-        <input matInput formControlName="runningTime" placeholder="">
+        <input matInput formControlName="mainRunTime" placeholder="" />
+    </mat-form-field>
+
+    <mat-form-field class="app-form-field">
+        <mat-label>Port</mat-label>
+        <input matInput formControlName="eastPort" placeholder="" />
+    </mat-form-field>
+
+    <mat-form-field class="app-form-field">
+        <mat-label>Minimum idle time</mat-label>
+        <input matInput formControlName="eastMinIdle" placeholder="" />
+    </mat-form-field>
+
+    <mat-form-field class="app-form-field">
+        <mat-label>Maximum idle time</mat-label>
+        <input matInput formControlName="eastMaxIdle" placeholder="" />
     </mat-form-field>
 
     <button mat-raised-button color="primary" type="submit" [disabled]="!settingForm.valid">Apply</button>

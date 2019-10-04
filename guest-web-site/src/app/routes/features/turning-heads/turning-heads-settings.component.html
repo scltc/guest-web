@@ -1,0 +1,30 @@
+<form class="setting-form feature-wrapper" [formGroup]="settingForm" (ngSubmit)="onSubmit()">
+
+    <mat-checkbox type="checkbox" formControlName="enabled">Enabled</mat-checkbox>
+
+    <mat-form-field class="app-form-field">
+        <mat-label>Controller</mat-label>
+        <input matInput formControlName="controller" placeholder="" />
+    </mat-form-field>
+
+    <mat-form-field class="app-form-field">
+        <mat-label>Port</mat-label>
+        <input matInput formControlName="port" placeholder="" />
+    </mat-form-field>
+
+    <mat-form-field class="app-form-field">
+        <mat-label>Rotate left duty cycle</mat-label>
+        <input matInput formControlName="leftDutyCycle" placeholder="" />
+    </mat-form-field>
+
+    <mat-form-field class="app-form-field">
+        <mat-label>Rotate right duty cycle</mat-label>
+        <input matInput formControlName="rightDutyCycle" placeholder="" />
+    </mat-form-field>
+
+    <mat-form-field class="app-form-field">
+        <mat-label>Motor run time</mat-label>
+        <input matInput formControlName="motorRunTime" placeholder="" />
+    </mat-form-field>
+
+</form>
