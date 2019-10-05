@@ -197,14 +197,9 @@ keep 'class com.brickintellect.exhibit.Exhibit$** { \
     <init>(java.rmi.activation.ActivationID, java.rmi.MarshalledObject); \
   }'
 
-  // Keep NanoHTTPD Nanolet implementations.
+  // Keep NanoHTTPD Nanolet implementation class names.
 
-  keep 'class ** extends org.nanohttpd.router.RouterNanoHTTPD$DefaultHandler { \
-    <methods>; \
-  }'
-
-  keep 'class ** extends org.nanohttpd.router.RouterNanoHTTPD$StaticPageHandler { \
-    <methods>; \
+  keep 'class ** extends org.nanohttpd.router.RouterNanoHTTPD$UriResponder { \
   }'
 
   // Jackson
