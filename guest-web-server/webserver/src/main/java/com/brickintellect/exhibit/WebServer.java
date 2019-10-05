@@ -19,19 +19,22 @@ import org.nanohttpd.router.RouterNanoHTTPD.StaticPageHandler;
 import org.nanohttpd.router.RouterNanoHTTPD.UriResource;
 
 import com.brickintellect.webserver.HttpRouter;
-import com.brickintellect.webserver.Redirector;
+import com.brickintellect.webserver.PortRedirector;
 import com.brickintellect.webserver.SSLServerSocketFactoryCreator;
 import com.brickintellect.webserver.WebSocketSessionManager;
 
 public class WebServer extends NanoWSD implements IHandler<IHTTPSession, Response> {
 
+    /*
+    A UriResponder that always redirects to the "/index.html" page.
+    */
     public static class IndexRedirectHandler extends DefaultHandler {
 
-        // static final String uri = "/index.html";
+        static final String uri = "/index.html";
 
         @Override
         public String getText() {
-            return "<html><head><meta http-equiv='refresh' content='0; URL=./index.html'></head></html>";
+            return "<html><head><meta http-equiv='refresh' content='0; URL=" + uri + "'></head></html>";
         }
 
         @Override
@@ -55,27 +58,29 @@ public class WebServer extends NanoWSD implements IHandler<IHTTPSession, Respons
         }
     }
 
-    public static class StaticPageHandlerWithIndexRedirect extends StaticPageHandler {
-
-        static final IndexRedirectHandler redirector = new IndexRedirectHandler();
+    /*
+    The standard NanoHTTPD StaticPageHandler is hard coded to use its built-in Error404UriHandler
+    for not found pages.  This version permits a custom not found handler class to be specified
+    (as the second initParameter value).
+    */
+    public static class StaticPageHandlerWithCustomNotFoundHandler extends StaticPageHandler {
 
         @Override
         public Response get(UriResource uriResource, Map<String, String> urlParams, IHTTPSession session) {
 
             Response response = super.get(uriResource, urlParams, session);
             if (response.getStatus() == Status.NOT_FOUND) {
-                response = redirector.get(uriResource, urlParams, session);
-            }
-            else {
-                // 1 second * 60 * 60 * 24 = 86,400 = 24 hours.
+                UriResource notFoundUriResource = new UriResource(null, 100, uriResource.initParameter(1, Class.class));
+                response = notFoundUriResource.process(urlParams, session);
+            } else {
+                // 24 hours = 1 second * 60 * 60 * 24 = 86,400.
                 response.addHeader("Cache-Control", "max-age=86400, public");
-
             }
             return response;
         }
     }
 
-        private Redirector redirector = null;
+    private PortRedirector redirector = null;
 
     public WebServer(String host, int port, File keyStore, File root) {
         super(host, port);
@@ -88,7 +93,7 @@ public class WebServer extends NanoWSD implements IHandler<IHTTPSession, Respons
             if (socketFactory != null) {
                 makeSecure(socketFactory, null);
 
-                redirector = new Redirector(80, "https://home.scltc.club/index.html");
+                redirector = new PortRedirector(80, "https://home.scltc.club/index.html");
             }
 
         } catch (IOException ignored) {
@@ -99,9 +104,9 @@ public class WebServer extends NanoWSD implements IHandler<IHTTPSession, Respons
 
         HttpRouter router = new HttpRouter();
 
-        // Default page root to current directory if root not configured.
-        router.addRoute("/(.)+", 999000, StaticPageHandlerWithIndexRedirect.class,
-                (root == null) ? new File(".").getAbsoluteFile() : root);
+        // Default static page root to current directory if root not configured.
+        router.addRoute("/(.)+", 999000, StaticPageHandlerWithCustomNotFoundHandler.class,
+                (root == null) ? new File(".").getAbsoluteFile() : root, IndexRedirectHandler.class);
         router.setNotFoundHandler(IndexRedirectHandler.class);
         this.setHTTPHandler(router);
 
