@@ -8,13 +8,13 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class Redirector implements Runnable {
+public class PortRedirector implements Runnable {
 
     private ServerSocket server;
     private final String target;
     private final Thread thread;
 
-    public Redirector(final int port, final String target) throws IOException {
+    public PortRedirector(final int port, final String target) throws IOException {
         this.target = target;
         this.server = new ServerSocket(port);
         this.thread = new Thread(this);
