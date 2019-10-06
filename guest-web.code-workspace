@@ -14,7 +14,7 @@
 		},
 		{
 			"name": "nanohttpd",
-			"path": "nanohttpd-2.3.2"
+			"path": "nanohttpd"
 		}
 	],
 	"settings": {
