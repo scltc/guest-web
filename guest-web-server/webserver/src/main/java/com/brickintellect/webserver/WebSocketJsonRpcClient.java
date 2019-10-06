@@ -124,10 +124,9 @@ public class WebSocketJsonRpcClient extends JsonRpcClient implements IJsonRpcCli
 	}
 
 	public int endpointNumber() {
-		return 2;
+		return endpoint;
 	}
 
 	public void onMessage(WebSocketInputStream input) {
-
 	}
 }
