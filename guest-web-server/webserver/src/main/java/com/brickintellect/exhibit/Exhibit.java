@@ -1,21 +1,37 @@
 package com.brickintellect.exhibit;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
+import com.googlecode.jsonrpc4j.JsonRpcParam;
+
+import org.nanohttpd.protocols.http.IHTTPSession;
+import org.nanohttpd.protocols.http.NanoHTTPD.ResponseException;
+import org.nanohttpd.protocols.http.response.IStatus;
+import org.nanohttpd.protocols.http.response.Response;
+import org.nanohttpd.protocols.http.response.Status;
+// import org.nanohttpd.router.RouterNanoHTTPD.DefaultHandler;
+// import org.nanohttpd.router.RouterNanoHTTPD.DefaultStreamHandler;
+import org.nanohttpd.router.RouterNanoHTTPD.UriResource;
+import org.nanohttpd.router.RouterNanoHTTPD.UriResponder;
+
+import com.brickintellect.webserver.Json;
+import com.brickintellect.webserver.Json.JsonException;
+import com.brickintellect.webserver.Json.JsonType;
+import com.brickintellect.webserver.HttpRouter;
 import com.brickintellect.webserver.WebSocketJsonRpcClient;
 import com.brickintellect.webserver.WebSocketJsonRpcServer;
 import com.brickintellect.webserver.WebSocketSession;
 import com.brickintellect.webserver.WebSocketSessionManager;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import com.googlecode.jsonrpc4j.JsonRpcParam;
-
-import org.nanohttpd.protocols.http.IHTTPSession;
-
 import com.brickintellect.exhibit.CatchAndThrowPlayController.CatchAndThrowPlayState;
+import com.brickintellect.exhibit.CatchAndThrow;
 import com.brickintellect.exhibit.HeadTurnerPlayController.HeadTurnerPlayState;
 
 public class Exhibit {
@@ -78,7 +94,225 @@ public class Exhibit {
 
     }
 
-    private static final ObjectMapper objectMapper = new ObjectMapper();
+    public static class WebService {
+
+        public static class JsonHandlerException extends Exception {
+
+            private static final long serialVersionUID = 1L;
+
+            private int code;
+
+            public int getStatus() {
+                return code;
+            }
+
+            public int setStatus(IStatus status) {
+                return code = status.getRequestStatus();
+            }
+
+            public JsonHandlerException(Exception exception, IStatus status) {
+                super(exception);
+                code = status.getRequestStatus();
+            }
+
+            public static JsonHandlerException create(Exception exception, IStatus status) {
+                if (exception instanceof JsonHandlerException) {
+                    JsonHandlerException result = (JsonHandlerException) exception;
+                    result.setStatus(status);
+                    return result;
+                }
+                return new JsonHandlerException(exception, status);
+            }
+
+            public static JsonHandlerException create(Exception exception) {
+                if (exception instanceof JsonHandlerException) {
+                    return (JsonHandlerException) exception;
+                }
+                return new JsonHandlerException(exception, Status.INTERNAL_ERROR);
+            }
+        }
+
+        public static class JsonResponseWrapper {
+            public int status = 0;
+            public Object exception = null;
+            public Object response = null;
+            public JsonResponseWrapper(Object value) {
+                if (value instanceof Exception) {
+
+                }
+            }
+        }
+
+        public static abstract class JsonHandler<T> implements UriResponder {
+
+            protected abstract JsonType<T> getObjectJsonType();
+
+            protected abstract T getObject(int index) throws Exception;
+
+            protected abstract T setObject(int index, T value) throws Exception;
+
+            public static final String MIME_JSON = "application/json";
+
+            public String getMimeType() {
+                return MIME_JSON;
+            }
+
+            private IStatus status = Status.OK;
+
+            public IStatus getStatus() {
+                return status;
+            };
+
+            protected void setStatus(IStatus value) {
+                status = value;
+            }
+
+            public int getIndex(Map<String, String> urlParams) throws JsonHandlerException {
+                try {
+                    return (!urlParams.containsKey("index")) ? -1 : Integer.parseInt(urlParams.get("index"));
+                }
+                catch (Exception exception) {
+                    throw new JsonHandlerException(exception, Status.BAD_REQUEST);
+                }
+
+            }
+
+            public String getContent(IHTTPSession session) throws IOException, ResponseException {
+                long contentLength = (!session.getHeaders().containsKey("content-length")) ? 0
+                        : Integer.parseInt(session.getHeaders().get("content-length"));
+
+                // http://stackoverflow.com/a/9133993/229631
+                byte[] buffer = new byte[1024];
+                int length;
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                while ((length = session.getInputStream().read(buffer)) != -1) {
+                    outputStream.write(buffer, 0, length);
+                }
+                byte[] outputBytes = outputStream.toByteArray();
+                // todo: this will break with size > int.max
+                byte[] postBodyBytes = Arrays.copyOfRange(outputBytes, outputBytes.length - (int) contentLength,
+                        outputBytes.length);
+                return new String(postBodyBytes, StandardCharsets.UTF_8);
+            }
+
+            private T DecodeJsonRequest(String value) {
+                T object;
+                try {
+                    object = Json.decodeString(value, getObjectJsonType());
+                } catch (JsonException exception) {
+                    setStatus(Status.BAD_REQUEST);
+                    object = null;
+                }
+                return object;
+
+            }
+
+            private Response EncodeJsonResponse(Exception exception, IStatus status) {
+                setStatus(Status.INTERNAL_ERROR);
+                return Response.newFixedLengthResponse(getStatus(), MIME_JSON,
+                        Json.encodeString(new JsonHandlerException(exception, status)));
+            }
+
+            private Response EncodeJsonResponse(Exception exception) {
+                return EncodeJsonResponse(exception, Status.INTERNAL_ERROR);
+            }
+
+            private Response EncodeJsonResponse(T value) {
+                try {
+                    return Response.newFixedLengthResponse(getStatus(), getMimeType(), Json.encodeString(value));
+                } catch (JsonException exception) {
+                    return EncodeJsonResponse(exception);
+                }
+            }
+
+            /*
+             * public T DecodeJson(ObjectMapper mapper, String value) { try { return
+             * mapper.writeValueAsString(value); } catch (JsonProcessingException exception)
+             * { setStatus(Status.INTERNAL_ERROR); return exception.getMessage(); } }
+             */
+
+            public Response get(UriResource uriResource, Map<String, String> urlParams, IHTTPSession session) {
+                try {
+                    return EncodeJsonResponse(getObject(getIndex(urlParams)));
+                }
+                catch (Exception exception) {
+                    return EncodeJsonResponse(JsonHandlerException.create(exception));
+                }
+
+            }
+
+            public Response put(UriResource uriResource, Map<String, String> urlParams, IHTTPSession session) {
+                try {
+                    return EncodeJsonResponse(setObject(getIndex(urlParams), DecodeJsonRequest(getContent(session))));
+                }
+                catch (Exception exception) {
+                    return EncodeJsonResponse(JsonHandlerException.create(exception));
+                }
+            }
+
+            public Response post(UriResource uriResource, Map<String, String> urlParams, IHTTPSession session) {
+                return get(uriResource, urlParams, session);
+            }
+
+            public Response delete(UriResource uriResource, Map<String, String> urlParams, IHTTPSession session) {
+                return get(uriResource, urlParams, session);
+            }
+
+            public Response other(String method, UriResource uriResource, Map<String, String> urlParams,
+                    IHTTPSession session) {
+                return get(uriResource, urlParams, session);
+            }
+
+        }
+
+        public static class CatchAndThrowService extends JsonHandler<CatchAndThrow.Settings> {
+
+            static JsonType<CatchAndThrow.Settings> jsonType = new JsonType<CatchAndThrow.Settings>();
+
+            @Override
+            protected JsonType<CatchAndThrow.Settings> getObjectJsonType() {
+                return jsonType;
+            }
+
+            @Override
+            public CatchAndThrow.Settings getObject(int index) throws Exception {
+                if (index < 0) {
+                    throw new Exception("booga booga");
+                }
+                return new CatchAndThrow.Settings(index);
+            }
+
+            @Override
+            public CatchAndThrow.Settings setObject(int index, CatchAndThrow.Settings value) {
+                return value;
+            }
+        }
+
+        public static class HeadTurnerService extends JsonHandler<HeadTurner.Settings> {
+
+            static JsonType<HeadTurner.Settings> jsonType = new JsonType<HeadTurner.Settings>();
+
+            @Override
+            protected JsonType<HeadTurner.Settings> getObjectJsonType() {
+                return jsonType;
+            }
+
+            @Override
+            public HeadTurner.Settings getObject(int index) {
+                return new HeadTurner.Settings(index);
+            }
+
+            @Override
+            public HeadTurner.Settings setObject(int index, HeadTurner.Settings value) {
+                return value;
+            }
+        }
+
+        public static void addRoutes(HttpRouter router) {
+            router.addRoute("/api/heads/:index", 100, HeadTurnerService.class);
+            router.addRoute("/api/catchers/:index", 100, CatchAndThrowService.class);
+        }
+    }
 
     public static class WebSocketService extends WebSocketSession implements IWebSocketService {
 
@@ -86,8 +320,8 @@ public class Exhibit {
 
         public WebSocketService(IHTTPSession session) {
             super(session);
-            client = new WebSocketJsonRpcClient(this, 2, objectMapper);
-            addEndpoint(new WebSocketJsonRpcServer(this, 1, objectMapper, this, Exhibit.IWebSocketService.class));
+            client = new WebSocketJsonRpcClient(this, 2, Json.mapper());
+            addEndpoint(new WebSocketJsonRpcServer(this, 1, Json.mapper(), this, Exhibit.IWebSocketService.class));
             addEndpoint(client);
         }
 

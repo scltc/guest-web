@@ -6,6 +6,8 @@ public class CatchAndThrow implements Runnable {
 
     public static class Settings {
 
+        public int index;
+
         public boolean enabled = true;
 
         public String controller = null;
@@ -20,6 +22,14 @@ public class CatchAndThrow implements Runnable {
         public String eastPort = "C";
         public int eastMinIdle = westMinIdle;
         public int eastMaxIdle = westMaxIdle;
+
+        public Settings(int index) {
+            this.index = index;
+        }
+
+        public Settings() {
+            this(0);
+        }
     }
 
     private Settings settings;

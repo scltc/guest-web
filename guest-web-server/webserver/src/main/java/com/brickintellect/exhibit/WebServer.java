@@ -80,6 +80,7 @@ public class WebServer extends NanoWSD implements IHandler<IHTTPSession, Respons
         }
     }
 
+    private HttpRouter router = new HttpRouter();
     private PortRedirector redirector = null;
 
     public WebServer(String host, int port, File keyStore, File root) {
@@ -102,14 +103,17 @@ public class WebServer extends NanoWSD implements IHandler<IHTTPSession, Respons
         // Add the icon MIME type so "favicon.ico" will cache correctly.
         mimeTypes().put("ico", "image/x-icon");
 
-        HttpRouter router = new HttpRouter();
-
+        Exhibit.WebService.addRoutes(router);
         // Default static page root to current directory if root not configured.
         router.addRoute("/(.)+", 999000, StaticPageHandlerWithCustomNotFoundHandler.class,
                 (root == null) ? new File(".").getAbsoluteFile() : root, IndexRedirectHandler.class);
         router.setNotFoundHandler(IndexRedirectHandler.class);
         this.setHTTPHandler(router);
 
+    }
+
+    public void addRoute(String url, Class<?> handler, Object... initParameter) {
+        router.addRoute(url, 100, handler, initParameter);
     }
 
     @Override

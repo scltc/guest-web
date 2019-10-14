@@ -9,6 +9,8 @@ public class HeadTurner {
 
     public static class Settings {
 
+        public int index;
+
         public boolean enabled = true;
 
         public String controller = null;
@@ -17,6 +19,14 @@ public class HeadTurner {
         public int leftDutyCycle = +33;
         public int rightDutyCycle = -33;
         public int motorRunTime = 160;
+
+        public Settings(int index) {
+            this.index = index;
+        }
+
+        public Settings() {
+            this(0);
+        }        
     }
 
     private Settings settings;
