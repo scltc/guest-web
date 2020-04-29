@@ -59,9 +59,9 @@ public class SSLServerSocketFactoryCreator {
     public static SSLServerSocketFactory makeSSLSocketFactory(KeyStore loadedKeyStore, KeyManager[] keyManagers) throws IOException {
         SSLServerSocketFactory res = null;
         try {
-            TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+            TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance("PKIX");//TrustManagerFactory.getDefaultAlgorithm());
             trustManagerFactory.init(loadedKeyStore);
-            SSLContext ctx = SSLContext.getInstance("TLSv1.2");
+            SSLContext ctx = SSLContext.getInstance("TLSv1.2"); // "TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384"); // "TLS"
             ctx.init(keyManagers, trustManagerFactory.getTrustManagers(), null);
             res = ctx.getServerSocketFactory();
         } catch (Exception e) {
@@ -96,11 +96,11 @@ public class SSLServerSocketFactoryCreator {
             result = null;
         } else {
             try (InputStream keystoreStream = new FileInputStream(keyStoreFile)) {
-                KeyStore keystore = KeyStore.getInstance(KeyStore.getDefaultType());
+                KeyStore keystore = KeyStore.getInstance("JKS");//KeyStore.getDefaultType());
                 keystore.load(keystoreStream, keyStorePassword.toCharArray());
 
                 KeyManagerFactory keyManagerFactory = KeyManagerFactory
-                        .getInstance(KeyManagerFactory.getDefaultAlgorithm());
+                        .getInstance("PKIX");//KeyManagerFactory.getDefaultAlgorithm());
                 keyManagerFactory.init(keystore, keyStorePassword.toCharArray());
                 result = NanoHTTPD.makeSSLSocketFactory(keystore, keyManagerFactory);
             } catch (Exception e) {

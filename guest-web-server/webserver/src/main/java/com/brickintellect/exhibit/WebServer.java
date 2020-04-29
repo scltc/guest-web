@@ -2,6 +2,7 @@ package com.brickintellect.exhibit;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.util.Map;
 
 import javax.net.ssl.SSLServerSocketFactory;
@@ -94,7 +95,11 @@ public class WebServer extends NanoWSD implements IHandler<IHTTPSession, Respons
             if (socketFactory != null) {
                 makeSecure(socketFactory, null);
 
-                redirector = new PortRedirector(80, "https://home.scltc.club/index.html");
+                String redirect = "https://" + InetAddress.getLocalHost().getHostName() + ".scltc.club/index.html";
+
+                System.out.println(redirect);
+
+                redirector = new PortRedirector(80, redirect);
             }
 
         } catch (IOException ignored) {

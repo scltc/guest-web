@@ -10,6 +10,13 @@ remotes {
         user = 'robot'
         password = 'maker'
     }
+    /*
+    remote02 {
+        host = '192.168.2.202'
+        user = 'robot'
+        password = 'maker'
+    }
+    */
 }
 
 /*
