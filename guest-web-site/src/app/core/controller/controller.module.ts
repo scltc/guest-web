@@ -13,7 +13,7 @@ import { ControllerSocketService } from './controller-socket.service';
   ]
 })
 export class ControllerModule {
-  public static forRoot(url: string): ModuleWithProviders {
+  public static forRoot(url: string): ModuleWithProviders<ControllerModule> {
     return {
       ngModule: ControllerModule,
       providers: [ControllerSocketService, { provide: 'string', useValue: url }]
