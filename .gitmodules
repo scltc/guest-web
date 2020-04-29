@@ -3,4 +3,4 @@
 	url = ev3dev-lang-java.git
 [submodule "nanohttpd"]
 	path = nanohttpd
-	url = https://github.com/NanoHttpd/nanohttpd.git
+	url = http://JMB-GitLab/nanohttpd.git
